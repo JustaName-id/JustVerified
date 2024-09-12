@@ -5,13 +5,30 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/vc-api",
+        "main": "apps/vc-api/src/main.ts",
+        "tsConfig": "apps/vc-api/tsconfig.app.json",
+        "webpackConfig": "apps/vc-api/webpack.config.js",
+        "generatePackageJson": true
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      },
+      "dependsOn": ["prisma-generate","lint","^test","test"]
+    },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
-      "dependsOn": ["build"],
       "options": {
-        "buildTarget": "vc-api:build",
-        "runBuildTargetDependencies": false
+        "buildTarget": "vc-api:build"
       },
       "configurations": {
         "development": {
@@ -20,6 +37,12 @@
         "production": {
           "buildTarget": "vc-api:build:production"
         }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "fix": true
       }
     }
   }
