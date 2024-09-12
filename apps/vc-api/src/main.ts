@@ -16,7 +16,8 @@ async function bootstrap() {
         rawBody: true,
       }
   );
-  const globalPrefix = '';
+
+  const globalPrefix = 'verifications';
 
   app.useBodyParser('json');
 
@@ -44,11 +45,20 @@ async function bootstrap() {
       },
     })
   );
-  app.setGlobalPrefix(globalPrefix);
+
+  const version = '1';
+
+  app
+    .enableVersioning({
+      type: VersioningType.URI,
+      defaultVersion: version,
+    })
+    .setGlobalPrefix(globalPrefix);
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
+    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}/v${version}`,
   );
 }
 

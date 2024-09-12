@@ -1,8 +1,6 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 enum AuthName {
-  Google = 'google',
-  Facebook = 'facebook',
   Twitter = 'twitter',
   Github = 'github',
   Discord = 'discord',
