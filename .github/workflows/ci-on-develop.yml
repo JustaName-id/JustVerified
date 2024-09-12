@@ -87,3 +87,4 @@ jobs:
         env:
           INPUT_PUSH: false
           COMPONENT_NAME: ${{ matrix.component }}
+          INPUT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
