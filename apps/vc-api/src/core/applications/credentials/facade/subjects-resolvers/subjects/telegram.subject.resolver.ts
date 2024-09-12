@@ -4,8 +4,11 @@ import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../../../environment/
 import { CREDENTIAL_CREATOR, ICredentialCreator } from '../../../creator/icredential.creator';
 import { TIME_GENERATOR, TimeGenerator } from '../../../../time.generator';
 import { HttpService } from '@nestjs/axios';
+import * as crypto from 'crypto';
+import { TelegramCredential } from '../../../../../domain/credentials/telegram.credential';
+import { TelegramCallback } from './callback/telegram.callback';
 
-export class TelegramSubjectResolver extends AbstractSubjectResolver {
+export class TelegramSubjectResolver extends AbstractSubjectResolver<TelegramCallback ,TelegramCredential> {
   constructor(
     @Inject(ENVIRONMENT_GETTER)
     readonly environmentGetter: IEnvironmentGetter,
@@ -23,8 +26,29 @@ export class TelegramSubjectResolver extends AbstractSubjectResolver {
     );
   }
 
-  callbackSuccessful(data: {}): Promise<void> {
-    return Promise.resolve(undefined);
+  async callbackSuccessful(params: TelegramCallback): Promise<void> {
+    const { hash, ...telegramData } = params;
+
+    const dataCheckString = Object.keys(telegramData)
+      .sort()
+      .map((key) => `${key}=${telegramData[key]}`)
+      .join('\n');
+
+    const secretKey = crypto.createHash('sha256').update(process.env.TELEGRAM_BOT_TOKEN!).digest();
+
+    const hmac = crypto.createHmac('sha256', secretKey).update(dataCheckString);
+    const calculatedHash = hmac.digest('hex');
+
+    if (calculatedHash !== hash) {
+      throw new Error('Invalid data: Authentication failed.');
+    }
+
+    const verifiedCredential = await this.generateCredentialSubject({
+      username: telegramData.username
+    });
+
+    console.log(verifiedCredential);
+
   }
 
   getAuthUrl(): string {
