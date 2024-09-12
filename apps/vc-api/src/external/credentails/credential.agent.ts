@@ -35,7 +35,6 @@ export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,
   }
 
   async createCredential(credential: EthereumEip712Signature2021): Promise<VerifiedEthereumEip712Signature2021> {
-    console.debug('Creating credential', credential)
     const verifiedCredential =  await this.agent.createVerifiableCredentialEIP712(
       this.credentialAgentMapper.mapEthereumEip712Signature2021ToVeramoICreateVerifiableCredentialEIP712Args(this.identifier.did,credential)
     )

@@ -83,7 +83,5 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<GithubCallbac
     const verifiedCredential = await this.generateCredentialSubject({
       username: userResponse.data.login,
     });
-
-    console.log(verifiedCredential);
   }
 }

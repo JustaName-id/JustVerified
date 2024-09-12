@@ -4,6 +4,7 @@ export type PrimitiveValue = string | number | boolean | null;
 
 export type CredentialSubjectValue = Record<string, PrimitiveValue>;
 
+/* eslint-disable @typescript-eslint/ban-types */
 export class EthereumEip712Signature2021<T extends CredentialSubjectValue = {}> {
   credentialSubject: CredentialSubject & T;
   issuanceDate: Date;

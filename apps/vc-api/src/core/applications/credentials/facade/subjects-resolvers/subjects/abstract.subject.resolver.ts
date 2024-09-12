@@ -8,6 +8,7 @@ import { TimeGenerator } from '../../../../time.generator';
 import { AllCallback } from './callback/all.callback';
 import { IEnvironmentGetter } from '../../../../environment/ienvironment.getter';
 
+/* eslint-disable @typescript-eslint/ban-types */
 export abstract class AbstractSubjectResolver<T extends AllCallback = {}, K extends CredentialSubjectValue = {}> {
 
   credentialCreator: ICredentialCreator;
@@ -40,7 +41,6 @@ export abstract class AbstractSubjectResolver<T extends AllCallback = {}, K exte
   }
 
   callback(data: T): Promise<void> {
-    console.log("Callback data", data);
     if (this.checkCallbackParametersHaveAllRequiredFields(data)) {
       return this.callbackSuccessful(data);
     } else {

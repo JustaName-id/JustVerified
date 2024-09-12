@@ -95,7 +95,5 @@ export class TwitterSubjectResolver extends AbstractSubjectResolver<TwitterCallb
     const verifiedCredential = await this.generateCredentialSubject({
       username: userResponse.data.data.username,
     });
-
-    console.log(verifiedCredential);
   }
 }

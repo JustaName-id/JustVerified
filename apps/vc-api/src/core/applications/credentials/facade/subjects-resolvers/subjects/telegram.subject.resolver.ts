@@ -46,9 +46,6 @@ export class TelegramSubjectResolver extends AbstractSubjectResolver<TelegramCal
     const verifiedCredential = await this.generateCredentialSubject({
       username: telegramData.username
     });
-
-    console.log(verifiedCredential);
-
   }
 
   getAuthUrl(): string {

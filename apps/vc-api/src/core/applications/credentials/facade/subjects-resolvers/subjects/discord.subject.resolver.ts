@@ -84,10 +84,7 @@ export class DiscordSubjectResolver extends AbstractSubjectResolver<DiscordCallb
     });
 
     const verifiedCredential = await this.generateCredentialSubject({
-      // TODO: global_name or username?
       username: userResponse.data.global_name,
     });
-
-    console.log(verifiedCredential);
   }
 }
