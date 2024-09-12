@@ -131,8 +131,8 @@ const dynamicImport = async (packageName: string) =>
                 ...webDidResolver(),
                 ...ensDidResolver({
                   networks: [
-                    { name: 'goerli', rpcUrl: 'https://goerli.infura.io/v3/' + infuraProjectId },
-                    { rpcUrl: 'https://mainnet.infura.io/v3/' + infuraProjectId }
+                    { name: 'sepolia', rpcUrl: 'https://sepolia.infura.io/v3/' + infuraProjectId },
+                    { name: 'mainnet', rpcUrl: 'https://mainnet.infura.io/v3/' + infuraProjectId }
                   ]
                 })
               })
