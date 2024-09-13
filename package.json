@@ -8,6 +8,8 @@
     "@nestjs/config": "^3.2.3",
     "@nestjs/core": "^10.0.2",
     "@nestjs/platform-express": "^10.0.2",
+    "@nx-tools/container-metadata": "^6.0.2",
+    "@nestjs/swagger": "^7.4.0",
     "@veramo/core": "^6.0.0",
     "@veramo/credential-eip712": "^6.0.0",
     "@veramo/credential-ld": "^6.0.0",

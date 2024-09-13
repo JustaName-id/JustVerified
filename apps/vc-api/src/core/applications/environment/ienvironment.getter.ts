@@ -1,10 +1,12 @@
-import {EnvironmentType} from "../../domain/entities/environment";
+import { ChainId, EnvironmentType } from '../../domain/entities/environment';
 
 export const ENVIRONMENT_GETTER = 'ENVIRONMENT_GETTER'
 
 export interface IEnvironmentGetter {
   getPk(): string;
   getEnv(): EnvironmentType;
+  getEnsDomain(): string;
+  getChainId(): ChainId
   getApiDomain(): string;
   getInfuraProjectId(): string;
   getGithubClientId(): string;

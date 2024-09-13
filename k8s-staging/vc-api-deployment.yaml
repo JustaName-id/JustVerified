@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vc-api-deployment
+  labels:
+    app: analytics
+  namespace: verifications-staging-namespace
+spec:
+  selector:
+    matchLabels:
+      app: vc-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: vc-api
+    spec:
+      serviceAccountName: secrets-manager-access-sa
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "aws-secrets"
+      containers:
+        - name: analytics
+          image: 905418196669.dkr.ecr.eu-central-1.amazonaws.com/justaname/vc-api:latest
+          ports:
+            - containerPort: 3009
+          volumeMounts:
+            - mountPath: "/mnt/secrets-store"
+              name:  secrets-store-inline
+              readOnly: true
+          env:
+            - name: INFURA_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: INFURA_PROJECT_ID
+            - name: SIGNING_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: SIGNING_PRIVATE_KEY
+            - name: ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: ENVIRONMENT
+            - name: API_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: API_DOMAIN
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: GITHUB_CLIENT_ID
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: GITHUB_CLIENT_SECRET
+            - name: TWITTER_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: TWITTER_CLIENT_ID
+            - name: TWITTER_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: TWITTER_CLIENT_SECRET
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: TELEGRAM_BOT_TOKEN
+            - name: TELEGRAM_BOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: TELEGRAM_BOT_USERNAME
+            - name: DISCORD_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: DISCORD_CLIENT_ID
+            - name: DISCORD_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: DISCORD_CLIENT_SECRET
+            - name: ENS_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: ENS_DOMAIN
+            - name: CHAIN_ID
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: CHAIN_ID
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vc-api-service
+  namespace: verifications-staging-namespace
+spec:
+  selector:
+    app: vc-api
+  ports:
+    - port: 3009
+      targetPort: 3009
+  type: ClusterIP

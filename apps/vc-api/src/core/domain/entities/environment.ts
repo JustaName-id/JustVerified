@@ -6,10 +6,18 @@ export enum EnvironmentType {
   production = 'production',
 }
 
+export const SupportedChainIds = [1,11155111] as const;
+
+export type ChainId = typeof SupportedChainIds[number];
+
 export class Environment {
   SIGNING_PRIVATE_KEY!: string;
 
   ENVIRONMENT!: EnvironmentType;
+
+  ENS_DOMAIN!: string;
+
+  CHAIN_ID!: ChainId;
 
   INFURA_PROJECT_ID!: string;
 
