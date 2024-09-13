@@ -16,7 +16,12 @@ async function bootstrap() {
         rawBody: true,
       }
   );
-  const globalPrefix = '';
+  const globalPrefix = 'verifications';
+
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1'
+  })
 
   app.useBodyParser('json');
 

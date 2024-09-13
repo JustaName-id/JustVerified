@@ -1,8 +1,9 @@
-import {Inject, Injectable} from "@nestjs/common";
-import {ICredentialCreatorFacade} from "./icredential.facade";
-import {VerifiedEthereumEip712Signature2021} from "../../../domain/entities/eip712";
-import {ICredentialFacadeRequest} from "./icredential.facade.request";
-import {ISubjectResolver, SUBJECT_RESOLVER} from "./subjects-resolvers/isubject.resolver";
+import { Inject, Injectable } from '@nestjs/common';
+import { ICredentialCreatorFacade } from './icredential.facade';
+import { VerifiedEthereumEip712Signature2021 } from '../../../domain/entities/eip712';
+import { ISubjectResolver, SUBJECT_RESOLVER } from './subjects-resolvers/isubject.resolver';
+import { CredentialCallbackRequest } from './credential.callback.request';
+import { CredentialCallbackResponse } from './credential.callback.response';
 
 @Injectable()
 export class CredentialCreatorFacade implements ICredentialCreatorFacade {
@@ -26,7 +27,7 @@ export class CredentialCreatorFacade implements ICredentialCreatorFacade {
     return this.getResolver(credentialName).getAuthUrl();
   }
 
-  async callback<T>(credentialName: string, body: T): Promise<void> {
-    return this.getResolver<T>(credentialName).callback(body);
+  async callback(credentialCallbackRequest: CredentialCallbackRequest): Promise<CredentialCallbackResponse> {
+    return await this.getResolver(credentialCallbackRequest.credentialName).callback(credentialCallbackRequest.callbackData);
   }
 }

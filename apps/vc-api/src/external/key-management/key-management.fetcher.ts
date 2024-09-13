@@ -17,7 +17,7 @@ export class KeyManagementFetcher implements IKeyManagementFetcher {
   }
 
 
-  fetchKeyManagement(): SigningWallet {
+  fetchKey(): SigningWallet {
     return {
       publicKey: this.wallet.address,
       privateKey: this.wallet.privateKey

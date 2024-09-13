@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import {ConfigModule} from "@nestjs/config";
 import {validate} from "./config/env.validation";
-import { AuthReadController } from './api/auth/auth.read.controller';
+import { AuthController } from './api/auth/auth.controller';
 import { CREDENTIAL_CREATOR_FACADE } from './core/applications/credentials/facade/icredential.facade';
 import { CredentialCreatorFacade } from './core/applications/credentials/facade/credential.facade';
 import { SUBJECT_RESOLVER } from './core/applications/credentials/facade/subjects-resolvers/isubject.resolver';
@@ -35,6 +35,8 @@ import {
 import {
   TwitterSubjectResolver
 } from './core/applications/credentials/facade/subjects-resolvers/subjects/twitter.subject.resolver';
+import { AuthControllerMapper } from './api/auth/mapper/auth.controller.mapper';
+import { AUTH_CONTROLLER_MAPPER } from './api/auth/mapper/iauth.controller.mapper';
 
 const dynamicImport = async (packageName: string) =>
   new Function(`return import('${packageName}')`)();
@@ -47,9 +49,13 @@ const dynamicImport = async (packageName: string) =>
     HttpModule
   ],
   controllers: [
-    AuthReadController
+    AuthController
   ],
   providers: [
+    {
+      useClass: AuthControllerMapper,
+      provide: AUTH_CONTROLLER_MAPPER
+    },
     {
       useClass: CredentialCreatorFacade,
       provide: CREDENTIAL_CREATOR_FACADE
@@ -127,12 +133,16 @@ const dynamicImport = async (packageName: string) =>
             }),
             new DIDResolverPlugin({
               resolver: new Resolver({
-                ...ethrDidResolver({ infuraProjectId }),
-                ...webDidResolver(),
+                ...ethrDidResolver({
+                  networks: [
+                    { name: 'sepolia', rpcUrl: 'https://sepolia.infura.io/v3/' + infuraProjectId },
+                    { rpcUrl: 'https://mainnet.infura.io/v3/' + infuraProjectId }
+                  ]
+                }),
                 ...ensDidResolver({
                   networks: [
                     { name: 'sepolia', rpcUrl: 'https://sepolia.infura.io/v3/' + infuraProjectId },
-                    { name: 'mainnet', rpcUrl: 'https://mainnet.infura.io/v3/' + infuraProjectId }
+                    { rpcUrl: 'https://mainnet.infura.io/v3/' + infuraProjectId }
                   ]
                 })
               })

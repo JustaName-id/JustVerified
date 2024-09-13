@@ -8,6 +8,7 @@ import { TIME_GENERATOR, TimeGenerator } from '../../../../time.generator';
 import { DiscordCallback } from './callback/discord.callback';
 import { DiscordToken } from './token/discord.token';
 import { DiscordAuth } from './auth/discord.auth';
+import { VerifiedEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
 
 export class DiscordSubjectResolver extends AbstractSubjectResolver<DiscordCallback ,DiscordCredential> {
 
@@ -55,7 +56,7 @@ export class DiscordSubjectResolver extends AbstractSubjectResolver<DiscordCallb
     this.getCallbackUrl()}&state=${state}`;
   }
 
-  async callbackSuccessful(params: DiscordCallback): Promise<void> {
+  async callbackSuccessful(params: DiscordCallback): Promise<VerifiedEthereumEip712Signature2021> {
     const response = await this.httpService.axiosRef.post<DiscordToken>(
       this.discordTokenUrl,
       new URLSearchParams({
@@ -88,6 +89,6 @@ export class DiscordSubjectResolver extends AbstractSubjectResolver<DiscordCallb
       username: userResponse.data.global_name,
     });
 
-    console.log(verifiedCredential);
+    return verifiedCredential;
   }
 }
