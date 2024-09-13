@@ -8,6 +8,7 @@ import { TIME_GENERATOR, TimeGenerator } from '../../../../time.generator';
 import { GithubCallback } from './callback/github.callback';
 import { GithubToken } from './token/github.token';
 import { GithubAuth } from './auth/github.auth';
+import { VerifiedEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
 
 export class GithubSubjectResolver extends AbstractSubjectResolver<GithubCallback ,GithubCredential> {
   githubAuthUrl = "https://github.com/login/oauth/authorize";
@@ -55,7 +56,7 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<GithubCallbac
     return `${this.githubAuthUrl}?client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}`
   }
 
-  async callbackSuccessful(params: GithubCallback): Promise<void> {
+  async callbackSuccessful(params: GithubCallback): Promise<VerifiedEthereumEip712Signature2021> {
     const response = await this.httpService.axiosRef.post<GithubToken>(
       this.githubTokenUrl,
       {
@@ -84,6 +85,6 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<GithubCallbac
       username: userResponse.data.login,
     });
 
-    console.log(verifiedCredential);
+    return verifiedCredential;
   }
 }

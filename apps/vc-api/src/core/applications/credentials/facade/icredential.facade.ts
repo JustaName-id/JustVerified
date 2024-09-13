@@ -1,10 +1,11 @@
 import {AbstractSubjectResolver} from "./subjects-resolvers/subjects/abstract.subject.resolver";
-import { AllCallback } from './subjects-resolvers/subjects/callback/all.callback';
+import { CredentialCallbackRequest } from './credential.callback.request';
+import { CredentialCallbackResponse } from './credential.callback.response';
 
 export const CREDENTIAL_CREATOR_FACADE = 'CREDENTIAL_CREATOR_FACADE';
 
 export interface ICredentialCreatorFacade {
   getResolver<T>(credentialName: string): AbstractSubjectResolver<T>  ;
   getAuthUrl(credentialName: string): Promise<string>;
-  callback(credentialName: string,code: AllCallback): Promise<void>;
+  callback(credentialCallbackRequest: CredentialCallbackRequest): Promise<CredentialCallbackResponse>;
 }

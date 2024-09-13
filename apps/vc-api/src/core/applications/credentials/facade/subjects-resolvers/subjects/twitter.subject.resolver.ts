@@ -8,6 +8,7 @@ import { TIME_GENERATOR, TimeGenerator } from '../../../../time.generator';
 import { TwitterCallback } from './callback/twitter.callback';
 import { TwitterToken } from './token/twitter.token';
 import { TwitterAuth } from './auth/twitter.auth';
+import { VerifiedEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
 
 
 export class TwitterSubjectResolver extends AbstractSubjectResolver<TwitterCallback ,TwitterCredential> {
@@ -60,7 +61,7 @@ export class TwitterSubjectResolver extends AbstractSubjectResolver<TwitterCallb
     )}&scope=tweet.read%20users.read%20offline.access&state=${state}&code_challenge=${this.codeVerifier}&code_challenge_method=plain`;
   }
 
-  async callbackSuccessful(params: TwitterCallback): Promise<void> {
+  async callbackSuccessful(params: TwitterCallback): Promise<VerifiedEthereumEip712Signature2021> {
 
     const response = await this.httpService.axiosRef.post<TwitterToken>(
       this.twitterTokenUrl,
@@ -96,6 +97,6 @@ export class TwitterSubjectResolver extends AbstractSubjectResolver<TwitterCallb
       username: userResponse.data.data.username,
     });
 
-    console.log(verifiedCredential);
+    return verifiedCredential;
   }
 }
