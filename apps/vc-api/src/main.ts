@@ -4,24 +4,27 @@
  */
 
 import { NestFactory } from '@nestjs/core';
-import { HttpException, Logger, ValidationPipe, ValidationError, VersioningType } from '@nestjs/common';
+import {
+  HttpException,
+  Logger,
+  ValidationPipe,
+  ValidationError,
+  VersioningType,
+} from '@nestjs/common';
 import { VCManagementModule } from './vc-management.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as process from 'node:process';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
     VCManagementModule,
-      {
-        bufferLogs: true,
-        rawBody: true,
-      }
+    {
+      bufferLogs: true,
+      rawBody: true,
+    }
   );
-  const globalPrefix = 'verifications';
 
-  app.enableVersioning({
-    type: VersioningType.URI,
-    defaultVersion: '1'
-  })
+  const globalPrefix = 'verifications';
 
   app.useBodyParser('json');
 
@@ -49,12 +52,24 @@ async function bootstrap() {
       },
     })
   );
-  app.setGlobalPrefix(globalPrefix);
+
+  const version = '1';
+
+  app
+    .enableVersioning({
+      type: VersioningType.URI,
+      defaultVersion: version,
+    })
+    .setGlobalPrefix(globalPrefix);
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
+
+  if (process.env.NODE_ENV === 'development') {
+    Logger.log(
+      `🚀 Application is running on: http://localhost:${port}/${globalPrefix}/v${version}`
+    );
+  }
 }
 
 bootstrap();

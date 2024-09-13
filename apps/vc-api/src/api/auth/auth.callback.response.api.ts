@@ -124,6 +124,7 @@ export class ProofApiResponse {
 }
 
 @ApiExtraModels(CredentialSubjectApiResponse)
+/* eslint-disable @typescript-eslint/ban-types */
 export class EthereumEip712Signature2021ApiResponse<T extends CredentialSubjectValueApiResponse = {}> {
   @ApiProperty({ type: CredentialSubjectApiResponse })
   @ValidateNested()
@@ -149,6 +150,7 @@ export class EthereumEip712Signature2021ApiResponse<T extends CredentialSubjectV
 }
 
 @ApiExtraModels(ProofApiResponse, IssuerApiResponse)
+/* eslint-disable @typescript-eslint/ban-types */
 export class VerifiedEthereumEip712Signature2021ApiResponse<T extends CredentialSubjectValueApiResponse = {}> extends EthereumEip712Signature2021ApiResponse<T> {
   @ApiProperty({ type: ProofApiResponse })
   @ValidateNested()

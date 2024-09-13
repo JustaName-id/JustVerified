@@ -1,19 +1,28 @@
 import { AbstractSubjectResolver } from './abstract.subject.resolver';
 import { GithubCredential } from '../../../../../domain/credentials/github.credential';
 import { Inject } from '@nestjs/common';
-import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../../../environment/ienvironment.getter';
+import {
+  ENVIRONMENT_GETTER,
+  IEnvironmentGetter,
+} from '../../../../environment/ienvironment.getter';
 import { HttpService } from '@nestjs/axios';
-import { CREDENTIAL_CREATOR, ICredentialCreator } from '../../../creator/icredential.creator';
+import {
+  CREDENTIAL_CREATOR,
+  ICredentialCreator,
+} from '../../../creator/icredential.creator';
 import { TIME_GENERATOR, TimeGenerator } from '../../../../time.generator';
 import { GithubCallback } from './callback/github.callback';
 import { GithubToken } from './token/github.token';
 import { GithubAuth } from './auth/github.auth';
 import { VerifiedEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
 
-export class GithubSubjectResolver extends AbstractSubjectResolver<GithubCallback ,GithubCredential> {
-  githubAuthUrl = "https://github.com/login/oauth/authorize";
-  githubTokenUrl = "https://github.com/login/oauth/access_token";
-  githubUserUrl = "https://api.github.com/user";
+export class GithubSubjectResolver extends AbstractSubjectResolver<
+  GithubCallback,
+  GithubCredential
+> {
+  githubAuthUrl = 'https://github.com/login/oauth/authorize';
+  githubTokenUrl = 'https://github.com/login/oauth/access_token';
+  githubUserUrl = 'https://api.github.com/user';
 
   constructor(
     @Inject(ENVIRONMENT_GETTER)
@@ -25,27 +34,23 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<GithubCallbac
 
     private readonly httpService: HttpService
   ) {
-    super(
-      credentialCreator,
-      timeGenerator,
-      environmentGetter
-    );
+    super(credentialCreator, timeGenerator, environmentGetter);
   }
 
   getCredentialName(): string {
-    return "github";
+    return 'github';
   }
 
   getCallbackParameters(): string[] {
-    return ['code']
+    return ['code'];
   }
 
   getType(): string[] {
-    return ['VerifiableGithubAccount']
+    return ['VerifiableGithubAccount'];
   }
 
   getContext(): string[] {
-    return []
+    return [];
   }
 
   getAuthUrl(): string {
@@ -53,10 +58,12 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<GithubCallbac
     const clientId = this.environmentGetter.getGithubClientId();
     const redirectUri = `${this.environmentGetter.getApiDomain()}/auth/github/callback`;
     const scope = 'read:user';
-    return `${this.githubAuthUrl}?client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}`
+    return `${this.githubAuthUrl}?client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}`;
   }
 
-  async callbackSuccessful(params: GithubCallback): Promise<VerifiedEthereumEip712Signature2021> {
+  async callbackSuccessful(
+    params: GithubCallback
+  ): Promise<VerifiedEthereumEip712Signature2021> {
     const response = await this.httpService.axiosRef.post<GithubToken>(
       this.githubTokenUrl,
       {
@@ -66,20 +73,21 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<GithubCallbac
       },
       {
         headers: {
-          Accept: "application/json",
+          Accept: 'application/json',
         },
       }
     );
 
     const accessToken = response.data.access_token;
 
-    const userResponse =  await this.httpService.axiosRef.get<GithubAuth>(
-      this.githubUserUrl, {
-      headers: {
-        Authorization: `token ${accessToken}`,
-      },
-    });
-
+    const userResponse = await this.httpService.axiosRef.get<GithubAuth>(
+      this.githubUserUrl,
+      {
+        headers: {
+          Authorization: `token ${accessToken}`,
+        },
+      }
+    );
 
     const verifiedCredential = await this.generateCredentialSubject({
       username: userResponse.data.login,

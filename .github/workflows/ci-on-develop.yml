@@ -1,0 +1,90 @@
+name: ci-on-develop
+
+on:
+  pull_request:
+    branches: ["develop", "staging", "main"]
+
+jobs:
+
+  determine-affected-projects:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache node modules
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+      - uses: actions/setup-node@v1
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          node-version: 18.18.0
+      - name: yarn install
+        continue-on-error: true
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --pure-lockfile
+
+      - name: Fetch missing history
+        run: git fetch
+
+      - name: 'Determine affected projects'
+        id: affected
+        run: |
+          OUTPUT=$(npx nx show projects --affected --base=origin/${{github.event.pull_request.base.ref}} --with-target=container)
+          echo "Affected projects: $OUTPUT"
+          OUTPUT="${OUTPUT//[$'\r\n']/ }"
+          echo "::set-output name=affected::$OUTPUT"
+      - name: Set output matrix excluding e2e
+        id: set-matrix
+        run: |
+          IFS=' '
+          read -ra PROJECTS <<< "${{ steps.affected.outputs.affected }}"
+          COMPONENTS=()
+          for PROJECT in "${PROJECTS[@]}"; do
+            if ! [[ "$PROJECT" =~ -e2e$ ]] && [[ "$PROJECT" != "contracts" ]]; then
+              COMPONENTS+=("$PROJECT")
+            fi
+          done
+          MATRIX='{"component":['
+          for COMPONENT in "${COMPONENTS[@]}"; do
+            MATRIX+="\"$COMPONENT\","
+            done
+          MATRIX="${MATRIX%,}]}"
+          echo "::set-output name=matrix::$MATRIX"
+  build_and_push:
+    needs: determine-affected-projects
+    runs-on: ubuntu-latest
+    if: ${{ needs.determine-affected-projects.outputs.matrix != '{"component":[]}' }}
+    strategy:
+      matrix:
+        component: ${{fromJson(needs.determine-affected-projects.outputs.matrix).component}}
+    steps:
+      - name: Debug affected projects
+        run: echo "${{ needs.determine-affected-projects.outputs.matrix }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - run: git fetch --no-tags --prune --depth=1 origin develop
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Debug component name
+        env:
+          COMPONENT_NAME: ${{ matrix.component }}
+        run: echo ${COMPONENT_NAME}
+      - name: 'Build images'
+        run: |
+
+          npx nx container ${COMPONENT_NAME} --prod
+        env:
+          INPUT_PUSH: false
+          COMPONENT_NAME: ${{ matrix.component }}
+          INPUT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
