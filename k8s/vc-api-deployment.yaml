@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: vc-api
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
