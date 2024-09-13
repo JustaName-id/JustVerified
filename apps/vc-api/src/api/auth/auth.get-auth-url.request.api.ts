@@ -1,22 +1,20 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 enum AuthName {
-  Google = 'google',
-  Facebook = 'facebook',
   Twitter = 'twitter',
   Github = 'github',
   Discord = 'discord',
   Telegram = 'telegram',
 }
 
-export class AuthGetAuthUrlRequestApi
+export class AuthGetAuthUrlRequestApiRequestParam
 {
   @IsNotEmpty()
   @IsEnum(AuthName)
   authName: AuthName
 }
 
-export class AuthGetAuthUrlRequestQueryApi
+export class AuthGetAuthUrlApiRequestQuery
 {
   @IsOptional()
   @IsString()

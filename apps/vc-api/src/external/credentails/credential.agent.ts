@@ -29,13 +29,16 @@ export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,
 
   async  onModuleInit(){
 
-    const { agent, identifier } = await this.agentInitiator.createAgentWithIdentifier(this.keyManagementFetcher.fetchKeyManagement().publicKey, this.keyManagementFetcher.fetchKeyManagement().privateKey)
+    const { agent, identifier } = await this.agentInitiator.createAgentWithIdentifier(
+      this.environmentGetter.getEnsDomain(),
+      this.keyManagementFetcher.fetchKey().publicKey,
+      this.keyManagementFetcher.fetchKey().privateKey
+    )
     this.agent = agent
     this.identifier = identifier
   }
 
   async createCredential(credential: EthereumEip712Signature2021): Promise<VerifiedEthereumEip712Signature2021> {
-    console.debug('Creating credential', credential)
     const verifiedCredential =  await this.agent.createVerifiableCredentialEIP712(
       this.credentialAgentMapper.mapEthereumEip712Signature2021ToVeramoICreateVerifiableCredentialEIP712Args(this.identifier.did,credential)
     )

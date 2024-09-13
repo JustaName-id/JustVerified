@@ -1,14 +1,24 @@
 import { AbstractSubjectResolver } from './abstract.subject.resolver';
 import { Inject } from '@nestjs/common';
-import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../../../environment/ienvironment.getter';
-import { CREDENTIAL_CREATOR, ICredentialCreator } from '../../../creator/icredential.creator';
+import {
+  ENVIRONMENT_GETTER,
+  IEnvironmentGetter,
+} from '../../../../environment/ienvironment.getter';
+import {
+  CREDENTIAL_CREATOR,
+  ICredentialCreator,
+} from '../../../creator/icredential.creator';
 import { TIME_GENERATOR, TimeGenerator } from '../../../../time.generator';
 import { HttpService } from '@nestjs/axios';
 import * as crypto from 'crypto';
 import { TelegramCredential } from '../../../../../domain/credentials/telegram.credential';
 import { TelegramCallback } from './callback/telegram.callback';
+import { VerifiedEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
 
-export class TelegramSubjectResolver extends AbstractSubjectResolver<TelegramCallback ,TelegramCredential> {
+export class TelegramSubjectResolver extends AbstractSubjectResolver<
+  TelegramCallback,
+  TelegramCredential
+> {
   constructor(
     @Inject(ENVIRONMENT_GETTER)
     readonly environmentGetter: IEnvironmentGetter,
@@ -19,14 +29,12 @@ export class TelegramSubjectResolver extends AbstractSubjectResolver<TelegramCal
 
     private readonly httpService: HttpService
   ) {
-    super(
-      credentialCreator,
-      timeGenerator,
-      environmentGetter
-    );
+    super(credentialCreator, timeGenerator, environmentGetter);
   }
 
-  async callbackSuccessful(params: TelegramCallback): Promise<void> {
+  async callbackSuccessful(
+    params: TelegramCallback
+  ): Promise<VerifiedEthereumEip712Signature2021> {
     const { hash, ...telegramData } = params;
 
     const dataCheckString = Object.keys(telegramData)
@@ -34,7 +42,10 @@ export class TelegramSubjectResolver extends AbstractSubjectResolver<TelegramCal
       .map((key) => `${key}=${telegramData[key]}`)
       .join('\n');
 
-    const secretKey = crypto.createHash('sha256').update(process.env.TELEGRAM_BOT_TOKEN!).digest();
+    const secretKey = crypto
+      .createHash('sha256')
+      .update(process.env.TELEGRAM_BOT_TOKEN!)
+      .digest();
 
     const hmac = crypto.createHmac('sha256', secretKey).update(dataCheckString);
     const calculatedHash = hmac.digest('hex');
@@ -44,11 +55,10 @@ export class TelegramSubjectResolver extends AbstractSubjectResolver<TelegramCal
     }
 
     const verifiedCredential = await this.generateCredentialSubject({
-      username: telegramData.username
+      username: telegramData.username,
     });
 
-    console.log(verifiedCredential);
-
+    return verifiedCredential;
   }
 
   getAuthUrl(): string {
@@ -77,7 +87,6 @@ export class TelegramSubjectResolver extends AbstractSubjectResolver<TelegramCal
   }
 
   getType(): string[] {
-    return ['VerifiableTelegramAccount']
+    return ['VerifiableTelegramAccount'];
   }
-
 }

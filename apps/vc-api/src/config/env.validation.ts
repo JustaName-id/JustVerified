@@ -1,14 +1,14 @@
-import { plainToClass } from 'class-transformer';
+import { plainToClass, Transform } from 'class-transformer';
 import {
   IsEnum,
-  IsNumber,
+  IsNumber, IsNumberString,
   IsString,
   registerDecorator,
   validateSync,
-  ValidationOptions,
+  ValidationOptions
 } from 'class-validator';
 import { ethers } from 'ethers';
-import { Environment, EnvironmentType } from '../core/domain/entities/environment';
+import { ChainId, Environment, EnvironmentType, SupportedChainIds } from '../core/domain/entities/environment';
 
 class EnvironmentVariables implements Environment{
   @IsString({ message: 'SIGNING_PRIVATE_KEY must be a string' })
@@ -18,6 +18,23 @@ class EnvironmentVariables implements Environment{
   @IsString({ message: 'ENVIROMENT must be a string' })
   @IsEnum(EnvironmentType, { message: 'ENVIRONMENT must be a valid environment' })
   ENVIRONMENT!: EnvironmentType;
+
+  @Transform(({ value }) => {
+      const intValue = parseInt(value)
+      if (isNaN(intValue)) {
+        throw new Error('CHAIN_ID must be a number')
+      }
+
+      const isValidChainId = (x: any): x is ChainId => SupportedChainIds.includes(x);
+
+      if (!isValidChainId(intValue)) {
+        throw new Error('CHAIN_ID must be a valid chain id (1, 11155111)')
+      }
+  })
+  CHAIN_ID!: ChainId;
+
+  @IsString({ message: 'ENS_DOMAIN must be a string' })
+  ENS_DOMAIN!: string;
 
   @IsString({message: 'INFURA_PROJECT_ID must be a string'})
   INFURA_PROJECT_ID!: string;
