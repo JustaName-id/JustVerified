@@ -1,0 +1,104 @@
+name: ci-on-staging
+
+on:
+  push:
+    branches: [ "staging" ]
+
+jobs:
+  determine-affected-projects:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache node modules
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+      - uses: actions/setup-node@v1
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          node-version: 18.18.0
+      - name: yarn install
+        if: steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        run: yarn install --pure-lockfile
+
+
+      - name: Fetch missing history
+        run: git fetch
+
+      - name: 'Determine affected projects'
+        id: affected
+        run: |
+          OUTPUT=$(npx nx show projects --affected --base=origin/staging~1 --head=origin/staging --with-target=container)
+          echo "Affected projects: $OUTPUT"
+          OUTPUT="${OUTPUT//[$'\r\n']/ }"
+          echo "::set-output name=affected::$OUTPUT"
+      - name: Set output matrix
+        id: set-matrix
+        run: |
+          IFS=' '
+          read -ra PROJECTS <<< "${{ steps.affected.outputs.affected }}"
+          COMPONENTS=()
+          for PROJECT in "${PROJECTS[@]}"; do
+            COMPONENTS+=("$PROJECT")
+          done
+          MATRIX='{"component":['
+          for COMPONENT in "${COMPONENTS[@]}"; do
+            MATRIX+="\"$COMPONENT\","
+            done
+          MATRIX="${MATRIX%,}]}"
+          echo "::set-output name=matrix::$MATRIX"
+  build_and_push:
+    needs: determine-affected-projects
+    runs-on: ubuntu-latest
+    if: ${{ needs.determine-affected-projects.outputs.matrix != '{"component":[]}' }}
+    strategy:
+      matrix:
+        component: ${{fromJson(needs.determine-affected-projects.outputs.matrix).component}}
+    steps:
+      - name: Debug affected projects
+        run: echo "${{ needs.determine-affected-projects.outputs.matrix }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - run: git fetch --no-tags --prune --depth=1 origin staging
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Debug component name
+        env:
+          COMPONENT_NAME: ${{ matrix.component }}
+        run: echo ${COMPONENT_NAME}
+      - name: 'Build images'
+        run: |
+
+          npx nx container ${COMPONENT_NAME} --prod
+        env:
+          COMPONENT_NAME: ${{ matrix.component }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          INPUT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          INPUT_VC_API_IMAGES: ${{ steps.login-ecr.outputs.registry }}/justaname/vc-api
+          INPUT_TAGS: latest
+          INPUT_PUSH: true
