@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { VCManagementModule } from './vc-management.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as process from 'node:process';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
@@ -63,9 +64,12 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}/v${version}`
-  );
+
+  if (process.env.NODE_ENV === 'development') {
+    Logger.log(
+      `🚀 Application is running on: http://localhost:${port}/${globalPrefix}/v${version}`
+    );
+  }
 }
 
 bootstrap();

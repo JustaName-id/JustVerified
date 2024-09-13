@@ -4,7 +4,6 @@ import {
   ICredentialCreatorFacade
 } from '../../core/applications/credentials/facade/icredential.facade';
 import { Response } from 'express';
-import { VerifiedEthereumEip712Signature2021 } from '../../core/domain/entities/eip712';
 import { AuthCallbackApiResponse } from './auth.callback.response.api';
 import { AUTH_CONTROLLER_MAPPER, IAuthControllerMapper } from './mapper/iauth.controller.mapper';
 import { AuthGetAuthUrlRequestApiRequestParam } from './auth.get-auth-url.request.api';
@@ -18,6 +17,11 @@ export class AuthController {
     @Inject(AUTH_CONTROLLER_MAPPER)
     private readonly authControllerMapper: IAuthControllerMapper
   ) {}
+
+  @Get('')
+  async welcomeToJustaNameVerifications(): Promise<string[]> {
+    return ['Welcome to JustaName Verifications! Please use the /auth/:authName endpoint to get started.']
+  }
 
   @Get(':authName')
   async getAuthUrl(

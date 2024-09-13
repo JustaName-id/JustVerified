@@ -19,6 +19,7 @@
     "ethr-did-resolver": "^10.1.10",
     "express": "4.20.0",
     "moment": "^2.30.1",
-    "web-did-resolver": "^2.0.27"
+    "web-did-resolver": "^2.0.27",
+    "@nestjs/swagger": "^7.4.0"
   }
 }
