@@ -1,6 +1,6 @@
 import {IEnvironmentGetter} from "./ienvironment.getter";
 import {ConfigService} from "@nestjs/config";
-import { Environment, EnvironmentType } from '../../domain/entities/environment';
+import { ChainId, Environment, EnvironmentType } from '../../domain/entities/environment';
 import {Injectable} from "@nestjs/common";
 
 @Injectable()
@@ -16,6 +16,14 @@ export class EnvironmentGetter implements  IEnvironmentGetter {
 
   getEnv(): EnvironmentType {
     return this.configService.get<EnvironmentType>('ENVIRONMENT');
+  }
+
+  getChainId(): ChainId {
+    return parseInt(this.configService.get('CHAIN_ID')) as ChainId;
+  }
+
+  getEnsDomain(): string {
+    return this.configService.get<string>('ENS_DOMAIN');
   }
 
   getInfuraProjectId(): string {

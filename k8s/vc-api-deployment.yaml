@@ -93,6 +93,16 @@ spec:
                 secretKeyRef:
                   name: foosecret-verifications
                   key: DISCORD_CLIENT_SECRET
+            - name: ENS_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: ENS_DOMAIN
+            - name: CHAIN_ID
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: CHAIN_ID
 ---
 apiVersion: v1
 kind: Service

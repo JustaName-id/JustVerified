@@ -4,17 +4,23 @@
  */
 
 import { NestFactory } from '@nestjs/core';
-import { HttpException, Logger, ValidationPipe, ValidationError, VersioningType } from '@nestjs/common';
+import {
+  HttpException,
+  Logger,
+  ValidationPipe,
+  ValidationError,
+  VersioningType,
+} from '@nestjs/common';
 import { VCManagementModule } from './vc-management.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
     VCManagementModule,
-      {
-        bufferLogs: true,
-        rawBody: true,
-      }
+    {
+      bufferLogs: true,
+      rawBody: true,
+    }
   );
 
   const globalPrefix = 'verifications';
@@ -58,7 +64,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}/v${version}`,
+    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}/v${version}`
   );
 }
 

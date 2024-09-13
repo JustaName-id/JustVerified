@@ -14,13 +14,13 @@ export class CredentialAgentInitiator {
      this.agent = agent;
   }
 
-  async createAgentWithIdentifier(publicKey: string, privateKey: string): Promise<{
+  async createAgentWithIdentifier(ensDomain: string, publicKey: string, privateKey: string): Promise<{
     agent: Agent,
     identifier: Identifier
   }> {
     const identifier = await this.agent.didManagerImport({
-      did: 'did:ethr:' + publicKey,
-      provider: 'did:ethr',
+      did: 'did:ens:' + ensDomain + '#' + publicKey,
+      provider: 'did:ens',
       keys: [{
         privateKeyHex: privateKey,
         type: 'Secp256k1',
