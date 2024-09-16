@@ -6,9 +6,10 @@ import {EthereumEip712Signature2021, VerifiedEthereumEip712Signature2021} from "
 import {IKeyManagementFetcher, KEY_MANAGEMENT_FETCHER} from "../../core/applications/key-management/ikey-management.fetcher";
 import {CREDENTIAL_AGENT_MAPPER, ICredentialAgentMapper} from "./mapper/icredential-agent.mapper";
 import { Agent, CredentialAgentInitiator, Identifier } from './credential.agent.initiator';
+import { IDIDResolver } from '../../core/applications/did/resolver/idid.resolver';
 
 @Injectable()
-export class CredentialAgent implements ICredentialCreator, ICredentialVerifier, OnModuleInit {
+export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,IDIDResolver, OnModuleInit {
 
   private agent: Agent
   private identifier: Identifier
@@ -32,7 +33,8 @@ export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,
     const { agent, identifier } = await this.agentInitiator.createAgentWithIdentifier(
       this.environmentGetter.getEnsDomain(),
       this.keyManagementFetcher.fetchKey().publicKey,
-      this.keyManagementFetcher.fetchKey().privateKey
+      this.keyManagementFetcher.fetchKey().privateKey,
+      this.environmentGetter.getChainId()
     )
     this.agent = agent
     this.identifier = identifier
@@ -44,6 +46,14 @@ export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,
     )
 
     return this.credentialAgentMapper.mapVeramoVerifiedCredentialToVerifiedEthereumEip721Signature2021(verifiedCredential)
+  }
+
+  async getEnsDid(ens: string): Promise<string> {
+    const didUrl = 'did:ens:' + (this.environmentGetter.getChainId() === 1 ? '' : 'sepolia:') + ens
+    const did = await this.agent.resolveDid({
+      didUrl
+    })
+    return typeof did.didDocument.authentication[0] === 'string' ? did.didDocument.authentication[0] : did.didDocument.authentication[0].id
   }
 
   verifyCredential(verifiedEthereumEip712Signature2021: VerifiedEthereumEip712Signature2021): Promise<boolean> {

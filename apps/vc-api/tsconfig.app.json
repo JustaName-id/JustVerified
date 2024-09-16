@@ -7,6 +7,9 @@
     "emitDecoratorMetadata": true,
     "target": "es2021",
     "resolveJsonModule": true,
+    "paths": {
+      "@justanid/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"]
+    }
   },
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
   "include": ["src/**/*.ts"]

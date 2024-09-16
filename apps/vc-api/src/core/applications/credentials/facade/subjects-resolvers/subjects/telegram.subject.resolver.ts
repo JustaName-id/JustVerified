@@ -1,15 +1,4 @@
 import { AbstractSubjectResolver } from './abstract.subject.resolver';
-import { Inject } from '@nestjs/common';
-import {
-  ENVIRONMENT_GETTER,
-  IEnvironmentGetter,
-} from '../../../../environment/ienvironment.getter';
-import {
-  CREDENTIAL_CREATOR,
-  ICredentialCreator,
-} from '../../../creator/icredential.creator';
-import { TIME_GENERATOR, TimeGenerator } from '../../../../time.generator';
-import { HttpService } from '@nestjs/axios';
 import * as crypto from 'crypto';
 import { TelegramCredential } from '../../../../../domain/credentials/telegram.credential';
 import { TelegramCallback } from './callback/telegram.callback';
@@ -19,21 +8,9 @@ export class TelegramSubjectResolver extends AbstractSubjectResolver<
   TelegramCallback,
   TelegramCredential
 > {
-  constructor(
-    @Inject(ENVIRONMENT_GETTER)
-    readonly environmentGetter: IEnvironmentGetter,
-    @Inject(CREDENTIAL_CREATOR)
-    readonly credentialCreator: ICredentialCreator,
-    @Inject(TIME_GENERATOR)
-    private readonly timeGenerator: TimeGenerator,
-
-    private readonly httpService: HttpService
-  ) {
-    super(credentialCreator, timeGenerator, environmentGetter);
-  }
 
   async callbackSuccessful(
-    params: TelegramCallback
+    params: TelegramCallback, ens: string
   ): Promise<VerifiedEthereumEip712Signature2021> {
     const { hash, ...telegramData } = params;
 
@@ -56,7 +33,7 @@ export class TelegramSubjectResolver extends AbstractSubjectResolver<
 
     const verifiedCredential = await this.generateCredentialSubject({
       username: telegramData.username,
-    });
+    }, ens);
 
     return verifiedCredential;
   }

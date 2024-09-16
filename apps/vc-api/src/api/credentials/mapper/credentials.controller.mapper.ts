@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { IAuthControllerMapper } from './iauth.controller.mapper';
-import { AuthCallbackApiResponse } from '../auth.callback.response.api';
+import { IcredentialsControllerMapper } from './icredentials.controller.mapper';
+import { AuthCallbackApiResponse } from '../credentials.callback.response.api';
 import { CredentialCallbackResponse } from '../../../core/applications/credentials/facade/credential.callback.response';
-import { AuthGetAuthUrlApiRequestQuery, AuthGetAuthUrlRequestApiRequestParam } from '../auth.get-auth-url.request.api';
+import { CredentialsGetAuthUrlApiRequestQuery, CredentialsGetAuthUrlRequestApiRequestParam } from '../credentials.get-auth-url.request.api';
 import { CredentialCallbackRequest } from '../../../core/applications/credentials/facade/credential.callback.request';
 
 @Injectable()
-export class AuthControllerMapper implements IAuthControllerMapper {
+export class CredentialsControllerMapper implements IcredentialsControllerMapper {
 
   constructor() {}
 
@@ -28,8 +28,8 @@ export class AuthControllerMapper implements IAuthControllerMapper {
   }
 
   mapAuthCallbackApiRequestToCredentialCallbackRequest(
-    authCallbackApiRequestQuery: AuthGetAuthUrlApiRequestQuery,
-    authCallbackApiRequestParams: AuthGetAuthUrlRequestApiRequestParam
+    authCallbackApiRequestQuery: CredentialsGetAuthUrlApiRequestQuery,
+    authCallbackApiRequestParams: CredentialsGetAuthUrlRequestApiRequestParam
   ): CredentialCallbackRequest {
     return {
       credentialName: authCallbackApiRequestParams.authName,

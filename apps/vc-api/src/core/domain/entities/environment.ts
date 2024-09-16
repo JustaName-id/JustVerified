@@ -38,4 +38,14 @@ export class Environment {
   TELEGRAM_BOT_TOKEN!: string;
 
   TELEGRAM_BOT_USERNAME!: string;
+
+  JWT_SECRET!: string;
+
+  SIWE_DOMAIN!: string;
+
+  SIWE_ORIGIN!: string;
+
+  ENCRYPT_KEY!: string;
+
+  ENCRYPT_SALT!: string;
 }

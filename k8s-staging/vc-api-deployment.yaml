@@ -103,6 +103,36 @@ spec:
                 secretKeyRef:
                   name: foosecret-verifications
                   key: CHAIN_ID
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: JWT_SECRET
+            - name: SIWE_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: SIWE_DOMAIN
+            - name: SIWE_ORIGIN
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: SIWE_ORIGIN
+            - name: ENCRYPT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: ENCRYPT_KEY
+            - name: ENCRYPT_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: ENCRYPT_SALT
+            - name: JUSTANAME_ENVIRONMENT
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: JUSTANAME_ENVIRONMENT
 ---
 apiVersion: v1
 kind: Service

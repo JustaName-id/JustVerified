@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { ethers } from 'ethers';
 import { ChainId, Environment, EnvironmentType, SupportedChainIds } from '../core/domain/entities/environment';
+import { x } from 'vitest/dist/reporters-yx5ZTtEV';
 
 class EnvironmentVariables implements Environment{
   @IsString({ message: 'SIGNING_PRIVATE_KEY must be a string' })
@@ -65,6 +66,21 @@ class EnvironmentVariables implements Environment{
 
   @IsString({message: 'TELEGRAM_BOT_USERNAME must be a string'})
   TELEGRAM_BOT_USERNAME!: string;
+
+  @IsString({message: 'JWT_SECRET must be a string'})
+  JWT_SECRET: string;
+
+  @IsString({message: 'SIWE_DOMAIN must be a string'})
+  SIWE_DOMAIN: string;
+
+  @IsString({message: 'SIWE_ORIGIN must be a string'})
+  SIWE_ORIGIN: string;
+
+  @IsString({message: 'ENCRYPT_KEY must be a string'})
+  ENCRYPT_KEY: string;
+
+  @IsString({message: 'ENCRYPT_SALT must be a string'})
+  ENCRYPT_SALT: string;
 }
 
 function IsEthereumPrivateKey(validationOptions?: ValidationOptions) {
