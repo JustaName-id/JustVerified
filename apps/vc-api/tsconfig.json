@@ -18,6 +18,9 @@
     "target": "ES2020",
     "module": "CommonJS",
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "paths": {
+      "@justanid/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"]
+    }
   }
 }

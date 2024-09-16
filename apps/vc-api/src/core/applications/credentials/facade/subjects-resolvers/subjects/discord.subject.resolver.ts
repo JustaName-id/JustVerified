@@ -1,16 +1,7 @@
+import { HttpService } from '@nestjs/axios';
+import { Inject } from '@nestjs/common';
 import { AbstractSubjectResolver } from './abstract.subject.resolver';
 import { DiscordCredential } from '../../../../../domain/credentials/discord.credential';
-import { Inject } from '@nestjs/common';
-import {
-  ENVIRONMENT_GETTER,
-  IEnvironmentGetter,
-} from '../../../../environment/ienvironment.getter';
-import { HttpService } from '@nestjs/axios';
-import {
-  CREDENTIAL_CREATOR,
-  ICredentialCreator,
-} from '../../../creator/icredential.creator';
-import { TIME_GENERATOR, TimeGenerator } from '../../../../time.generator';
 import { DiscordCallback } from './callback/discord.callback';
 import { DiscordToken } from './token/discord.token';
 import { DiscordAuth } from './auth/discord.auth';
@@ -23,19 +14,6 @@ export class DiscordSubjectResolver extends AbstractSubjectResolver<
   discordAuthUrl = 'https://discord.com/api/oauth2/authorize';
   discordTokenUrl = 'https://discord.com/api/oauth2/token';
   discordUserUrl = 'https://discord.com/api/users/@me';
-
-  constructor(
-    @Inject(ENVIRONMENT_GETTER)
-    readonly environmentGetter: IEnvironmentGetter,
-    @Inject(CREDENTIAL_CREATOR)
-    readonly credentialCreator: ICredentialCreator,
-    @Inject(TIME_GENERATOR)
-    private readonly timeGenerator: TimeGenerator,
-
-    private readonly httpService: HttpService
-  ) {
-    super(credentialCreator, timeGenerator, environmentGetter);
-  }
 
   getCredentialName(): string {
     return 'discord';
@@ -62,7 +40,7 @@ export class DiscordSubjectResolver extends AbstractSubjectResolver<
   }
 
   async callbackSuccessful(
-    params: DiscordCallback
+    params: DiscordCallback,  ens: string
   ): Promise<VerifiedEthereumEip712Signature2021> {
     const response = await this.httpService.axiosRef.post<DiscordToken>(
       this.discordTokenUrl,
@@ -95,7 +73,7 @@ export class DiscordSubjectResolver extends AbstractSubjectResolver<
 
     const verifiedCredential = await this.generateCredentialSubject({
       username: userResponse.data.global_name,
-    });
+    }, ens);
 
     return verifiedCredential;
   }

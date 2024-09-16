@@ -14,7 +14,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "types": ["Multer"]
+    "types": ["Multer"],
+    "paths": {
+      "@justanid/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

@@ -6,6 +6,8 @@ export interface IEnvironmentGetter {
   getPk(): string;
   getEnv(): EnvironmentType;
   getEnsDomain(): string;
+  getSiweDomain(): string;
+  getSiweOrigin(): string;
   getChainId(): ChainId
   getApiDomain(): string;
   getInfuraProjectId(): string;
@@ -17,4 +19,6 @@ export interface IEnvironmentGetter {
   getTwitterClientSecret(): string;
   getTelegramBotToken(): string;
   getTelegramBotUsername(): string;
+  getEncryptKey(): string;
+  getEncryptSalt(): string;
 }

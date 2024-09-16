@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import {ConfigModule} from "@nestjs/config";
+import { JwtModule } from '@nestjs/jwt';
 import {validate} from "./config/env.validation";
-import { AuthController } from './api/auth/auth.controller';
+import { Resolver } from 'did-resolver';
+import { getResolver as ethrDidResolver } from 'ethr-did-resolver';
+import { getResolver as ensDidResolver } from '@justanid/ens-did-resolver';
+import { CredentialsController } from './api/credentials/credentials.controller';
 import { CREDENTIAL_CREATOR_FACADE } from './core/applications/credentials/facade/icredential.facade';
 import { CredentialCreatorFacade } from './core/applications/credentials/facade/credential.facade';
 import { SUBJECT_RESOLVER } from './core/applications/credentials/facade/subjects-resolvers/isubject.resolver';
@@ -12,20 +16,16 @@ import {
 import { EnvironmentGetter } from './core/applications/environment/environment.getter';
 import { ENVIRONMENT_GETTER } from './core/applications/environment/ienvironment.getter';
 import { HttpModule } from '@nestjs/axios';
-import { CredentialAgent } from './external/credentails/credential.agent';
+import { CredentialAgent } from './external/credentials/credential.agent';
 import { CREDENTIAL_CREATOR } from './core/applications/credentials/creator/icredential.creator';
 import { CREDENTIAL_VERIFIER } from './core/applications/credentials/verifier/icredential.verifier';
 import { KeyManagementFetcher } from './external/key-management/key-management.fetcher';
 import { KEY_MANAGEMENT_FETCHER } from './core/applications/key-management/ikey-management.fetcher';
-import { CredentialAgentMapper } from './external/credentails/mapper/credential-agent.mapper';
-import { CREDENTIAL_AGENT_MAPPER } from './external/credentails/mapper/icredential-agent.mapper';
+import { CredentialAgentMapper } from './external/credentials/mapper/credential-agent.mapper';
+import { CREDENTIAL_AGENT_MAPPER } from './external/credentials/mapper/icredential-agent.mapper';
 import { DateGenerator } from './external/time-manager/date.generator';
 import { TIME_GENERATOR } from './core/applications/time.generator';
-import { Agent, CredentialAgentInitiator } from './external/credentails/credential.agent.initiator';
-import { Resolver } from 'did-resolver';
-import { getResolver as ethrDidResolver } from 'ethr-did-resolver';
-import { getResolver as webDidResolver } from 'web-did-resolver';
-import { getResolver as ensDidResolver } from 'ens-did-resolver';
+import { Agent, CredentialAgentInitiator } from './external/credentials/credential.agent.initiator';
 import {
   DiscordSubjectResolver
 } from './core/applications/credentials/facade/subjects-resolvers/subjects/discord.subject.resolver';
@@ -35,8 +35,12 @@ import {
 import {
   TwitterSubjectResolver
 } from './core/applications/credentials/facade/subjects-resolvers/subjects/twitter.subject.resolver';
-import { AuthControllerMapper } from './api/auth/mapper/auth.controller.mapper';
-import { AUTH_CONTROLLER_MAPPER } from './api/auth/mapper/iauth.controller.mapper';
+import { CredentialsControllerMapper } from './api/credentials/mapper/credentials.controller.mapper';
+import { AUTH_CONTROLLER_MAPPER } from './api/credentials/mapper/icredentials.controller.mapper';
+import { AuthController } from './api/auth/auth.controller';
+import { DID_RESOLVER } from './core/applications/did/resolver/idid.resolver';
+import { CryptoService } from './external/crypto/crypto.service';
+import { CRYPTO_SERVICE } from './core/applications/crypto/icrypto.service';
 
 const dynamicImport = async (packageName: string) =>
   new Function(`return import('${packageName}')`)();
@@ -46,14 +50,19 @@ const dynamicImport = async (packageName: string) =>
     ConfigModule.forRoot({
       validate
     }),
-    HttpModule
+    HttpModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1d' },
+    }),
   ],
   controllers: [
+    CredentialsController,
     AuthController
   ],
   providers: [
     {
-      useClass: AuthControllerMapper,
+      useClass: CredentialsControllerMapper,
       provide: AUTH_CONTROLLER_MAPPER
     },
     {
@@ -77,6 +86,10 @@ const dynamicImport = async (packageName: string) =>
       provide: CREDENTIAL_VERIFIER
     },
     {
+      useClass: CredentialAgent,
+      provide: DID_RESOLVER
+    },
+    {
       useClass: KeyManagementFetcher,
       provide: KEY_MANAGEMENT_FETCHER
     },
@@ -87,6 +100,10 @@ const dynamicImport = async (packageName: string) =>
     {
       useClass: DateGenerator,
       provide: TIME_GENERATOR
+    },
+    {
+      useClass: CryptoService,
+      provide: CRYPTO_SERVICE
     },
     GithubSubjectResolver,
     DiscordSubjectResolver,

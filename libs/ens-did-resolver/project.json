@@ -1,0 +1,19 @@
+{
+  "name": "ens-did-resolver",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ens-did-resolver/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/ens-did-resolver",
+        "main": "libs/ens-did-resolver/src/index.ts",
+        "tsConfig": "libs/ens-did-resolver/tsconfig.lib.json",
+        "assets": ["libs/ens-did-resolver/*.md"]
+      }
+    }
+  }
+}
