@@ -24,7 +24,7 @@ spec:
             volumeAttributes:
               secretProviderClass: "aws-secrets"
       containers:
-        - name: analytics
+        - name: vc-api
           image: ${AWS_ID}.dkr.ecr.eu-central-1.amazonaws.com/justaname-production/vc-api:latest
           ports:
             - containerPort: 3009
