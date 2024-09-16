@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kong-alb
+  namespace: verifications-staging-namespace
+spec:
+  ingressClassName: kong
+  rules:
+    - host: api-staging.justaname.id
+      http:
+        paths:
+          - path: /verifications/v1
+            pathType: Prefix
+            backend:
+              service:
+                name: vc-api-service
+                port:
+                  number: 3009
