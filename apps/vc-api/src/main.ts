@@ -24,6 +24,12 @@ async function bootstrap() {
     }
   );
 
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  })
+
+
   const globalPrefix = 'verifications';
 
   app.useBodyParser('json');
@@ -62,7 +68,7 @@ async function bootstrap() {
     })
     .setGlobalPrefix(globalPrefix);
 
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3009;
   await app.listen(port);
 
   if (process.env.NODE_ENV === 'development') {

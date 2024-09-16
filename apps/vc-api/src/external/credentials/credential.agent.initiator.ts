@@ -1,6 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import type { ICredentialPlugin, IDIDManager, IIdentifier, IKeyManager, IResolver, TAgent } from '@veramo/core';
 import type { ICredentialIssuerEIP712 } from '@veramo/credential-eip712';
+import type {  } from '@veramo/did-manager'
+import type {  } from '@veramo/key-manager';
+import type {  } from '@veramo/kms-local';
+import type { } from '@veramo/did-provider-ethr';
+import type { } from '@veramo/did-resolver';
+import type {  } from '@veramo/credential-w3c';
+import type {  } from '@veramo/credential-ld';
+import { } from '@veramo/credential-ld';
+
+
 export type Agent = TAgent<IDIDManager & IKeyManager & IResolver & ICredentialPlugin & ICredentialIssuerEIP712>
 export type Identifier = IIdentifier
 
