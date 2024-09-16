@@ -7,14 +7,14 @@ enum AuthName {
   Telegram = 'telegram',
 }
 
-export class AuthGetAuthUrlRequestApiRequestParam
+export class CredentialsGetAuthUrlRequestApiRequestParam
 {
   @IsNotEmpty()
   @IsEnum(AuthName)
   authName: AuthName
 }
 
-export class AuthGetAuthUrlApiRequestQuery
+export class CredentialsGetAuthUrlApiRequestQuery
 {
   @IsOptional()
   @IsString()
