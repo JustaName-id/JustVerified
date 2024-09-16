@@ -33,7 +33,8 @@ export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,
     const { agent, identifier } = await this.agentInitiator.createAgentWithIdentifier(
       this.environmentGetter.getEnsDomain(),
       this.keyManagementFetcher.fetchKey().publicKey,
-      this.keyManagementFetcher.fetchKey().privateKey
+      this.keyManagementFetcher.fetchKey().privateKey,
+      this.environmentGetter.getChainId()
     )
     this.agent = agent
     this.identifier = identifier

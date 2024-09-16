@@ -14,6 +14,7 @@ import { Inject } from '@nestjs/common';
 import { CRYPTO_SERVICE, ICryptoService } from '../../../../crypto/icrypto.service';
 import { HttpService } from '@nestjs/axios';
 
+/* eslint-disable @typescript-eslint/ban-types */
 export abstract class AbstractSubjectResolver<
   T extends AllCallback = {},
   K extends CredentialSubjectValue = {}

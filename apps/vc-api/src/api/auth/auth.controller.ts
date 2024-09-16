@@ -25,7 +25,7 @@ export class AuthController {
         origin:this.environmentGetter.getSiweOrigin(),
       },
       ensDomain: this.environmentGetter.getEnsDomain(),
-      providerUrl: 'https://sepolia.infura.io/v3/' +this.environmentGetter.getInfuraProjectId()
+      providerUrl: (this.environmentGetter.getChainId() === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') +this.environmentGetter.getInfuraProjectId()
     })
   }
 

@@ -3,8 +3,6 @@ import { ICryptoService } from '../../core/applications/crypto/icrypto.service';
 import * as crypto from 'crypto';
 import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../core/applications/environment/ienvironment.getter';
 
-
-// @ts-ignore
 @Injectable()
 export class CryptoService implements ICryptoService {
 

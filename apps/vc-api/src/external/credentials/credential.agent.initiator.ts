@@ -36,13 +36,15 @@ export class CredentialAgentInitiator {
   async createAgentWithIdentifier(
     ensDomain: string,
     publicKey: string,
-    privateKey: string
+    privateKey: string,
+    chainId: number,
   ): Promise<{
     agent: Agent;
     identifier: Identifier;
   }> {
+
     const identifier = await this.agent.didManagerImport({
-      did: 'did:ens:' + ensDomain + '#' + publicKey,
+      did: 'did:ens:' + (chainId === 1 ? '' : 'sepolia:') + ensDomain + '#' + publicKey,
       provider: 'did:ens',
       keys: [
         {
