@@ -1,37 +1,27 @@
 import { Body, Controller, Get, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { JustaName } from '@justaname.id/sdk';
-import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../core/applications/environment/ienvironment.getter';
 import { AuthSigninApiRequest } from './requests/auth.signin.api.request';
 import { Response, Request} from 'express';
 import { JwtService } from '@nestjs/jwt';
 import moment from 'moment';
 import { JwtGuard } from '../../guards/jwt.guard';
+import {
+  ISdkInitializerGetter,
+  SDK_INITIALIZER_GETTER
+} from '../../core/applications/environment/isdk-initializer.getter';
 
 type Siwj = { address: string, subname: string };
 
 @Controller('auth')
 export class AuthController {
 
-  justaname: JustaName
   constructor(
-    @Inject(ENVIRONMENT_GETTER) private readonly environmentGetter: IEnvironmentGetter,
-
+    @Inject(SDK_INITIALIZER_GETTER) private readonly sdkInitializerGetter: ISdkInitializerGetter,
     private readonly jwtService: JwtService
-  ) {
-    this.justaname = JustaName.init({
-      config: {
-        chainId: this.environmentGetter.getChainId(),
-        domain: this.environmentGetter.getSiweDomain(),
-        origin:this.environmentGetter.getSiweOrigin(),
-      },
-      ensDomain: this.environmentGetter.getEnsDomain(),
-      providerUrl: (this.environmentGetter.getChainId() === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') +this.environmentGetter.getInfuraProjectId()
-    })
-  }
+  ) {}
 
   @Get('nonce')
   async getNonce() {
-    return this.justaname.signIn.generateNonce()
+    return this.sdkInitializerGetter.getInitializedSdk().signIn.generateNonce()
   }
 
   @Post('signin')
@@ -40,7 +30,7 @@ export class AuthController {
     @Res() res: Response,
     @Req() req: Request
   ) {
-    const { data: message, subname } = await this.justaname.signIn.signIn(body.message, body.signature)
+    const { data: message, subname } = await this.sdkInitializerGetter.getInitializedSdk().signIn.signIn(body.message, body.signature)
 
     if (!message) {
       res.status(500).json({ message: 'No message returned.' });

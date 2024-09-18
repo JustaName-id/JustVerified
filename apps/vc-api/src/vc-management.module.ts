@@ -41,6 +41,12 @@ import { AuthController } from './api/auth/auth.controller';
 import { DID_RESOLVER } from './core/applications/did/resolver/idid.resolver';
 import { CryptoService } from './external/crypto/crypto.service';
 import { CRYPTO_SERVICE } from './core/applications/crypto/icrypto.service';
+import { VerifyRecordsService } from './core/applications/verify-records/verify-records.service';
+import { VERIFY_RECORDS_SERVICE } from './core/applications/verify-records/iverify-records.service';
+import { SubnameRecordsFetcher } from './external/subname-records-fetcher/subname-records.fetcher';
+import { SUBNAME_RECORDS_FETCHER } from './core/applications/verify-records/isubname-records.fetcher';
+import { SdkInitializerGetter } from './external/sdk-initializer/sdk-initializer.getter';
+import { SDK_INITIALIZER_GETTER } from './core/applications/environment/isdk-initializer.getter';
 
 const dynamicImport = async (packageName: string) =>
   new Function(`return import('${packageName}')`)();
@@ -104,6 +110,18 @@ const dynamicImport = async (packageName: string) =>
     {
       useClass: CryptoService,
       provide: CRYPTO_SERVICE
+    },
+    {
+      useClass: VerifyRecordsService,
+      provide: VERIFY_RECORDS_SERVICE
+    },
+    {
+      useClass: SubnameRecordsFetcher,
+      provide: SUBNAME_RECORDS_FETCHER
+    },
+    {
+      useClass: SdkInitializerGetter,
+      provide: SDK_INITIALIZER_GETTER
     },
     GithubSubjectResolver,
     DiscordSubjectResolver,
