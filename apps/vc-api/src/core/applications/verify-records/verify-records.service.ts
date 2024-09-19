@@ -4,6 +4,7 @@ import { ISubnameRecordsFetcher, SUBNAME_RECORDS_FETCHER } from './isubname-reco
 import { VerifyRecordsRequest } from './requests/verify-records.request';
 import { VeirfyRecordsResponse } from './response/verify-records.response';
 import { Subname } from '../../domain/entities/subname';
+import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../environment/ienvironment.getter';
 
 @Injectable()
 export class VerifyRecordsService implements IVerifyRecordsService {
@@ -12,13 +13,19 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     "sepolia": 11155111
   };
 
+  domain: string;
   constructor(
     @Inject(SUBNAME_RECORDS_FETCHER)
     private readonly subnameRecordsFetcher: ISubnameRecordsFetcher,
-  ) {}
+    @Inject(ENVIRONMENT_GETTER) private readonly environmentGetter: IEnvironmentGetter,
+  ) {
+    this.domain = this.environmentGetter.getEnsDomain();
+  }
 
   async verifyRecords(verifyRecordsRequest: VerifyRecordsRequest): Promise<VeirfyRecordsResponse[]> {
     const { subname, chainId, recordsToVerify, issuer } = verifyRecordsRequest;
+
+    const validIssuer = issuer ? issuer : this.domain;
 
     if (chainId !== 1 && chainId !== 11155111) {
       throw new Error('Invalid chainId');
@@ -29,7 +36,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     const responses: VeirfyRecordsResponse[] = [];
 
       for (const record of recordsToVerify) {
-        const response = this._recordVerifier(subname, record, subnameRecords, chainId, issuer);
+        const response = this._recordVerifier(subname, record, subnameRecords, chainId, validIssuer);
         responses.push(response);
       }
 

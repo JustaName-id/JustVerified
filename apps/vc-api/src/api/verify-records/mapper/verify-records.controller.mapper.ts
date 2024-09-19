@@ -11,13 +11,12 @@ export class VerifyRecordsControllerMapper implements IVerifyRecordsControllerMa
 
   mapVerifyRecordsApiRequestToVerifyRecordsRequest(
     verifyRecordsApiRequest: VerifyRecordsApiRequest,
-    issuer: string  // Add issuerName as an additional argument
   ): VerifyRecordsRequest {
     return {
       subname: verifyRecordsApiRequest.subname,
       chainId: verifyRecordsApiRequest.chainId,
       recordsToVerify: verifyRecordsApiRequest.recordsToVerify,
-      issuer: issuer
+      issuer: verifyRecordsApiRequest.issuer,
     };
   }
 

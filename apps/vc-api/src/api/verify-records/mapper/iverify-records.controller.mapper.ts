@@ -8,7 +8,6 @@ export const VERIFY_RECORDS_CONTROLLER_MAPPER = "VERIFY_RECORDS_CONTROLLER_MAPPE
 export interface IVerifyRecordsControllerMapper {
   mapVerifyRecordsApiRequestToVerifyRecordsRequest(
     verifyRecordsApiRequest: VerifyRecordsApiRequest,
-    issuer: string
   ): VerifyRecordsRequest;
 
   mapVerifyRecordsResponseToVerifyRecordsApiResponse(

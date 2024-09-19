@@ -13,15 +13,13 @@ export class VerifyRecordsController {
     @Inject(VERIFY_RECORDS_SERVICE) private readonly verifyRecordsService: IVerifyRecordsService,
     @Inject('VERIFY_RECORDS_CONTROLLER_MAPPER') private readonly verifyRecordsControllerMapper: IVerifyRecordsControllerMapper
   ) {}
-  @Get(':issuer')
+  @Get('')
   async verifyRecords(
-    @Param('issuer') issuer: string,
     @Query() query: VerifyRecordsApiRequest
   ) {
     const response = await this.verifyRecordsService.verifyRecords(
       this.verifyRecordsControllerMapper.mapVerifyRecordsApiRequestToVerifyRecordsRequest(
-        query,
-        issuer
+        query
       )
     );
 
