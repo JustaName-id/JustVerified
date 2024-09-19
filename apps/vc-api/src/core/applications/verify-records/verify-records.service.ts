@@ -36,28 +36,34 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     const responses: VeirfyRecordsResponse[] = [];
 
       for (const record of recordsToVerify) {
-        const response = this._recordVerifier(subname, record, subnameRecords, chainId, validIssuer);
+        const response = this._recordVerifier(record, subnameRecords, chainId, validIssuer);
         responses.push(response);
       }
 
     return responses;
   }
 
-   private _recordVerifier(subname: string, record: string, subnameRecords: Subname, chainId: number, issuer: string): VeirfyRecordsResponse {
-     // 1) check if record exists in subnameRecords, if not return false
-     if (!subnameRecords.metadata.textRecords[record]) {
+   private _recordVerifier(record: string, subnameRecords: Subname, chainId: number, issuer: string): VeirfyRecordsResponse {
+    // 1) check if record exists in subnameRecords, if not return false
+     const foundRecord = subnameRecords.metadata.textRecords.find((item) => item.key === record);
+
+     if (!foundRecord) {
        return {
          [record]: false
        }
      }
-     // 2) check if record_verifier.id exists in subnameRecords, if not return false
-     if (!subnameRecords.metadata.textRecords[`${record}_${issuer}`]) {
+
+     // 2) check if record_issuer exists in subnameRecords, if not return false
+     const foundRecordIssuer = subnameRecords.metadata.textRecords.find((item) => item.key === `${record}_${issuer}`);
+
+     if (!foundRecordIssuer) {
        return {
          [record]: false
        }
      }
-     // 3) parse the value of record_verifier.id
-        const vc = JSON.parse(subnameRecords.metadata.textRecords[`${record}_${issuer}`].value);
+
+     // 3) parse the value of record_issuer
+        const vc = JSON.parse(foundRecordIssuer.value);
 
      // 4) check the expirationDate, if expired return false
      const currentDate = new Date();
@@ -69,7 +75,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
      }
      // 5) check if it belongs to the subname, if not return false
      const didSubname = vc.credentialSubject.did.split(':')[3];
-     if (didSubname !== subname) {
+     if (didSubname !== subnameRecords.subname) {
        return {
          [record]: false
        };
@@ -92,7 +98,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
        };
      }
      // 8) check that the value of the username of the credentialSubject matches the value of the record inside the subnameRecords, if not return false
-     if (vc.credentialSubject.username !== subnameRecords.metadata.textRecords[record]) {
+     if (vc.credentialSubject.username !== foundRecord.value) {
        return {
          [record]: false
        };
