@@ -63,7 +63,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
      }
 
      // 3) parse the value of record_issuer
-        const vc = JSON.parse(foundRecordIssuer.value);
+     const vc = JSON.parse(foundRecordIssuer.value);
 
      // 4) check the expirationDate, if expired return false
      const currentDate = new Date();
@@ -73,22 +73,29 @@ export class VerifyRecordsService implements IVerifyRecordsService {
          [record]: false
        };
      }
+
      // 5) check if it belongs to the subname, if not return false
-     const didSubname = vc.credentialSubject.did.split(':')[3];
+     const didSubnameWithFragment = vc.credentialSubject.did.split(':')[3];
+     const didSubname = didSubnameWithFragment.split('#')[0];
+
      if (didSubname !== subnameRecords.subname) {
        return {
          [record]: false
        };
      }
+
      // 6) check the issuer did, if not return false
      const issuerDid = vc.issuer.id.split(':');
-     const issuerChain = issuerDid[2]; // Extract chain from DID
-     const issuerName = issuerDid[3]; // Extract subname
+     const issuerChain = issuerDid[2];
+     const issuerNameFragment = issuerDid[3];
+     const issuerName = issuerNameFragment.split('#')[0];
+
      if (issuerName !== issuer || this.chainIdMapping[issuerChain] !== chainId) {
        return {
          [record]: false
        };
      }
+
      // 7) check if it's on the correct chain, if not return false (for both the issuer did and credential subject did, and the chainId in the proof)
      const subjectDid = vc.credentialSubject.did.split(':');
      const subjectChain = subjectDid[2]; // Extract chain from DID
@@ -97,6 +104,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
          [record]: false
        };
      }
+
      // 8) check that the value of the username of the credentialSubject matches the value of the record inside the subnameRecords, if not return false
      if (vc.credentialSubject.username !== foundRecord.value) {
        return {
