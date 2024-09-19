@@ -47,6 +47,9 @@ import { SubnameRecordsFetcher } from './external/subname-records-fetcher/subnam
 import { SUBNAME_RECORDS_FETCHER } from './core/applications/verify-records/isubname-records.fetcher';
 import { SdkInitializerGetter } from './external/sdk-initializer/sdk-initializer.getter';
 import { SDK_INITIALIZER_GETTER } from './core/applications/environment/isdk-initializer.getter';
+import { VerifyRecordsController } from './api/verify-records/verify-records.controller';
+import { VerifyRecordsControllerMapper } from './api/verify-records/mapper/verify-records.controller.mapper';
+import { VERIFY_RECORDS_CONTROLLER_MAPPER } from './api/verify-records/mapper/iverify-records.controller.mapper';
 
 const dynamicImport = async (packageName: string) =>
   new Function(`return import('${packageName}')`)();
@@ -64,7 +67,8 @@ const dynamicImport = async (packageName: string) =>
   ],
   controllers: [
     CredentialsController,
-    AuthController
+    AuthController,
+    VerifyRecordsController
   ],
   providers: [
     {
@@ -122,6 +126,10 @@ const dynamicImport = async (packageName: string) =>
     {
       useClass: SdkInitializerGetter,
       provide: SDK_INITIALIZER_GETTER
+    },
+    {
+      useClass: VerifyRecordsControllerMapper,
+      provide: VERIFY_RECORDS_CONTROLLER_MAPPER
     },
     GithubSubjectResolver,
     DiscordSubjectResolver,
