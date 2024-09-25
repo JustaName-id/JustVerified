@@ -72,7 +72,7 @@
     "@nx/node": "19.7.2",
     "@nx/react": "19.7.2",
     "@nx/rollup": "19.7.2",
-    "@nx/storybook": "19.7.2",
+    "@nx/storybook": "^19.8.0",
     "@nx/vite": "19.7.2",
     "@nx/web": "19.7.2",
     "@nx/webpack": "19.7.2",
