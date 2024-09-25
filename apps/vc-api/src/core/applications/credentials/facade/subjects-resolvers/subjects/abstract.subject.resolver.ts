@@ -2,7 +2,7 @@ import {
   CredentialSubject,
   CredentialSubjectValue,
   EthereumEip712Signature2021,
-  VerifiedEthereumEip712Signature2021,
+  VerifiableEthereumEip712Signature2021,
 } from '../../../../../domain/entities/eip712';
 import { CREDENTIAL_CREATOR, ICredentialCreator } from '../../../creator/icredential.creator';
 import { TIME_GENERATOR, TimeGenerator } from '../../../../time.generator';
@@ -13,6 +13,7 @@ import { DID_RESOLVER, IDIDResolver } from '../../../../did/resolver/idid.resolv
 import { Inject } from '@nestjs/common';
 import { CRYPTO_SERVICE, ICryptoService } from '../../../../crypto/icrypto.service';
 import { HttpService } from '@nestjs/axios';
+import { ENS_MANAGER_SERVICE, IEnsManagerService } from '../../../../ens-manager/iens-manager.service';
 
 /* eslint-disable @typescript-eslint/ban-types */
 export abstract class AbstractSubjectResolver<
@@ -30,6 +31,8 @@ export abstract class AbstractSubjectResolver<
   protected readonly dateGenerator: TimeGenerator
   @Inject(CRYPTO_SERVICE)
   protected readonly cryptoEncryption: ICryptoService;
+  @Inject(ENS_MANAGER_SERVICE)
+  protected readonly ensManagerService: IEnsManagerService;
   @Inject()
   protected readonly httpService: HttpService
 
@@ -44,7 +47,7 @@ export abstract class AbstractSubjectResolver<
   abstract callbackSuccessful(
     data: T,
     subname: string
-  ): Promise<VerifiedEthereumEip712Signature2021>;
+  ): Promise<VerifiableEthereumEip712Signature2021>;
 
   abstract getCallbackParameters(): string[];
 
@@ -64,7 +67,7 @@ export abstract class AbstractSubjectResolver<
     if (this.checkCallbackParametersHaveAllRequiredFields(data)) {
       const { ens, authId } = JSON.parse(this.cryptoEncryption.decrypt(data?.state));
       const vc = await this.callbackSuccessful(data, ens);
-      this.successfulVerification(vc, ens);
+      await this.successfulVerification(vc, ens);
       return {
         dataKey: this.getDataKey(),
         verifiableCredential: vc,
@@ -86,16 +89,23 @@ export abstract class AbstractSubjectResolver<
   }
 
   // TODO: Implement this
-  successfulVerification(
-    vc: VerifiedEthereumEip712Signature2021,
+  async successfulVerification(
+    vc: VerifiableEthereumEip712Signature2021,
     subname: string
   ): Promise<void> {
-    return Promise.resolve();
+    const checkIfMAppEnabled = await this.ensManagerService.checkIfMAppEnabled(subname);
+    if (checkIfMAppEnabled) {
+      await this.ensManagerService.appendVcInMAppEnabledEns(
+        subname,
+        vc,
+        this.getCredentialName()
+      );
+    }
   }
 
   async generateCredentialSubject(
     credentialSubject: CredentialSubject & K, ens: string
-  ): Promise<VerifiedEthereumEip712Signature2021<K>> {
+  ): Promise<VerifiableEthereumEip712Signature2021<K>> {
     const did = await this.didResolver.getEnsDid(ens)
     const ethereumEip712Signature2021 = new EthereumEip712Signature2021<K>({
       type: this.getType(),
@@ -115,7 +125,7 @@ export abstract class AbstractSubjectResolver<
 
     const verified = (await this.credentialCreator.createCredential(
       ethereumEip712Signature2021
-    )) as VerifiedEthereumEip712Signature2021<K>;
+    )) as VerifiableEthereumEip712Signature2021<K>;
 
     return verified;
   }

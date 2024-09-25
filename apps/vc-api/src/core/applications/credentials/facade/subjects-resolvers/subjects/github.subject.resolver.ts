@@ -5,7 +5,7 @@ import { GithubCredential } from '../../../../../domain/credentials/github.crede
 import { GithubCallback } from './callback/github.callback';
 import { GithubToken } from './token/github.token';
 import { GithubAuth } from './auth/github.auth';
-import { VerifiedEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
 
 export class GithubSubjectResolver extends AbstractSubjectResolver<
   GithubCallback,
@@ -31,15 +31,17 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<
     return [];
   }
 
-  getAuthUrl(subname: string): string {
+  getAuthUrl(ens: string, authId: string): string {
+    const stateObject = { ens, authId };
+    const encryptedState = this.cryptoEncryption.encrypt(JSON.stringify(stateObject));
     const clientId = this.environmentGetter.getGithubClientId();
     const scope = 'read:user';
-    return `${this.githubAuthUrl}?client_id=${clientId}&redirect_uri=${this.getCallbackUrl()}&state=${subname}&scope=${scope}`;
+    return `${this.githubAuthUrl}?client_id=${clientId}&redirect_uri=${this.getCallbackUrl()}&state=${encryptedState}&scope=${scope}`;
   }
 
   async callbackSuccessful(
     params: GithubCallback, ens: string
-  ): Promise<VerifiedEthereumEip712Signature2021> {
+  ): Promise<VerifiableEthereumEip712Signature2021> {
     const response = await this.httpService.axiosRef.post<GithubToken>(
       this.githubTokenUrl,
       {

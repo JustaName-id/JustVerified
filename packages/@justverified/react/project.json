@@ -1,0 +1,21 @@
+{
+  "name": "@justverified/react",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/@justverified/react/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "storybook": {
+      "executor": "@nx/storybook:storybook",
+      "options": {
+        "port": 4402,
+        "configDir": "packages/@justverified/react/.storybook"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    }
+  }
+}

@@ -11,7 +11,7 @@ import { filter, Subject, take } from 'rxjs';
 import { SubjectData } from './isubject.data';
 import { JwtGuard } from '../../guards/jwt.guard';
 
-type Siwj = { address: string, subname: string };
+type Siwj = { address: string, ens: string };
 
 @Controller('credentials')
 export class CredentialsController {
@@ -45,7 +45,7 @@ export class CredentialsController {
 
     const redirectUrl = await this.credentialCreatorFacade.getAuthUrl(
       authGetAuthUrlRequestApi.authName,
-      req.user?.subname,
+      req.user?.ens,
       authId
     )
 
@@ -63,7 +63,7 @@ export class CredentialsController {
       take(1)
     ).subscribe(
       (data) => {
-        res.write(`data: ${JSON.stringify(data.result)}\n\n`);
+        res.write(`data: ${JSON.stringify({ result:data.result })}\n\n`);
         res.end();
         this.authSubjects.delete(authId);
       },
@@ -81,22 +81,26 @@ export class CredentialsController {
     @Query() authGetAuthUrlRequestApiQuery: any,
     @Res() res: Response
   ): Promise<void> {
-    const verifiedEthereumEip712Signature2021 = await this.credentialCreatorFacade.callback(
-      this.authControllerMapper.mapAuthCallbackApiRequestToCredentialCallbackRequest(
-        authGetAuthUrlRequestApiQuery,
-        authGetAuthUrlRequestApiParam)
-    )
+    try {
+      const verifiedEthereumEip712Signature2021 = await this.credentialCreatorFacade.callback(
+        this.authControllerMapper.mapAuthCallbackApiRequestToCredentialCallbackRequest(
+          authGetAuthUrlRequestApiQuery,
+          authGetAuthUrlRequestApiParam)
+      )
 
-    const { authId, dataKey, verifiableCredential} = verifiedEthereumEip712Signature2021
+      const { authId, dataKey, verifiableCredential } = verifiedEthereumEip712Signature2021
 
-    const subject = this.authSubjects.get(authId);
-    subject?.next({
-      authId,
-      result: {
-        verifiableCredential,
-        dataKey
-      }
-    });
+      const subject = this.authSubjects.get(authId);
+      subject?.next({
+        authId,
+        result: {
+          verifiableCredential,
+          dataKey
+        }
+      });
+    }catch(e){
+
+    }
 
 
     res.send(`

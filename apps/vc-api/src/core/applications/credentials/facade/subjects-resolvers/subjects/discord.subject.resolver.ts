@@ -5,7 +5,7 @@ import { DiscordCredential } from '../../../../../domain/credentials/discord.cre
 import { DiscordCallback } from './callback/discord.callback';
 import { DiscordToken } from './token/discord.token';
 import { DiscordAuth } from './auth/discord.auth';
-import { VerifiedEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
 
 export class DiscordSubjectResolver extends AbstractSubjectResolver<
   DiscordCallback,
@@ -41,7 +41,7 @@ export class DiscordSubjectResolver extends AbstractSubjectResolver<
 
   async callbackSuccessful(
     params: DiscordCallback,  ens: string
-  ): Promise<VerifiedEthereumEip712Signature2021> {
+  ): Promise<VerifiableEthereumEip712Signature2021> {
     const response = await this.httpService.axiosRef.post<DiscordToken>(
       this.discordTokenUrl,
       new URLSearchParams({

@@ -5,7 +5,7 @@ import { TwitterCredential } from '../../../../../domain/credentials/twitter.cre
 import { TwitterCallback } from './callback/twitter.callback';
 import { TwitterToken } from './token/twitter.token';
 import { TwitterAuth } from './auth/twitter.auth';
-import { VerifiedEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
 
 export class TwitterSubjectResolver extends AbstractSubjectResolver<
   TwitterCallback,
@@ -53,7 +53,7 @@ export class TwitterSubjectResolver extends AbstractSubjectResolver<
 
   async callbackSuccessful(
     params: TwitterCallback, ens: string
-  ): Promise<VerifiedEthereumEip712Signature2021> {
+  ): Promise<VerifiableEthereumEip712Signature2021> {
     const encryptedState = params.state;
     const decryptedState = this.cryptoEncryption.decrypt(encryptedState);
     const { authId } = JSON.parse(decryptedState);

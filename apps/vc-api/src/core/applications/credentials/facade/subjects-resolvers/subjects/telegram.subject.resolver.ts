@@ -2,7 +2,7 @@ import { AbstractSubjectResolver } from './abstract.subject.resolver';
 import * as crypto from 'crypto';
 import { TelegramCredential } from '../../../../../domain/credentials/telegram.credential';
 import { TelegramCallback } from './callback/telegram.callback';
-import { VerifiedEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
 
 export class TelegramSubjectResolver extends AbstractSubjectResolver<
   TelegramCallback,
@@ -11,7 +11,7 @@ export class TelegramSubjectResolver extends AbstractSubjectResolver<
 
   async callbackSuccessful(
     params: TelegramCallback, ens: string
-  ): Promise<VerifiedEthereumEip712Signature2021> {
+  ): Promise<VerifiableEthereumEip712Signature2021> {
     const { hash, ...telegramData } = params;
 
     const dataCheckString = Object.keys(telegramData)

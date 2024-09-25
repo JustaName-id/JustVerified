@@ -36,7 +36,7 @@ export class EthereumEip712Signature2021<T extends CredentialSubjectValue = {}> 
 }
 
 
-export class VerifiedEthereumEip712Signature2021<T extends CredentialSubjectValue = {}> extends EthereumEip712Signature2021<T> {
+export class VerifiableEthereumEip712Signature2021<T extends CredentialSubjectValue = {}> extends EthereumEip712Signature2021<T> {
   proof: Proof;
   issuer: Issuer
   constructor({

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ICredentialCreatorFacade } from './icredential.facade';
-import { VerifiedEthereumEip712Signature2021 } from '../../../domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../../domain/entities/eip712';
 import { ISubjectResolver, SUBJECT_RESOLVER } from './subjects-resolvers/isubject.resolver';
 import { CredentialCallbackRequest } from './credential.callback.request';
 import { CredentialCallbackResponse } from './credential.callback.response';
