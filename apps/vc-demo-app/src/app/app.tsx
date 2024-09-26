@@ -23,7 +23,7 @@ const SiwensConfig: SIWENSProviderConfig = {
   routes:{
     signinRoute: '/auth/signin',
     signinNonceRoute: '/auth/nonce',
-    currentEnsRoute: '/auth/session',
+    currentEnsRoute: '/auth/current',
     signoutRoute: '/auth/signout',
     addSubnameRoute: '/auth/add-subname',
     revokeSubnameRoute: '/auth/revoke-subname',

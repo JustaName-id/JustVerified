@@ -6,11 +6,12 @@ import { EmailNotificationContent } from '../../../core/domain/entities/emailNot
 
 interface OtpEmailProps extends EmailNotificationContent {
   otp: string;
+  email: string;
 }
 
 export const VerificationEmail: React.FC<OtpEmailProps> & {
   PreviewProps: OtpEmailProps;
-} = ({ otp }: OtpEmailProps) => {
+} = ({ otp, email }: OtpEmailProps) => {
 
   return (
     <BaseEmail
@@ -35,6 +36,7 @@ export const VerificationEmail: React.FC<OtpEmailProps> & {
           />
         </span>
       }
+      email={email}
       preview="Verify your email with the OTP"
     >
       <React.Fragment>
@@ -86,4 +88,5 @@ export default VerificationEmail;
 // Define the preview properties for this email
 VerificationEmail.PreviewProps = {
   otp: "123456",
+  email: 'example@example.com'
 };

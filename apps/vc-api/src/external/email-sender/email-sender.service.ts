@@ -23,7 +23,7 @@ export class EmailSender implements IEmailSender {
       from: 'JustaName <noreply@justaname.id>',
       to: emailNotification.to,
       subject: emailNotification.subject,
-      react: React.createElement(emailNotification.content.otp),
+      react: React.createElement(emailNotification.content.otp, emailNotification.to),
     });
 
     if (error) {

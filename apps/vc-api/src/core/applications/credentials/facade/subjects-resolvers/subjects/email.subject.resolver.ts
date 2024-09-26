@@ -61,17 +61,12 @@ export class EmailSubjectResolver extends AbstractSubjectResolver<
     return verifiedCredential;
   }
 
-  async getAuthUrl(
-    {
-      email,
-      ens,
-      authId,
-    }
-  ): Promise<string> {
+   getAuthUrl({ ens, authId }): string {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     const expiresAt = Date.now() + 3 * 60 * 1000;
 
+    const email = 'ghadi@justalab.co';
     otpStore.set(email, { otp, expiresAt });
 
     // const stateObject = { ens, authId };
@@ -87,7 +82,7 @@ export class EmailSubjectResolver extends AbstractSubjectResolver<
       },
     };
 
-    await this.emailSender.sendEmail(emailNotification);
+     this.emailSender.sendEmail(emailNotification);
 
     return this.getCallbackUrl();
   }

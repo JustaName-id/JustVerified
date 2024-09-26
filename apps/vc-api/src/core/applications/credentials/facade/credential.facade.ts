@@ -23,8 +23,8 @@ export class CredentialCreatorFacade implements ICredentialCreatorFacade {
     throw new Error(`No resolver found for ${credentialName}`);
   }
 
-  async getAuthUrl(credentialName: string, subname: string, authId: string): Promise<string> {
-    return this.getResolver(credentialName).getAuthUrl(subname, authId);
+  async getAuthUrl(credentialName: string, ens: string, authId: string): Promise<string> {
+    return this.getResolver(credentialName).getAuthUrl({ens, authId});
   }
 
   async callback(credentialCallbackRequest: CredentialCallbackRequest): Promise<CredentialCallbackResponse> {

@@ -31,12 +31,13 @@ export class DiscordSubjectResolver extends AbstractSubjectResolver<
     return [];
   }
 
-  getAuthUrl(): string {
-    const state = Math.random().toString(36).substring(7); // Generate a random state
+  getAuthUrl({ens, authId}): string {
+    const stateObject = { ens, authId };
+    const encryptedState = this.cryptoEncryption.encrypt(JSON.stringify(stateObject));
     const clientId = this.environmentGetter.getDiscordClientId();
     return `${
       this.discordAuthUrl
-    }?response_type=code&client_id=${clientId}&scope=identify&redirect_uri=${this.getCallbackUrl()}&state=${state}`;
+    }?response_type=code&client_id=${clientId}&scope=identify&redirect_uri=${this.getCallbackUrl()}&state=${encryptedState}`;
   }
 
   async callbackSuccessful(
@@ -49,7 +50,9 @@ export class DiscordSubjectResolver extends AbstractSubjectResolver<
         client_secret: this.environmentGetter.getDiscordClientSecret(),
         grant_type: 'authorization_code',
         code: params.code,
-        redirect_uri: `${this.environmentGetter.getApiDomain()}/auth/discord/callback`,
+        redirect_uri: `${
+          this.getCallbackUrl()
+        }`,
         scope: 'identify',
       }).toString(),
       {
