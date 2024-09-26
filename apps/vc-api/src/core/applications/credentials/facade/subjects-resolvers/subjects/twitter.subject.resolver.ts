@@ -34,7 +34,7 @@ export class TwitterSubjectResolver extends AbstractSubjectResolver<
     return [];
   }
 
-  getAuthUrl(ens: string, authId: string): string {
+  getAuthUrl({ens, authId}): string {
     const clientId = this.environmentGetter.getTwitterClientId();
     const stateObject = { ens, authId };
     const encryptedState = this.cryptoEncryption.encrypt(JSON.stringify(stateObject));

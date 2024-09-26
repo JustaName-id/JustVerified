@@ -50,6 +50,8 @@ import { VerifyRecordsControllerMapper } from './api/verify-records/mapper/verif
 import { VERIFY_RECORDS_CONTROLLER_MAPPER } from './api/verify-records/mapper/iverify-records.controller.mapper';
 import { JustaNameInitializerService } from './external/justaname-initializer/justaname-initializer.service';
 import { ENS_MANAGER_SERVICE } from './core/applications/ens-manager/iens-manager.service';
+import { EMAIL_SENDER } from './core/applications/email-sender/iemail-sender.service';
+import { EmailSender } from './external/email-sender/email-sender.service';
 
 const dynamicImport = async (packageName: string) =>
   new Function(`return import('${packageName}')`)();
@@ -130,6 +132,10 @@ const dynamicImport = async (packageName: string) =>
     {
       useClass: VerifyRecordsControllerMapper,
       provide: VERIFY_RECORDS_CONTROLLER_MAPPER
+    },
+    {
+      useClass: EmailSender,
+      provide: EMAIL_SENDER
     },
     GithubSubjectResolver,
     DiscordSubjectResolver,

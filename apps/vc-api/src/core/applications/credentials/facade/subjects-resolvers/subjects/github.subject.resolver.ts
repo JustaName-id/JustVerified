@@ -31,7 +31,7 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<
     return [];
   }
 
-  getAuthUrl(ens: string, authId: string): string {
+  getAuthUrl({ens, authId}): string {
     const stateObject = { ens, authId };
     const encryptedState = this.cryptoEncryption.encrypt(JSON.stringify(stateObject));
     const clientId = this.environmentGetter.getGithubClientId();

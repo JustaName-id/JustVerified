@@ -14,6 +14,7 @@ import { Inject } from '@nestjs/common';
 import { CRYPTO_SERVICE, ICryptoService } from '../../../../crypto/icrypto.service';
 import { HttpService } from '@nestjs/axios';
 import { ENS_MANAGER_SERVICE, IEnsManagerService } from '../../../../ens-manager/iens-manager.service';
+import { GetAuthUrlRequest } from './requests/get-auth-url.request';
 
 /* eslint-disable @typescript-eslint/ban-types */
 export abstract class AbstractSubjectResolver<
@@ -42,7 +43,7 @@ export abstract class AbstractSubjectResolver<
 
   abstract getContext(): string[];
 
-  abstract getAuthUrl(subname: string, authId: string): string;
+  abstract getAuthUrl(authUrlRequest: GetAuthUrlRequest): string;
 
   abstract callbackSuccessful(
     data: T,
