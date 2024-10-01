@@ -18,7 +18,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "paths": {
-      "@justanid/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"]
+      "@justverified/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"]
     }
   }
 }

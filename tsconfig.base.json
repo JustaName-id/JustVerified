@@ -16,9 +16,7 @@
     "baseUrl": ".",
     "types": ["Multer"],
     "paths": {
-      "@justan.id/react": ["packages/@justan.id/react/src/index.ts"],
-      "@justanid/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"],
-      "@justverified/react": ["packages/@justverified/react/src/index.ts"]
+      "@justverified/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

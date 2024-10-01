@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import {validate} from "./config/env.validation";
 import { Resolver } from 'did-resolver';
 import { getResolver as ethrDidResolver } from 'ethr-did-resolver';
-import { getResolver as ensDidResolver } from '@justanid/ens-did-resolver';
+import { getResolver as ensDidResolver } from '@justverified/ens-did-resolver';
 import { CredentialsController } from './api/credentials/credentials.controller';
 import { CREDENTIAL_CREATOR_FACADE } from './core/applications/credentials/facade/icredential.facade';
 import { CredentialCreatorFacade } from './core/applications/credentials/facade/credential.facade';
