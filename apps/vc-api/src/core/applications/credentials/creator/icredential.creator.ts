@@ -2,7 +2,7 @@ import {
   CredentialSubjectValue,
   EthereumEip712Signature2021,
   VerifiableEthereumEip712Signature2021
-} from '../../../domain/entities/eip712';
+} from '../../../domain/entities/ethereumEip712Signature';
 
 export const CREDENTIAL_CREATOR = 'CREDENTIAL_CREATOR';
 

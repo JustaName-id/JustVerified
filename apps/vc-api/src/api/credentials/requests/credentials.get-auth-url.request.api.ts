@@ -19,4 +19,7 @@ export class CredentialsGetAuthUrlApiRequestQuery
   @IsOptional()
   @IsString()
   code?: string;
+
+  @IsString()
+  state: string
 }

@@ -7,11 +7,17 @@ import {
   DialogFooter,
   DialogTitle,
   Flex,
-  H2,
+  H2, JustaNameLogoIcon,
   SPAN
 } from '@justaname.id/react-ui';
-import { useSignInWithEns, JustaNameFooter, JustaNameLoadingDialog } from '@justaname.id/react-signin';
-import { FC, Fragment, useEffect, useMemo, useState } from 'react';
+import {
+  useSignInWithJustaName,
+  JustaNameFooter,
+  JustaNameLoadingDialog,
+  JustSignInContext,
+  JustaNameDialog
+} from '@justaname.id/react-signin';
+import {FC, Fragment, useContext, useEffect, useMemo, useState} from 'react';
 import { useEnsAuth, useEnsSignIn, useEnsSignOut, useRecords } from '@justaname.id/react';
 import { SelectCredentialItem } from '../../components';
 export interface VCDialogProps {
@@ -26,8 +32,9 @@ export const JustVerifiedDialog: FC<VCDialogProps> = ({
                                                     credentials,
                                                     alreadyConfigured
 }) => {
+  const { logo } = useContext(JustSignInContext)
   const [selectedCredential, setSelectedCredential] = useState<Credentials | undefined>(undefined)
-  const { connectedEns } = useSignInWithEns();
+  const { connectedEns } = useSignInWithJustaName();
   const { refetchRecords} = useRecords({
     fullName: connectedEns?.ens || "",
   })
@@ -53,17 +60,14 @@ export const JustVerifiedDialog: FC<VCDialogProps> = ({
           setSelectedCredential(undefined);
           eventSource.close();
         } else if (data.error) {
-          console.error('Received error:', data.error);
           setSelectedCredential(undefined);
           eventSource.close();
         }
       } catch (error) {
-        console.error('Error parsing event data:', error);
       }
     };
 
     eventSource.onerror = (error) => {
-      console.error('EventSource failed:', error);
       setSelectedCredential(undefined);
       refetchRecords();
       eventSource.close();
@@ -74,19 +78,24 @@ export const JustVerifiedDialog: FC<VCDialogProps> = ({
     return <JustaNameLoadingDialog open={true} />
   }
 
-  return (<Dialog open={open}>
-    <div style={{
-      display: 'hidden'
-    }}>
-      <DialogTitle>
+  return (
+    <JustaNameDialog open={open} handleClose={() => handleOpenDialog(false)} header={
+      <div style={{
+        paddingLeft:'24px',
+        justifyContent: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        flexGrow:1
+      }}>
+        {
+          logo
+            ? <img src={logo} alt="logo" style={{ height: '62px' , width: 'auto' }} />
+            :         <JustaNameLogoIcon height={62} />
 
-      </DialogTitle>
-    </div>
-    <DialogContent style={{
-      padding: 0,
-      maxWidth: '500px',
-      transition: 'all 0.4 ease-in-out'
-    }}>
+        }
+      </div>
+    }
+    >
       <Flex
         style={{
           padding: '0px 0 0 0',
@@ -97,7 +106,6 @@ export const JustVerifiedDialog: FC<VCDialogProps> = ({
       >
         <Flex
           style={{
-            padding: '40px 20px 20px 20px',
             // border: "1px solid var(--justaname-input-border-color)",
             borderRadius: '16px',
             background: 'var(--justaname-background-color)',
@@ -119,13 +127,6 @@ export const JustVerifiedDialog: FC<VCDialogProps> = ({
                 fontWeight: 900,
               }}>{connectedEns?.ens}</SPAN>
             </Badge>
-
-            <CloseIcon
-              style={{
-                cursor: 'pointer'
-              }}
-              onClick={() => handleOpenDialog(false)}
-            />
           </Flex>
 
           <Flex
@@ -166,9 +167,7 @@ export const JustVerifiedDialog: FC<VCDialogProps> = ({
             }
           </Flex>
         </Flex>
-
-        <JustaNameFooter />
       </Flex>
-    </DialogContent>
-  </Dialog>);
-}
+    </JustaNameDialog>
+    )
+  }

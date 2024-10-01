@@ -4,7 +4,6 @@ export type PrimitiveValue = string | number | boolean | null;
 
 export type CredentialSubjectValue = Record<string, PrimitiveValue>;
 
-/* eslint-disable @typescript-eslint/ban-types */
 export class EthereumEip712Signature2021<T extends CredentialSubjectValue = {}> {
   credentialSubject: CredentialSubject & T;
   issuanceDate: Date;
@@ -60,6 +59,7 @@ export class VerifiableEthereumEip712Signature2021<T extends CredentialSubjectVa
 
 export class CredentialSubject {
   id?: string;
+  did: string;
 }
 
 export class Issuer {
@@ -76,7 +76,7 @@ export class Proof {
   proofPurpose: string;
   type: string;
   proofValue: string;
-  eip712: Eip712;
+  eip712: EthereumEip712Signature;
 
   constructor({
                 verificationMethod,
@@ -91,7 +91,7 @@ export class Proof {
     proofPurpose: string,
     type: string,
     proofValue: string,
-    eip712: Eip712
+    eip712: EthereumEip712Signature
   }) {
     this.verificationMethod = verificationMethod;
     this.created = created;
@@ -102,7 +102,7 @@ export class Proof {
   }
 }
 
-export class Eip712 {
+export class EthereumEip712Signature {
   domain: Domain;
   types: Types;
   primaryType: string;

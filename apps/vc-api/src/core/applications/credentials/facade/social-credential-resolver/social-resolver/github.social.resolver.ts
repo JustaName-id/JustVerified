@@ -1,13 +1,13 @@
 import { Inject } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { AbstractSubjectResolver } from './abstract.subject.resolver';
+import { AbstractSocialResolver } from './abstract.social.resolver';
 import { GithubCredential } from '../../../../../domain/credentials/github.credential';
 import { GithubCallback } from './callback/github.callback';
 import { GithubToken } from './token/github.token';
 import { GithubAuth } from './auth/github.auth';
-import { VerifiableEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../../../../domain/entities/ethereumEip712Signature';
 
-export class GithubSubjectResolver extends AbstractSubjectResolver<
+export class GithubSocialResolver extends AbstractSocialResolver<
   GithubCallback,
   GithubCredential
 > {
@@ -19,16 +19,12 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<
     return 'github';
   }
 
-  getCallbackParameters(): string[] {
-    return ['code'];
+  getKey(): string {
+    return 'com.github';
   }
 
   getType(): string[] {
     return ['VerifiableGithubAccount'];
-  }
-
-  getContext(): string[] {
-    return [];
   }
 
   getAuthUrl({ens, authId}): string {
@@ -39,9 +35,9 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<
     return `${this.githubAuthUrl}?client_id=${clientId}&redirect_uri=${this.getCallbackUrl()}&state=${encryptedState}&scope=${scope}`;
   }
 
-  async callbackSuccessful(
-    params: GithubCallback, ens: string
-  ): Promise<VerifiableEthereumEip712Signature2021> {
+  async extractCredentialSubject(
+    params: GithubCallback
+  ): Promise<GithubCredential> {
     const response = await this.httpService.axiosRef.post<GithubToken>(
       this.githubTokenUrl,
       {
@@ -67,10 +63,8 @@ export class GithubSubjectResolver extends AbstractSubjectResolver<
       }
     );
 
-    const verifiedCredential = await this.generateCredentialSubject({
+    return {
       username: userResponse.data.login,
-    }, ens);
-
-    return verifiedCredential;
+    }
   }
 }

@@ -1,13 +1,14 @@
 import { Inject } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { AbstractSubjectResolver } from './abstract.subject.resolver';
+import { AbstractSocialResolver } from './abstract.social.resolver';
 import { TwitterCredential } from '../../../../../domain/credentials/twitter.credential';
 import { TwitterCallback } from './callback/twitter.callback';
 import { TwitterToken } from './token/twitter.token';
 import { TwitterAuth } from './auth/twitter.auth';
-import { VerifiableEthereumEip712Signature2021 } from '../../../../../domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../../../../domain/entities/ethereumEip712Signature';
+import {GetAuthUrlRequest} from "./requests/get-auth-url.request";
 
-export class TwitterSubjectResolver extends AbstractSubjectResolver<
+export class TwitterSocialResolver extends AbstractSocialResolver<
   TwitterCallback,
   TwitterCredential
 > {
@@ -22,6 +23,10 @@ export class TwitterSubjectResolver extends AbstractSubjectResolver<
     return 'twitter';
   }
 
+  getKey(): string {
+    return 'com.twitter';
+  }
+
   getCallbackParameters(): string[] {
     return ['code'];
   }
@@ -30,17 +35,13 @@ export class TwitterSubjectResolver extends AbstractSubjectResolver<
     return ['VerifiableTwitterAccount'];
   }
 
-  getContext(): string[] {
-    return [];
-  }
 
-  getAuthUrl({ens, authId}): string {
+  getAuthUrl(authUrlRequest:GetAuthUrlRequest): string {
     const clientId = this.environmentGetter.getTwitterClientId();
-    const stateObject = { ens, authId };
-    const encryptedState = this.cryptoEncryption.encrypt(JSON.stringify(stateObject));
+    const encryptedState = this.encryptState(authUrlRequest);
     const codeVerifier = this.cryptoEncryption.generateCodeVerifier();
     const codeChallenge = this.cryptoEncryption.generateCodeChallenge(codeVerifier);
-    this.codeVerifierCache.set(authId, codeVerifier);
+    this.codeVerifierCache.set(authUrlRequest.authId, codeVerifier);
 
     return `${
       this.twitterAuthUrl
@@ -51,9 +52,9 @@ export class TwitterSubjectResolver extends AbstractSubjectResolver<
     }&code_challenge_method=S256`;
   }
 
-  async callbackSuccessful(
-    params: TwitterCallback, ens: string
-  ): Promise<VerifiableEthereumEip712Signature2021> {
+  async extractCredentialSubject(
+    params: TwitterCallback
+  ): Promise<TwitterCredential> {
     const encryptedState = params.state;
     const decryptedState = this.cryptoEncryption.decrypt(encryptedState);
     const { authId } = JSON.parse(decryptedState);
@@ -82,7 +83,6 @@ export class TwitterSubjectResolver extends AbstractSubjectResolver<
 
     const accessToken = response.data.access_token;
 
-    // Fetch the authenticated user's data
     const userResponse = await this.httpService.axiosRef.get<TwitterAuth>(
       this.twitterUserUrl,
       {
@@ -92,10 +92,8 @@ export class TwitterSubjectResolver extends AbstractSubjectResolver<
       }
     );
 
-    const verifiedCredential = await this.generateCredentialSubject({
+    return {
       username: userResponse.data.data.username,
-    }, ens);
-
-    return verifiedCredential;
+    }
   }
 }

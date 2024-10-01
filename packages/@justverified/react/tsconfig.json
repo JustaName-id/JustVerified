@@ -4,6 +4,8 @@
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
+    "target": "esnext",
+    "module": "esnext",
     "strict": true
   },
   "files": [],

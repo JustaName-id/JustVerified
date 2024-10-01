@@ -1,3 +1,3 @@
-export class VeirfyRecordsResponse {
+export class VerifyRecordsResponse {
   [key: string]: boolean;
 }

@@ -2,7 +2,7 @@ import {Inject, Injectable, OnModuleInit} from "@nestjs/common";
 import {ICredentialCreator} from "../../core/applications/credentials/creator/icredential.creator";
 import {ICredentialVerifier} from "../../core/applications/credentials/verifier/icredential.verifier";
 import {ENVIRONMENT_GETTER, IEnvironmentGetter} from "../../core/applications/environment/ienvironment.getter";
-import {EthereumEip712Signature2021, VerifiableEthereumEip712Signature2021} from "../../core/domain/entities/eip712";
+import {EthereumEip712Signature2021, VerifiableEthereumEip712Signature2021} from "../../core/domain/entities/ethereumEip712Signature";
 import {IKeyManagementFetcher, KEY_MANAGEMENT_FETCHER} from "../../core/applications/key-management/ikey-management.fetcher";
 import {CREDENTIAL_AGENT_MAPPER, ICredentialAgentMapper} from "./mapper/icredential-agent.mapper";
 import { Agent, CredentialAgentInitiator, Identifier } from './credential.agent.initiator';

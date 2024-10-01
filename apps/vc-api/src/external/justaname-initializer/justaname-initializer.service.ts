@@ -7,7 +7,7 @@ import { Inject } from '@nestjs/common';
 import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../core/applications/environment/ienvironment.getter';
 import { GetRecordsRequest } from '../../core/applications/ens-manager/requests/get-records.request';
 import { GetRecordsResponse } from '../../core/applications/ens-manager/responses/get-records.response';
-import { VerifiableEthereumEip712Signature2021 } from '../../core/domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../core/domain/entities/ethereumEip712Signature';
 import {
   IKeyManagementFetcher,
   KEY_MANAGEMENT_FETCHER
@@ -50,7 +50,7 @@ export class JustaNameInitializerService implements IEnsManagerService {
     const records: SubnameRecordsResponse = await this.justaname.subnames.getRecordsByFullName({
       fullName: params.ens,
       providerUrl: providerUrl,
-      chainId: params.chainId
+      chainId: params.chainId,
     })
 
     return this.mapSubnameRecordsResponseToGetRecordsResponse(records)

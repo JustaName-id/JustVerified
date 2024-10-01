@@ -1,5 +1,5 @@
 import {ICredentialAgentMapper} from "./icredential-agent.mapper";
-import {EthereumEip712Signature2021, VerifiableEthereumEip712Signature2021} from "../../../core/domain/entities/eip712";
+import {EthereumEip712Signature2021, VerifiableEthereumEip712Signature2021} from "../../../core/domain/entities/ethereumEip712Signature";
 import {VerifiableCredential} from "@veramo/core";
 import {ICreateVerifiableCredentialEIP712Args} from "@veramo/credential-eip712";
 
@@ -20,7 +20,10 @@ export class CredentialAgentMapper implements ICredentialAgentMapper {
     return {
       "@context": verifiedCredential["@context"],
       type: verifiedCredential.type,
-      credentialSubject: verifiedCredential.credentialSubject,
+      credentialSubject: {
+        did: verifiedCredential.credentialSubject.id,
+        ...verifiedCredential.credentialSubject
+      },
       issuer: {
         id: typeof verifiedCredential.issuer === 'string' ? verifiedCredential.issuer : verifiedCredential.issuer.id
       },

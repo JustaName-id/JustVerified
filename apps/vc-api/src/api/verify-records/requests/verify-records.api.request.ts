@@ -1,20 +1,26 @@
 import { IsArray, IsInt, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import {ChainId} from "@justaname.id/sdk";
+import {Credentials} from "../../../core/domain/entities/credentials";
 
 export class VerifyRecordsApiRequest {
   @ApiProperty()
   @IsString()
-  subname: string;
+  ens: string;
 
   @ApiProperty()
   @Type(() => Number)
   @IsInt()
-  chainId: number;
+  chainId: ChainId;
 
   @ApiProperty()
   @IsArray()
-  recordsToVerify: string[];
+  credentials: Credentials[];
+
+  @ApiProperty()
+  @IsOptional()
+  matchStandard?: boolean = false;
 
   @ApiProperty()
   @IsOptional()

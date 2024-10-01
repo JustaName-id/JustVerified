@@ -1,4 +1,4 @@
-import { VerifiableEthereumEip712Signature2021 } from '../../core/domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../core/domain/entities/ethereumEip712Signature';
 
 export interface SubjectData {
   authId: string;

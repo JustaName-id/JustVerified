@@ -1,17 +1,23 @@
-import { Controller, Get, Inject, Param, Query, Req, Res, Session, UseGuards } from '@nestjs/common';
+import {Body, Controller, Get, Inject, Param, Post, Query, Req, Res, Session, UseGuards} from '@nestjs/common';
 import {
   CREDENTIAL_CREATOR_FACADE,
   ICredentialCreatorFacade
 } from '../../core/applications/credentials/facade/icredential.facade';
 import { Response } from 'express';
 import { AUTH_CONTROLLER_MAPPER, IcredentialsControllerMapper } from './mapper/icredentials.controller.mapper';
-import { CredentialsGetAuthUrlRequestApiRequestParam } from './credentials.get-auth-url.request.api';
 import { v4 as uuidv4 } from 'uuid';
 import { filter, Subject, take } from 'rxjs';
 import { SubjectData } from './isubject.data';
 import { JwtGuard } from '../../guards/jwt.guard';
+import {CredentialsGenerateEmailOtpApiRequestQuery} from "./requests/credentials.generate-email-otp.request.api";
+import {CredentialsGetAuthUrlRequestApiRequestParam} from "./requests/credentials.get-auth-url.request.api";
+import {CredentialsGenerateEmailResponseApi} from "./responses/credentials.generate.email.response.api";
+import {CredentialsResendOtpRequestApi} from "./requests/credentials.resend-otp.request.api";
+import {CredentialsVerifyOtpRequestApi} from "./requests/credentials.verify-otp.request.api";
+import {CredentialsClearEmailRequestApi} from "./requests/credentials.clear-email.request.api";
+import {AuthCallbackApiResponse} from "./responses/credentials.callback.response.api";
 
-type Siwj = { address: string, ens: string };
+type Siwens = { address: string, ens: string };
 
 @Controller('credentials')
 export class CredentialsController {
@@ -26,24 +32,19 @@ export class CredentialsController {
     private readonly authControllerMapper: IcredentialsControllerMapper
   ) {}
 
-  @Get('')
-  async welcomeToJustaNameVerifications(): Promise<string[]> {
-    return ['Welcome to JustaName Verifications! Please use the /auth/:authName endpoint to get started.']
-  }
-
   @UseGuards(JwtGuard)
-  @Get(':authName')
+  @Get('socials/:authName')
   async getAuthUrl(
     @Param() authGetAuthUrlRequestApi: CredentialsGetAuthUrlRequestApiRequestParam,
     @Res() res: Response,
-    @Req() req: Request & { user: Siwj }
+    @Req() req: Request & { user: Siwens }
   ): Promise<any> {
 
     const authId = uuidv4();
     const subject = new Subject<SubjectData>();
     this.authSubjects.set(authId, subject);
 
-    const redirectUrl = await this.credentialCreatorFacade.getAuthUrl(
+    const redirectUrl = await this.credentialCreatorFacade.getSocialAuthUrl(
       authGetAuthUrlRequestApi.authName,
       req.user?.ens,
       authId
@@ -75,14 +76,14 @@ export class CredentialsController {
     );
   }
 
-  @Get(':authName/callback')
+  @Get('socials/:authName/callback')
   async callback(
     @Param() authGetAuthUrlRequestApiParam: CredentialsGetAuthUrlRequestApiRequestParam,
     @Query() authGetAuthUrlRequestApiQuery: any,
     @Res() res: Response
   ): Promise<void> {
     try {
-      const verifiedEthereumEip712Signature2021 = await this.credentialCreatorFacade.callback(
+      const verifiedEthereumEip712Signature2021 = await this.credentialCreatorFacade.socialCallback(
         this.authControllerMapper.mapAuthCallbackApiRequestToCredentialCallbackRequest(
           authGetAuthUrlRequestApiQuery,
           authGetAuthUrlRequestApiParam)
@@ -114,6 +115,67 @@ export class CredentialsController {
       </body>
     </html>
   `);
+  }
 
+
+  @UseGuards(JwtGuard)
+  @Get("email")
+  async generateEmailOtp(
+    @Query() query: CredentialsGenerateEmailOtpApiRequestQuery,
+    @Req() req: Request & { user: Siwens }
+  ): Promise<CredentialsGenerateEmailResponseApi>{
+    const authId = uuidv4();
+    const subject = new Subject<SubjectData>();
+    this.authSubjects.set(authId, subject);
+
+    const state = await this.credentialCreatorFacade.getEmailOTP(
+      query.email,
+      req.user?.ens,
+      authId
+    )
+
+    return {
+      state
+    }
+  }
+
+
+  @UseGuards(JwtGuard)
+  @Post("email/resend")
+  async resendEmailOtp(
+    @Body() body: CredentialsResendOtpRequestApi,
+  ): Promise<void>{
+    await this.credentialCreatorFacade.resendOtp(
+      body.state
+    )
+  }
+
+  @UseGuards(JwtGuard)
+  @Post("email/verify")
+  async verifyEmailOtp(
+    @Body() body: CredentialsVerifyOtpRequestApi,
+  ): Promise<AuthCallbackApiResponse>{
+    const { dataKey, verifiableCredential, authId} = await this.credentialCreatorFacade.callbackEmailOTP({
+      state: body.state,
+      otp: body.otp
+    })
+
+    this.authSubjects.delete(authId);
+
+    return this.authControllerMapper.mapCredentialCallbackResponseToAuthCallbackApiResponse({
+      dataKey,
+      verifiableCredential,
+      authId
+    })
+  }
+
+  @UseGuards(JwtGuard)
+  @Post("email/clear")
+  async clearEmailState(
+    @Query() query: CredentialsClearEmailRequestApi,
+  ): Promise<void>{
+    await this.credentialCreatorFacade.clearState(
+      query.state
+    )
   }
 }

@@ -16,6 +16,80 @@
           "quiet": true
         }
       }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "nx buildProject @justverified/react"
+          },
+          {
+            "command": "node update-package-json.js"
+          }
+        ],
+        "cwd": "packages/@justverified/react",
+        "parallel": false
+      }
+    },
+    "buildProject": {
+      "executor": "@nx/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "packages/@justverified/react/dist",
+        "tsConfig": "packages/@justverified/react/tsconfig.lib.json",
+        "project": "packages/@justverified/react/package.json",
+        "entryFile": "packages/@justverified/react/src/index.ts",
+        "external": [
+          "react",
+          "react-dom",
+          "react/jsx-runtime",
+          "@justverified/react"
+        ],
+        "rollupConfig": "packages/@justverified/react/rollup.config.cjs",
+        "generateExportsField": true,
+        "compiler": "swc",
+        "format": ["esm"],
+        "assets": [
+          {
+            "glob": "packages/@justverified/react/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      },
+      "dependsOn": [
+        "lint",
+        {
+          "projects": [
+            "@justverified/sdk",
+            "@justverified/react",
+            "@justverified/react-ui"
+          ],
+          "target": "build"
+        }
+      ]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "fix": true,
+        "lintFilePatterns": [
+          "packages/@justverified/react/**/*.{ts,tsx,js,jsx}",
+          "packages/@justverified/react/package.json"
+        ]
+      }
     }
   }
 }

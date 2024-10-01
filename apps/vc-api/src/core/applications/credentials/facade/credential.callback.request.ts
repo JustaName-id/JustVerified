@@ -1,6 +1,6 @@
-import { AllCallback } from './subjects-resolvers/subjects/callback/all.callback';
+import { BaseSocialCallback } from './social-credential-resolver/social-resolver/callback/base.social.callback';
 
 export class CredentialCallbackRequest {
   credentialName: string;
-  callbackData: AllCallback
+  callbackData: BaseSocialCallback
 }

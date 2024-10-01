@@ -1,5 +1,5 @@
-import { ApiProperty, ApiExtraModels } from '@nestjs/swagger';
-import { IsString, IsDate, IsArray, IsObject, ValidateNested, IsOptional } from 'class-validator';
+import { ApiResponseProperty, ApiExtraModels } from '@nestjs/swagger';
+import { IsString, IsDate, IsArray, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export type PrimitiveValueApiResponse = string | number | boolean | null;
@@ -8,38 +8,38 @@ export type CredentialSubjectValueApiResponse = Record<string, PrimitiveValueApi
 
 
 export class CredentialSubjectElementApiResponse {
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   name: string;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   type: string;
 }
 
 @ApiExtraModels(CredentialSubjectElementApiResponse)
 export class TypesApiResponse {
-  @ApiProperty({ type: [CredentialSubjectElementApiResponse] })
+  @ApiResponseProperty({ type: [CredentialSubjectElementApiResponse] })
   @ValidateNested({ each: true })
   @Type(() => CredentialSubjectElementApiResponse)
   EIP712Domain: CredentialSubjectElementApiResponse[];
 
-  @ApiProperty({ type: [CredentialSubjectElementApiResponse] })
+  @ApiResponseProperty({ type: [CredentialSubjectElementApiResponse] })
   @ValidateNested({ each: true })
   @Type(() => CredentialSubjectElementApiResponse)
   CredentialSubject: CredentialSubjectElementApiResponse[];
 
-  @ApiProperty({ type: [CredentialSubjectElementApiResponse] })
+  @ApiResponseProperty({ type: [CredentialSubjectElementApiResponse] })
   @ValidateNested({ each: true })
   @Type(() => CredentialSubjectElementApiResponse)
   Issuer: CredentialSubjectElementApiResponse[];
 
-  @ApiProperty({ type: [CredentialSubjectElementApiResponse] })
+  @ApiResponseProperty({ type: [CredentialSubjectElementApiResponse] })
   @ValidateNested({ each: true })
   @Type(() => CredentialSubjectElementApiResponse)
   Proof: CredentialSubjectElementApiResponse[];
 
-  @ApiProperty({ type: [CredentialSubjectElementApiResponse] })
+  @ApiResponseProperty({ type: [CredentialSubjectElementApiResponse] })
   @ValidateNested({ each: true })
   @Type(() => CredentialSubjectElementApiResponse)
   VerifiableCredential: CredentialSubjectElementApiResponse[];
@@ -48,14 +48,14 @@ export class TypesApiResponse {
 
 
 export class CredentialSubjectApiResponse {
-  @ApiProperty({ required: false })
+  @ApiResponseProperty()
   @IsOptional()
   @IsString()
   id?: string;
 }
 
 export class IssuerApiResponse {
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   id: string;
 
@@ -64,14 +64,14 @@ export class IssuerApiResponse {
 
 
 export class DomainApiResponse {
-  @ApiProperty()
+  @ApiResponseProperty()
   chainId: number;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   name: string;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   version: string;
 
@@ -79,17 +79,17 @@ export class DomainApiResponse {
 
 @ApiExtraModels(DomainApiResponse, TypesApiResponse)
 export class Eip712ApiResponse {
-  @ApiProperty({ type: DomainApiResponse })
+  @ApiResponseProperty({ type: DomainApiResponse })
   @ValidateNested()
   @Type(() => DomainApiResponse)
   domain: DomainApiResponse;
 
-  @ApiProperty({ type: TypesApiResponse })
+  @ApiResponseProperty({ type: TypesApiResponse })
   @ValidateNested()
   @Type(() => TypesApiResponse)
   types: TypesApiResponse;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   primaryType: string;
 
@@ -97,67 +97,65 @@ export class Eip712ApiResponse {
 
 @ApiExtraModels(Eip712ApiResponse)
 export class ProofApiResponse {
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   verificationMethod: string;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsDate()
   created: Date;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   proofPurpose: string;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   type: string;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   proofValue: string;
 
-  @ApiProperty({ type: Eip712ApiResponse })
+  @ApiResponseProperty({ type: Eip712ApiResponse })
   @ValidateNested()
   @Type(() => Eip712ApiResponse)
   eip712: Eip712ApiResponse;
 }
 
 @ApiExtraModels(CredentialSubjectApiResponse)
-/* eslint-disable @typescript-eslint/ban-types */
 export class EthereumEip712Signature2021ApiResponse<T extends CredentialSubjectValueApiResponse = {}> {
-  @ApiProperty({ type: CredentialSubjectApiResponse })
+  @ApiResponseProperty({ type: CredentialSubjectApiResponse })
   @ValidateNested()
   @Type(() => CredentialSubjectApiResponse)
   credentialSubject: CredentialSubjectApiResponse & T;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsDate()
   issuanceDate: Date;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsDate()
   expirationDate: Date;
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsArray()
   "@context": string | Record<string, any> | (string | Record<string, any>)[];
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsArray()
   type: string[] | string;
 
 }
 
 @ApiExtraModels(ProofApiResponse, IssuerApiResponse)
-/* eslint-disable @typescript-eslint/ban-types */
 export class VerifiedEthereumEip712Signature2021ApiResponse<T extends CredentialSubjectValueApiResponse = {}> extends EthereumEip712Signature2021ApiResponse<T> {
-  @ApiProperty({ type: ProofApiResponse })
+  @ApiResponseProperty({ type: ProofApiResponse })
   @ValidateNested()
   @Type(() => ProofApiResponse)
   proof: ProofApiResponse;
 
-  @ApiProperty({ type: IssuerApiResponse })
+  @ApiResponseProperty({ type: IssuerApiResponse })
   @ValidateNested()
   @Type(() => IssuerApiResponse)
   issuer: IssuerApiResponse;
@@ -168,11 +166,11 @@ export class VerifiedEthereumEip712Signature2021ApiResponse<T extends Credential
 @ApiExtraModels(VerifiedEthereumEip712Signature2021ApiResponse)
 export class AuthCallbackApiResponse {
 
-  @ApiProperty()
+  @ApiResponseProperty()
   @IsString()
   dataKey: string;
 
-  @ApiProperty({ type: VerifiedEthereumEip712Signature2021ApiResponse })
+  @ApiResponseProperty({ type: VerifiedEthereumEip712Signature2021ApiResponse })
   @ValidateNested()
   @Type(() => VerifiedEthereumEip712Signature2021ApiResponse)
   verifiedCredential: VerifiedEthereumEip712Signature2021ApiResponse;

@@ -17,7 +17,7 @@ export class SubnameRecordsFetcher implements ISubnameRecordsFetcher {
 
     const records = await this.ensManagerService.getRecords({
       ens: subname,
-      chainId: chainId
+      chainId: chainId,
     })
 
     return this.mapSubnameRecordsResponseToSubname(subname, records);

@@ -1,6 +1,6 @@
 import { Credentials } from '../../types';
 import { Text } from '@justaname.id/sdk'
-import { useSignInWithEns, useMApp } from '@justaname.id/react-signin';
+import { useSignInWithJustaName, useMApp } from '@justaname.id/react-signin';
 import { JustVerifiedDialog } from '../../dialogs';
 import {
   useCanEnableMApps,
@@ -11,7 +11,7 @@ import {
   useRecords
 } from '@justaname.id/react';
 import { createContext, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
-
+import { useQueryClient } from '@tanstack/react-query';
 export interface JustVerifiedContextProps {
   handleOpenVCDialog: (open: boolean) => void;
   configuredCredentials: Credentials[];
@@ -37,8 +37,9 @@ export const JustVerifiedProvider: FC<JustVerifiedProviderProps> = ({
                                                                       credentials ,
                                                                       openOnConnect= true
                                                                     }) => {
+  const queryClient = useQueryClient();
   const [openVCDialog, setOpenVCDialog] = useState(false);
-  const { connectedEns, isEnsAuthPending } = useSignInWithEns();
+  const { connectedEns, isEnsAuthPending } = useSignInWithJustaName();
   const { handleOpenMAppDialog, canOpenMAppDialog, isMAppEnabled, isCanOpenMAppDialogPending } = useMApp({
     mApp: MAPP
   });

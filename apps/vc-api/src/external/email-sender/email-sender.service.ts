@@ -1,10 +1,10 @@
-import * as React from 'react';
-
 import { Resend } from 'resend';
 import { Inject, Injectable } from '@nestjs/common';
 import { IEmailSender } from '../../core/applications/email-sender/iemail-sender.service';
 import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../core/applications/environment/ienvironment.getter';
 import { EmailNotification } from '../../core/domain/entities/emailNotification';
+import {createElement} from "react";
+import VerificationEmail from './templates/verification-email.template';
 
 @Injectable()
 export class EmailSender implements IEmailSender {
@@ -23,7 +23,10 @@ export class EmailSender implements IEmailSender {
       from: 'JustaName <noreply@justaname.id>',
       to: emailNotification.to,
       subject: emailNotification.subject,
-      react: React.createElement(emailNotification.content.otp, emailNotification.to),
+      react: createElement(VerificationEmail, {
+        otp: emailNotification.content.otp,
+        email: emailNotification.to,
+      }),
     });
 
     if (error) {

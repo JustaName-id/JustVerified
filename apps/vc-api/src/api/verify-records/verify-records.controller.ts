@@ -5,6 +5,7 @@ import {
 } from '../../core/applications/verify-records/iverify-records.service';
 import { VerifyRecordsApiRequest } from './requests/verify-records.api.request';
 import { IVerifyRecordsControllerMapper } from './mapper/iverify-records.controller.mapper';
+import {VerifyRecordsApiResponse} from "./responses/verify-records.api.response";
 
 @Controller('verify-records')
 export class VerifyRecordsController {
@@ -16,7 +17,7 @@ export class VerifyRecordsController {
   @Get('')
   async verifyRecords(
     @Query() query: VerifyRecordsApiRequest
-  ) {
+  ): Promise<VerifyRecordsApiResponse> {
     const response = await this.verifyRecordsService.verifyRecords(
       this.verifyRecordsControllerMapper.mapVerifyRecordsApiRequestToVerifyRecordsRequest(
         query

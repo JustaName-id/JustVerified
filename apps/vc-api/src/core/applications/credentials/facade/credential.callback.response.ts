@@ -1,4 +1,4 @@
-import { VerifiableEthereumEip712Signature2021 } from '../../../domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../../domain/entities/ethereumEip712Signature';
 
 export class CredentialCallbackResponse {
   dataKey: string;

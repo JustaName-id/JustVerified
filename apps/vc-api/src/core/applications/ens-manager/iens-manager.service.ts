@@ -2,7 +2,7 @@ import { SignInRequest } from './requests/sign-in.request';
 import { SignInResponse } from './responses/sign-in.response';
 import { GetRecordsRequest } from './requests/get-records.request';
 import { GetRecordsResponse } from './responses/get-records.response';
-import { VerifiableEthereumEip712Signature2021 } from '../../domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../domain/entities/ethereumEip712Signature';
 
 export const ENS_MANAGER_SERVICE = 'ENS_MANAGER_SERVICE'
 
