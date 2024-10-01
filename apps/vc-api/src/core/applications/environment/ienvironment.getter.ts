@@ -21,4 +21,5 @@ export interface IEnvironmentGetter {
   getTelegramBotUsername(): string;
   getEncryptKey(): string;
   getEncryptSalt(): string;
+  getResendApiKey(): string;
 }

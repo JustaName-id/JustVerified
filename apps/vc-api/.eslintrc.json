@@ -11,7 +11,16 @@
       "rules": {
         "@typescript-eslint/no-inferrable-types": "warn",
         "no-extra-boolean-cast": "warn",
-        "no-constant-condition": "warn"
+        "no-constant-condition": "warn",
+        "@typescript-eslint/ban-types": [
+          "error",
+          {
+            "types": {
+              "{}": false
+            },
+            "extendDefaults": true
+          }
+        ]
       }
     },
     {
@@ -22,9 +31,7 @@
       "files": ["*.json"],
       "parser": "jsonc-eslint-parser",
       "rules": {
-        "@nx/dependency-checks": [
-          "error"
-        ]
+        "@nx/dependency-checks": ["error"]
       }
     }
   ]

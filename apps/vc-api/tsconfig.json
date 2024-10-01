@@ -11,16 +11,14 @@
     }
   ],
   "compilerOptions": {
-//    "esModuleInterop": true,
-//    "module": "ESNext",
-//    "moduleResolution": "node",
+    "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
     "target": "ES2020",
     "module": "CommonJS",
     "esModuleInterop": true,
     "moduleResolution": "node",
     "paths": {
-      "@justanid/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"]
+      "@justverified/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"]
     }
   }
 }

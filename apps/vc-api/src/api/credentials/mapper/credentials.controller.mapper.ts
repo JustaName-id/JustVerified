@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { IcredentialsControllerMapper } from './icredentials.controller.mapper';
-import { AuthCallbackApiResponse } from '../credentials.callback.response.api';
+import { AuthCallbackApiResponse } from '../responses/credentials.callback.response.api';
 import { CredentialCallbackResponse } from '../../../core/applications/credentials/facade/credential.callback.response';
-import { CredentialsGetAuthUrlApiRequestQuery, CredentialsGetAuthUrlRequestApiRequestParam } from '../credentials.get-auth-url.request.api';
 import { CredentialCallbackRequest } from '../../../core/applications/credentials/facade/credential.callback.request';
+import {
+  CredentialsGetAuthUrlApiRequestQuery,
+  CredentialsGetAuthUrlRequestApiRequestParam
+} from "../requests/credentials.get-auth-url.request.api";
 
 @Injectable()
 export class CredentialsControllerMapper implements IcredentialsControllerMapper {

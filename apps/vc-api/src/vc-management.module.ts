@@ -4,15 +4,15 @@ import { JwtModule } from '@nestjs/jwt';
 import {validate} from "./config/env.validation";
 import { Resolver } from 'did-resolver';
 import { getResolver as ethrDidResolver } from 'ethr-did-resolver';
-import { getResolver as ensDidResolver } from '@justanid/ens-did-resolver';
+import { getResolver as ensDidResolver } from '@justverified/ens-did-resolver';
 import { CredentialsController } from './api/credentials/credentials.controller';
 import { CREDENTIAL_CREATOR_FACADE } from './core/applications/credentials/facade/icredential.facade';
 import { CredentialCreatorFacade } from './core/applications/credentials/facade/credential.facade';
-import { SUBJECT_RESOLVER } from './core/applications/credentials/facade/subjects-resolvers/isubject.resolver';
-import { SubjectResolver } from './core/applications/credentials/facade/subjects-resolvers/subject.resolver';
+import { SOCIAL_CREDENTIAL_RESOLVER } from './core/applications/credentials/facade/social-credential-resolver/isocial.credential.resolver';
+import { SocialCredentialResolver } from './core/applications/credentials/facade/social-credential-resolver/social.credential.resolver';
 import {
-  GithubSubjectResolver
-} from './core/applications/credentials/facade/subjects-resolvers/subjects/github.subject.resolver';
+  GithubSocialResolver
+} from './core/applications/credentials/facade/social-credential-resolver/social-resolver/github.social.resolver';
 import { EnvironmentGetter } from './core/applications/environment/environment.getter';
 import { ENVIRONMENT_GETTER } from './core/applications/environment/ienvironment.getter';
 import { HttpModule } from '@nestjs/axios';
@@ -27,20 +27,33 @@ import { DateGenerator } from './external/time-manager/date.generator';
 import { TIME_GENERATOR } from './core/applications/time.generator';
 import { Agent, CredentialAgentInitiator } from './external/credentials/credential.agent.initiator';
 import {
-  DiscordSubjectResolver
-} from './core/applications/credentials/facade/subjects-resolvers/subjects/discord.subject.resolver';
+  DiscordSocialResolver
+} from './core/applications/credentials/facade/social-credential-resolver/social-resolver/discord.social.resolver';
 import {
-  TelegramSubjectResolver
-} from './core/applications/credentials/facade/subjects-resolvers/subjects/telegram.subject.resolver';
+  TelegramSocialResolver
+} from './core/applications/credentials/facade/social-credential-resolver/social-resolver/telegram.social.resolver';
 import {
-  TwitterSubjectResolver
-} from './core/applications/credentials/facade/subjects-resolvers/subjects/twitter.subject.resolver';
+  TwitterSocialResolver
+} from './core/applications/credentials/facade/social-credential-resolver/social-resolver/twitter.social.resolver';
 import { CredentialsControllerMapper } from './api/credentials/mapper/credentials.controller.mapper';
 import { AUTH_CONTROLLER_MAPPER } from './api/credentials/mapper/icredentials.controller.mapper';
 import { AuthController } from './api/auth/auth.controller';
 import { DID_RESOLVER } from './core/applications/did/resolver/idid.resolver';
 import { CryptoService } from './external/crypto/crypto.service';
 import { CRYPTO_SERVICE } from './core/applications/crypto/icrypto.service';
+import { VerifyRecordsService } from './core/applications/verify-records/verify-records.service';
+import { VERIFY_RECORDS_SERVICE } from './core/applications/verify-records/iverify-records.service';
+import { SubnameRecordsFetcher } from './external/subname-records-fetcher/subname-records.fetcher';
+import { SUBNAME_RECORDS_FETCHER } from './core/applications/verify-records/isubname-records.fetcher';
+import { VerifyRecordsController } from './api/verify-records/verify-records.controller';
+import { VerifyRecordsControllerMapper } from './api/verify-records/mapper/verify-records.controller.mapper';
+import { VERIFY_RECORDS_CONTROLLER_MAPPER } from './api/verify-records/mapper/iverify-records.controller.mapper';
+import { JustaNameInitializerService } from './external/justaname-initializer/justaname-initializer.service';
+import { ENS_MANAGER_SERVICE } from './core/applications/ens-manager/iens-manager.service';
+import { EMAIL_SENDER } from './core/applications/email-sender/iemail-sender.service';
+import { EmailSender } from './external/email-sender/email-sender.service';
+import {EmailResolver} from "./core/applications/credentials/facade/email-resolver/email.resolver";
+import {EMAIL_RESOLVER} from "./core/applications/credentials/facade/email-resolver/iemail.resolver";
 
 const dynamicImport = async (packageName: string) =>
   new Function(`return import('${packageName}')`)();
@@ -58,7 +71,8 @@ const dynamicImport = async (packageName: string) =>
   ],
   controllers: [
     CredentialsController,
-    AuthController
+    AuthController,
+    VerifyRecordsController
   ],
   providers: [
     {
@@ -70,8 +84,8 @@ const dynamicImport = async (packageName: string) =>
       provide: CREDENTIAL_CREATOR_FACADE
     },
     {
-      useClass: SubjectResolver,
-      provide: SUBJECT_RESOLVER
+      useClass: SocialCredentialResolver,
+      provide: SOCIAL_CREDENTIAL_RESOLVER
     },
     {
       useClass: EnvironmentGetter,
@@ -105,10 +119,34 @@ const dynamicImport = async (packageName: string) =>
       useClass: CryptoService,
       provide: CRYPTO_SERVICE
     },
-    GithubSubjectResolver,
-    DiscordSubjectResolver,
-    TelegramSubjectResolver,
-    TwitterSubjectResolver,
+    {
+      useClass: VerifyRecordsService,
+      provide: VERIFY_RECORDS_SERVICE
+    },
+    {
+      useClass: SubnameRecordsFetcher,
+      provide: SUBNAME_RECORDS_FETCHER
+    },
+    {
+      useClass: JustaNameInitializerService,
+      provide: ENS_MANAGER_SERVICE
+    },
+    {
+      useClass: VerifyRecordsControllerMapper,
+      provide: VERIFY_RECORDS_CONTROLLER_MAPPER
+    },
+    {
+      useClass: EmailSender,
+      provide: EMAIL_SENDER
+    },
+    GithubSocialResolver,
+    DiscordSocialResolver,
+    TelegramSocialResolver,
+    TwitterSocialResolver,
+    {
+      useClass: EmailResolver,
+      provide: EMAIL_RESOLVER
+    },
     {
       provide: CredentialAgentInitiator,
       async useFactory() {

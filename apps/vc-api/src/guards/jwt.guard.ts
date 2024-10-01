@@ -28,6 +28,6 @@ export class JwtGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    return request.headers.cookie?.split(';').find((cookie) => cookie.trim().startsWith('justanidtoken='))?.split('=')[1];
+    return request.headers.cookie?.split(';').find((cookie) => cookie.trim().startsWith('justverifiedtoken='))?.split('=')[1];
   }
 }
