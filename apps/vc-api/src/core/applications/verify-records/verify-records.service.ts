@@ -99,7 +99,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
        };
      }
 
-     let typedVc = vc as VerifiableEthereumEip712Signature2021;
+     const typedVc = vc as VerifiableEthereumEip712Signature2021;
 
      const type = typedVc.type[1];
 
