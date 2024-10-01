@@ -4,11 +4,8 @@ import {IEnvironmentGetter} from "./ienvironment.getter";
 import { ChainId, Environment, EnvironmentType } from '../../domain/entities/environment';
 
 @Injectable()
-export class EnvironmentGetter implements  IEnvironmentGetter {
-
-  constructor(
-    private readonly configService: ConfigService<Environment>,
-  ) {}
+export class EnvironmentGetter implements IEnvironmentGetter {
+  constructor(private readonly configService: ConfigService<Environment>) {}
 
   getPk(): string {
     return this.configService.get('SIGNING_PRIVATE_KEY');
@@ -80,5 +77,9 @@ export class EnvironmentGetter implements  IEnvironmentGetter {
 
   getEncryptSalt(): string {
     return this.configService.get<string>('ENCRYPT_SALT');
+  }
+
+  getResendApiKey(): string {
+    return this.configService.get<string>('RESEND_API_KEY');
   }
 }

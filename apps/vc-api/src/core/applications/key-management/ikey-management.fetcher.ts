@@ -4,4 +4,5 @@ export const KEY_MANAGEMENT_FETCHER = 'KEY_MANAGEMENT_FETCHER';
 
 export interface IKeyManagementFetcher {
   fetchKey(): SigningWallet;
+  signMessage(message: string): Promise<string>
 }

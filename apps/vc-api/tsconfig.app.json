@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "jsx": "react-jsx",
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "types": ["node"],
@@ -8,9 +9,9 @@
     "target": "es2021",
     "resolveJsonModule": true,
     "paths": {
-      "@justanid/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"]
+      "@justverified/ens-did-resolver": ["libs/ens-did-resolver/src/index.ts"]
     }
   },
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }
