@@ -5,6 +5,8 @@ import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../core/applications/
 import { EmailNotification } from '../../core/domain/entities/emailNotification';
 import {createElement} from "react";
 import VerificationEmail from './templates/verification-email.template';
+import 'react';
+import 'react-dom/server';
 
 @Injectable()
 export class EmailSender implements IEmailSender {
