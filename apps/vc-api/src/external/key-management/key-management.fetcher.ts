@@ -24,4 +24,8 @@ export class KeyManagementFetcher implements IKeyManagementFetcher {
     }
   }
 
+  signMessage(message: string): Promise<string> {
+    return this.wallet.signMessage(message);
+  }
+
 }

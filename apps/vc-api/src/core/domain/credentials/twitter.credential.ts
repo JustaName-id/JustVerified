@@ -1,4 +1,4 @@
-import { CredentialSubjectValue } from '../entities/eip712';
+import { CredentialSubjectValue } from '../entities/ethereumEip712Signature';
 
 export interface TwitterCredential extends CredentialSubjectValue{
   username: string;

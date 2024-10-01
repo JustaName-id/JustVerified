@@ -1,7 +1,7 @@
-import { VerifiedEthereumEip712Signature2021 } from '../../../domain/entities/eip712';
+import { VerifiableEthereumEip712Signature2021 } from '../../../domain/entities/ethereumEip712Signature';
 
 export class CredentialCallbackResponse {
   dataKey: string;
-  verifiableCredential: VerifiedEthereumEip712Signature2021;
+  verifiableCredential: VerifiableEthereumEip712Signature2021;
   authId: string;
 }

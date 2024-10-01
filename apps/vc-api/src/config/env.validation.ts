@@ -81,6 +81,9 @@ class EnvironmentVariables implements Environment{
 
   @IsString({message: 'ENCRYPT_SALT must be a string'})
   ENCRYPT_SALT: string;
+
+  @IsString({message: 'RESEND_API_KEY must be a string'})
+  RESEND_API_KEY: string;
 }
 
 function IsEthereumPrivateKey(validationOptions?: ValidationOptions) {

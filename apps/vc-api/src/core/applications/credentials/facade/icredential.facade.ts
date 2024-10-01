@@ -1,11 +1,16 @@
-import {AbstractSubjectResolver} from "./subjects-resolvers/subjects/abstract.subject.resolver";
+import {AbstractSocialResolver} from "./social-credential-resolver/social-resolver/abstract.social.resolver";
 import { CredentialCallbackRequest } from './credential.callback.request';
 import { CredentialCallbackResponse } from './credential.callback.response';
+import {EmailCallback} from "./email-resolver/email.callback";
 
 export const CREDENTIAL_CREATOR_FACADE = 'CREDENTIAL_CREATOR_FACADE';
 
 export interface ICredentialCreatorFacade {
-  getResolver<T>(credentialName: string): AbstractSubjectResolver<T>  ;
-  getAuthUrl(credentialName: string, subname: string, sessionId: string): Promise<string>;
-  callback(credentialCallbackRequest: CredentialCallbackRequest): Promise<CredentialCallbackResponse>;
+  getSocialResolver(credentialName: string): AbstractSocialResolver  ;
+  getSocialAuthUrl(credentialName: string, ens: string, authId: string): Promise<string>;
+  socialCallback(credentialCallbackRequest: CredentialCallbackRequest): Promise<CredentialCallbackResponse>;
+  getEmailOTP(email: string, ens: string, authId:string): Promise<string>;
+  resendOtp(state: string): Promise<void>;
+  callbackEmailOTP(callbackData: EmailCallback ): Promise<CredentialCallbackResponse>;
+  clearState(state: string): void
 }
