@@ -128,6 +128,11 @@ spec:
                 secretKeyRef:
                   name: foosecret-verifications
                   key: ENCRYPT_SALT
+            - name: RESEND_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: RESEND_API_KEY
 ---
 apiVersion: v1
 kind: Service
