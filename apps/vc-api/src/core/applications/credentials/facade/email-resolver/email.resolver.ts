@@ -65,6 +65,7 @@ EmailCredential
   clearState(state: string) {
     const { authId} = this.decryptState(state);
     this.otpStore.delete(authId);
+    return authId;
   }
 
   async generateEmailOtp(emailOtpGenerateRequest: EmailOtpGenerateRequest): Promise<EmailOtpGenerateResponse> {

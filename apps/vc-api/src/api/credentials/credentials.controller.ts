@@ -172,10 +172,12 @@ export class CredentialsController {
   @UseGuards(JwtGuard)
   @Post("email/clear")
   async clearEmailState(
-    @Query() query: CredentialsClearEmailRequestApi,
+    @Body() body: CredentialsClearEmailRequestApi,
   ): Promise<void>{
-    await this.credentialCreatorFacade.clearState(
-      query.state
+    const authId = this.credentialCreatorFacade.clearState(
+      body.state
     )
+
+    this.authSubjects.delete(authId);
   }
 }
