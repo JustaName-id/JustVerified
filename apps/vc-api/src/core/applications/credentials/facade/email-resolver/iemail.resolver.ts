@@ -9,5 +9,5 @@ export const EMAIL_RESOLVER = 'EMAIL_RESOLVER'
 export interface  IEmailResolver extends AbstractResolver<EmailCallback, EmailCredential>{
   generateEmailOtp(emailOtpGenerateRequest: EmailOtpGenerateRequest): Promise<EmailOtpGenerateResponse>
   resendOtp(state: string): Promise<void>
-  clearState(state: string): void
+  clearState(state: string): string
 }

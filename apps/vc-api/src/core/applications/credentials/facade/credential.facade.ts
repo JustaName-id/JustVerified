@@ -51,7 +51,7 @@ export class CredentialCreatorFacade implements ICredentialCreatorFacade {
      return this.emailResolver.generateCredential(callbackData)
   }
 
-  clearState(state: string): void {
+  clearState(state: string): string {
     return this.emailResolver.clearState(state)
   }
 }
