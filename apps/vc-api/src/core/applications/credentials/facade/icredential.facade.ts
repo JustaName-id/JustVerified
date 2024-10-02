@@ -12,5 +12,5 @@ export interface ICredentialCreatorFacade {
   getEmailOTP(email: string, ens: string, authId:string): Promise<string>;
   resendOtp(state: string): Promise<void>;
   callbackEmailOTP(callbackData: EmailCallback ): Promise<CredentialCallbackResponse>;
-  clearState(state: string): void
+  clearState(state: string): string;
 }
