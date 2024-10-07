@@ -7,6 +7,7 @@ import { CredentialCallbackResponse } from './credential.callback.response';
 import {EmailResolver} from "./email-resolver/email.resolver";
 import {EMAIL_RESOLVER, IEmailResolver} from "./email-resolver/iemail.resolver";
 import {EmailCallback} from "./email-resolver/email.callback";
+import { SocialResolverNotFoundException } from '../../../domain/exceptions/SocialResolverNotFound.exception';
 
 @Injectable()
 export class CredentialCreatorFacade implements ICredentialCreatorFacade {
@@ -18,8 +19,7 @@ export class CredentialCreatorFacade implements ICredentialCreatorFacade {
     @Inject(EMAIL_RESOLVER)
     private readonly emailResolver: IEmailResolver,
 
-  ) {
-  }
+  ) {}
 
   getSocialResolver<T>(credentialName: string) {
     for(const resolver of this.subjectResolver.getSocialResolvers()){
@@ -27,7 +27,7 @@ export class CredentialCreatorFacade implements ICredentialCreatorFacade {
         return resolver;
       }
     }
-    throw new Error(`No resolver found for ${credentialName}`);
+    throw SocialResolverNotFoundException.forCredentialName(credentialName);
   }
 
   async getSocialAuthUrl(credentialName: string, ens: string, authId: string): Promise<string> {

@@ -11,6 +11,7 @@ import {TwitterCredential} from "../../domain/credentials/twitter.credential";
 import {TelegramCredential} from "../../domain/credentials/telegram.credential";
 import {EmailCredential} from "../../domain/credentials/email.credential";
 import {DiscordCredential} from "../../domain/credentials/discord.credential";
+import { ChainIdInvalidException } from '../../domain/exceptions/ChainIdInvalid.exception';
 
 @Injectable()
 export class VerifyRecordsService implements IVerifyRecordsService {
@@ -34,7 +35,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     const validIssuer = issuer ? issuer : this.domain;
 
     if (chainId !== 1 && chainId !== 11155111) {
-      throw new Error('Invalid chainId');
+      throw ChainIdInvalidException.withId(chainId);
     }
 
     const subnameRecords = await this.subnameRecordsFetcher.fetchRecords(ens, chainId);

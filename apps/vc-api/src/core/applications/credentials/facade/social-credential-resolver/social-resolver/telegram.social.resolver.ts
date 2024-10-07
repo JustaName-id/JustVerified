@@ -2,6 +2,7 @@ import { AbstractSocialResolver } from './abstract.social.resolver';
 import { TelegramCredential } from '../../../../../domain/credentials/telegram.credential';
 import { TelegramCallback } from './callback/telegram.callback';
 import {GetAuthUrlRequest} from "./requests/get-auth-url.request";
+import { CredentialsInvalidException } from '../../../../../domain/exceptions/CredentialsInvalid.exception';
 
 export class TelegramSocialResolver extends AbstractSocialResolver<
   TelegramCallback,
@@ -48,7 +49,7 @@ export class TelegramSocialResolver extends AbstractSocialResolver<
     const calculatedHash = this.cryptoEncryption.createTelegramHash(dataCheckString);
 
     if (calculatedHash !== hash) {
-      throw new Error('Invalid data: Authentication failed.');
+      throw CredentialsInvalidException.withMessage('Invalid data: Authentication failed.');
     }
 
     return {
