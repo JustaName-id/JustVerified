@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import moment from 'moment';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { ENS_MANAGER_SERVICE, IEnsManagerService } from '../../core/applications/ens-manager/iens-manager.service';
+import { AuthenticationException } from '../../core/domain/exceptions/Authentication.exception';
 
 type Siwens = { address: string, ens: string };
 
@@ -28,21 +29,29 @@ export class AuthController {
     @Res() res: Response,
     @Req() req: Request
   ) {
-    const { address, ens } = await this.ensManagerService.signIn({
-      message: body.message,
-      signature: body.signature
-    })
+    try {
+      const { address, ens } = await this.ensManagerService.signIn({
+        message: body.message,
+        signature: body.signature,
+      });
 
+      const token = this.jwtService.sign(
+        { ens, address },
+        {
+          expiresIn: moment().add(1, 'hour').unix(),
+        }
+      );
 
-    const token = this.jwtService.sign({ ens, address }, {
-      expiresIn: moment().add(1, 'hour').unix()
-    });
+      res.cookie('justverifiedtoken', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      });
 
-
-    res.cookie('justverifiedtoken', token, { httpOnly: true, secure: true, sameSite: 'none' });
-
-    return res.status(200).send({ ens, address });
-
+      return res.status(200).send({ ens, address });
+    } catch (error) {
+      throw AuthenticationException.withError(error);
+    }
   }
 
   @UseGuards(JwtGuard)
