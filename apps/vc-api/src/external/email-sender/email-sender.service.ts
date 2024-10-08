@@ -7,6 +7,7 @@ import {createElement} from "react";
 import VerificationEmail from './templates/verification-email.template';
 import 'react';
 import 'react-dom/server';
+import { EmailSenderException } from '../../core/domain/exceptions/EmailSender.exception';
 
 @Injectable()
 export class EmailSender implements IEmailSender {
@@ -32,9 +33,7 @@ export class EmailSender implements IEmailSender {
     });
 
     if (error) {
-      throw new Error(
-        `Error while sending email for Email Verification: ${error.message}`
-      );
+      throw EmailSenderException.withEmail(emailNotification.to, error.message);
     }
   }
 }

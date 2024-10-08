@@ -1,4 +1,3 @@
-
 import {AbstractResolver} from "../abstract.resolver";
 import {Inject, Injectable} from "@nestjs/common";
 import {EmailCallback} from "./email.callback";
@@ -7,6 +6,7 @@ import {EMAIL_SENDER, IEmailSender} from "../../../email-sender/iemail-sender.se
 import {EmailOtpGenerateRequest} from "./requests/email.otp.generate.request";
 import {IEmailResolver} from "./iemail.resolver";
 import {EmailOtpGenerateResponse} from "./responses/email.otp.generate.response";
+import { OTPException } from "../../../../domain/exceptions/OTP.exception";
 
 
 @Injectable()
@@ -39,19 +39,19 @@ EmailCredential
     const { authId } = this.decryptState(params.state)
     const otpData = this.otpStore.get(authId);
     if (!otpData) {
-      throw new Error('OTP not found or expired.');
+      throw OTPException.notFound();
     }
 
     const currentTime = Date.now();
     if (otpData.expiresAt < currentTime) {
       this.otpStore.delete(authId);
-      throw new Error('OTP has expired.');
+      throw OTPException.expired();
     }
 
     const hashedOtp = this.cryptoEncryption.createHash(params.otp);
 
     if (!this.cryptoEncryption.timingSafeEqual(hashedOtp, otpData.otpHash)) {
-      throw new Error('Invalid OTP.');
+      throw OTPException.invalid();
     }
 
     const email = this.otpStore.get(authId).email
@@ -108,7 +108,7 @@ EmailCredential
     const { authId } = this.decryptState(state);
     const otpData = this.otpStore.get(authId);
     if (!otpData) {
-      throw new Error('OTP not found or expired.');
+      throw OTPException.notFound();
     }
 
     const { email } = otpData;
