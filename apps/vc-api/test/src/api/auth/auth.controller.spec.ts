@@ -47,14 +47,14 @@ describe('Auth controller integration tests', () => {
       module.get<DeepMocked<IEnsManagerService>>(ENS_MANAGER_SERVICE);
     jwtService = module.get<DeepMocked<JwtService>>(JwtService);
 
-    ensManagerService.signIn.mockImplementationOnce(async (param) => {
+    ensManagerService.signIn.mockImplementation(async (param) => {
       if (param.message === MESSAGE && param.signature === SIGNATURE) {
         return { ens: ENS, address: ADDRESS };
       }
       throw new Error(ERROR_MESSAGE);
     });
 
-    jwtService.sign.mockImplementationOnce((payload) => {
+    jwtService.sign.mockImplementation((payload) => {
       if (
         JSON.stringify(payload) ===
         JSON.stringify({ ens: ENS, address: ADDRESS })
@@ -81,9 +81,7 @@ describe('Auth controller integration tests', () => {
           expect(res.status).toBe(200);
           expect(res.body).toEqual({ ens: ENS, address: ADDRESS });
           expect(res.headers['set-cookie']).toBeDefined();
-          expect(res.headers['set-cookie'][0]).toContain(
-            'justverifiedtoken=' + TOKEN
-          );
+          expect(res.headers['set-cookie'][0]).toContain('justverifiedtoken=' + TOKEN);
           expect(res.headers['set-cookie'][0]).toContain('HttpOnly');
           expect(res.headers['set-cookie'][0]).toContain('Secure');
           expect(res.headers['set-cookie'][0]).toContain('SameSite=None');

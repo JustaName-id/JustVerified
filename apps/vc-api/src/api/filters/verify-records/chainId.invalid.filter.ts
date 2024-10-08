@@ -1,5 +1,4 @@
 import { BaseExceptionFilter } from '@nestjs/core';
-import { BaseFilterResponse } from '../baseFilter.response';
 import { ArgumentsHost, Catch, HttpStatus } from '@nestjs/common';
 import { ChainIdInvalidException } from '../../../core/domain/exceptions/ChainIdInvalid.exception';
 
@@ -10,14 +9,8 @@ export class ChainIdInvalidExceptionFilter extends BaseExceptionFilter {
     const response = context.getResponse();
     const httpStatus = HttpStatus.BAD_REQUEST;
 
-    const result: BaseFilterResponse = {
-      statusCode: httpStatus,
-      result: {
-        data: null,
-        error: exception.message,
-      },
-    };
-
-    response.status(httpStatus).json(result);
+    response.status(httpStatus).json({
+      message: exception.message,
+    });
   }
 }
