@@ -35,6 +35,8 @@
     "react": "18.3.1",
     "resend": "^4.0.0",
     "react-dom": "18.3.1",
-    "@nestjs/testing": "^10.0.2"
+    "@nestjs/testing": "^10.0.2",
+    "supertest": "^7.0.0",
+    "@golevelup/ts-jest": "^0.5.6"
   }
 }
