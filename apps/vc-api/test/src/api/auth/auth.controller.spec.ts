@@ -10,6 +10,7 @@ import {
   ENS_MANAGER_SERVICE,
   IEnsManagerService,
 } from '../../../../src/core/applications/ens-manager/iens-manager.service';
+import { AuthenticationException } from '../../../../src/core/domain/exceptions/Authentication.exception';
 
 const ENS = 'ENS';
 const ADDRESS = 'ADDRESS';
@@ -51,7 +52,7 @@ describe('Auth controller integration tests', () => {
       if (param.message === MESSAGE && param.signature === SIGNATURE) {
         return { ens: ENS, address: ADDRESS };
       }
-      throw new Error(ERROR_MESSAGE);
+      throw new AuthenticationException(ERROR_MESSAGE);
     });
 
     jwtService.sign.mockImplementation((payload) => {
