@@ -1,4 +1,3 @@
-
 import { IEnsManagerService } from '../../core/applications/ens-manager/iens-manager.service';
 import { SignInRequest } from '../../core/applications/ens-manager/requests/sign-in.request';
 import { SignInResponse } from '../../core/applications/ens-manager/responses/sign-in.response';
@@ -12,6 +11,8 @@ import {
   IKeyManagementFetcher,
   KEY_MANAGEMENT_FETCHER
 } from '../../core/applications/key-management/ikey-management.fetcher';
+import { JustaNameInitializerException } from '../../core/domain/exceptions/JustaNameInitializer.exception';
+import { AuthenticationException } from '../../core/domain/exceptions/Authentication.exception';
 
 export class JustaNameInitializerService implements IEnsManagerService {
 
@@ -32,11 +33,18 @@ export class JustaNameInitializerService implements IEnsManagerService {
   }
 
   async signIn(params: SignInRequest): Promise<SignInResponse> {
-    const sign = await this.justaname.signIn.signIn(params.message,params.signature)
+    try {
+      const sign = await this.justaname.signIn.signIn(
+        params.message,
+        params.signature
+      );
 
-    return {
-      address: sign.data.address,
-      ens: sign.ens
+      return {
+        address: sign.data.address,
+        ens: sign.ens,
+      };
+    } catch (error) {
+      throw AuthenticationException.withError(error);
     }
   }
 
@@ -45,15 +53,19 @@ export class JustaNameInitializerService implements IEnsManagerService {
   }
 
   async getRecords(params: GetRecordsRequest): Promise<GetRecordsResponse> {
-    const providerUrl = (params.chainId === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') + this.environmentGetter.getInfuraProjectId()
-
-    const records: SubnameRecordsResponse = await this.justaname.subnames.getRecordsByFullName({
-      fullName: params.ens,
-      providerUrl: providerUrl,
-      chainId: params.chainId,
-    })
-
-    return this.mapSubnameRecordsResponseToGetRecordsResponse(records)
+    try {
+      const providerUrl = (params.chainId === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') + this.environmentGetter.getInfuraProjectId()
+      
+      const records: SubnameRecordsResponse = await this.justaname.subnames.getRecordsByFullName({
+        fullName: params.ens,
+        providerUrl: providerUrl,
+        chainId: params.chainId,
+      })
+      
+      return this.mapSubnameRecordsResponseToGetRecordsResponse(records)
+    } catch (error) {
+      throw JustaNameInitializerException.withError(error);
+    }
   }
 
   checkIfMAppEnabled(ens: string): Promise<boolean> {
@@ -65,29 +77,30 @@ export class JustaNameInitializerService implements IEnsManagerService {
   }
 
   async appendVcInMAppEnabledEns(ens: string, vc: VerifiableEthereumEip712Signature2021, field: string): Promise<boolean> {
-    const message = await this.justaname.mApps.requestAppendMAppFieldChallenge({
-      mApp: this.environmentGetter.getEnsDomain(),
-      subname: ens,
+    try {
+      const message = await this.justaname.mApps.requestAppendMAppFieldChallenge({
+        mApp: this.environmentGetter.getEnsDomain(),
+        subname: ens,
       address: this.keyManagementFetcher.fetchKey().publicKey,
     })
+      const signature = await this.keyManagementFetcher.signMessage(message.challenge)
 
-
-    const signature = await this.keyManagementFetcher.signMessage(message.challenge)
-
-
-    const appended = await this.justaname.mApps.appendMAppField({
-      subname: ens,
-      fields: [{
-        key: field,
-        value: JSON.stringify(vc),
-      }]
-    }, {
-      xAddress: this.keyManagementFetcher.fetchKey().publicKey,
-      xMessage: message.challenge,
-      xSignature: signature
-    })
-
-    return !!appended
+      const appended = await this.justaname.mApps.appendMAppField({
+        subname: ens,
+        fields: [{
+          key: field,
+          value: JSON.stringify(vc),
+        }]
+      }, {
+        xAddress: this.keyManagementFetcher.fetchKey().publicKey,
+        xMessage: message.challenge,
+        xSignature: signature
+      })
+    
+      return !!appended
+    } catch (error) {
+      throw JustaNameInitializerException.withError(error);
+    }
   }
 
   private mapSubnameRecordsResponseToGetRecordsResponse(records: SubnameRecordsResponse): GetRecordsResponse {

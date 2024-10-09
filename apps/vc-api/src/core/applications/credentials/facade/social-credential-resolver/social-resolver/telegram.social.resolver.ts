@@ -1,14 +1,13 @@
 import { AbstractSocialResolver } from './abstract.social.resolver';
 import { TelegramCredential } from '../../../../../domain/credentials/telegram.credential';
 import { TelegramCallback } from './callback/telegram.callback';
-import {GetAuthUrlRequest} from "./requests/get-auth-url.request";
-import { CredentialsInvalidException } from '../../../../../domain/exceptions/CredentialsInvalid.exception';
+import { GetAuthUrlRequest } from './requests/get-auth-url.request';
+import { CredentialsException } from '../../../../../domain/exceptions/Credentials.exception';
 
 export class TelegramSocialResolver extends AbstractSocialResolver<
   TelegramCallback,
   TelegramCredential
 > {
-
   getCredentialName(): string {
     return 'telegram';
   }
@@ -20,10 +19,9 @@ export class TelegramSocialResolver extends AbstractSocialResolver<
   getType(): string[] {
     return ['VerifiableTelegramAccount'];
   }
-  getAuthUrl(authUrlRequest:GetAuthUrlRequest): string {
+  getAuthUrl(authUrlRequest: GetAuthUrlRequest): string {
     const state = this.encryptState(authUrlRequest);
-    return (
-      `<html>
+    return `<html>
         <body>
           <script async src="https://telegram.org/js/telegram-widget.js?15"
                   data-telegram-login="${this.environmentGetter.getTelegramBotUsername()}"
@@ -32,8 +30,7 @@ export class TelegramSocialResolver extends AbstractSocialResolver<
                   data-request-access="write">
           </script>
         </body>
-      </html>`
-    );
+      </html>`;
   }
 
   async extractCredentialSubject(
@@ -46,14 +43,15 @@ export class TelegramSocialResolver extends AbstractSocialResolver<
       .map((key) => `${key}=${telegramData[key]}`)
       .join('\n');
 
-    const calculatedHash = this.cryptoEncryption.createTelegramHash(dataCheckString);
+    const calculatedHash =
+      this.cryptoEncryption.createTelegramHash(dataCheckString);
 
     if (calculatedHash !== hash) {
-      throw CredentialsInvalidException.withMessage('Invalid data: Authentication failed.');
+      throw CredentialsException.invalid();
     }
 
     return {
       username: telegramData.username,
-    }
+    };
   }
 }

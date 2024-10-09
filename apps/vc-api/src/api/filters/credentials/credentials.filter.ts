@@ -1,10 +1,10 @@
 import { BaseExceptionFilter } from '@nestjs/core';
 import { ArgumentsHost, Catch, HttpStatus } from '@nestjs/common';
-import { CredentialsInvalidException } from '../../../core/domain/exceptions/CredentialsInvalid.exception';
+import { CredentialsException } from '../../../core/domain/exceptions/Credentials.exception';
 
-@Catch(CredentialsInvalidException)
-export class CredentialsInvalidExceptionFilter extends BaseExceptionFilter {
-  catch(exception: CredentialsInvalidException, host: ArgumentsHost) {
+@Catch(CredentialsException)
+export class CredentialsExceptionFilter extends BaseExceptionFilter {
+  catch(exception: CredentialsException, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse();
     const httpStatus = HttpStatus.BAD_REQUEST;
