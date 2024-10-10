@@ -5,8 +5,6 @@ import {
   Head,
   Html,
   Img,
-  Link,
-  Preview,
   Section,
   Text,
 } from '@react-email/components';
@@ -19,144 +17,128 @@ interface BaseEmailProps {
   preview: string;
 }
 
-export const BaseEmail: React.FC<BaseEmailProps> = ({
-  title,
-  children,
-  email,
-  preview,
-}) => (
-  <Html
-    style={{
-      backgroundColor: '#D2C1FF',
-      padding: '50px 0',
-    }}
-  >
-    <Head>
-      <Font
-        fontFamily="Poppins"
-        fallbackFontFamily="Verdana"
-        fontWeight={900}
-        webFont={{
-          url: 'https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJnecnFHGPezSQ.woff2',
-          format: 'woff2',
-        }}
-        fontStyle="normal"
-      />
-      <Font
-        fontFamily="Poppins"
-        fallbackFontFamily="Verdana"
-        fontWeight={400}
-        webFont={{
-          url: 'https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJnecnFHGPezSQ.woff2',
-          format: 'woff2',
-        }}
-        fontStyle="normal"
-      />
-    </Head>
-    <Preview>{preview}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        {title}
-
-        <Section
-          style={{
-            padding: '20px 40px',
-            borderRadius: '20px',
-            marginTop: '20px',
-            border: '1px solid #8517E3',
-            background: '#F7FAFF',
-          }}
-        >
-          {children ?? null}
-        </Section>
-
-        <Text
-          style={{
-            textAlign: 'center',
-            marginTop: '40px',
-            color: '#5E577F',
-          }}
-        >
-          This email was sent to{' '}
-          <strong
-            style={{
-              color: '#8517E3',
-              textDecoration: 'underline',
-            }}
-          >
-            {email}
-          </strong>
-        </Text>
-
-        <Img
-          src={"https://cdn.justaname.id/avatar/justahead.png"}
-          alt="JustaName"
-          style={logo}
+export const BaseEmail: React.FC<BaseEmailProps> = ({ title, children }) => {
+  return (
+    <Html style={styles.html}>
+      <Head>
+        <Font
+          fontFamily="Poppins"
+          fallbackFontFamily="sans-serif"
+          fontWeight={900}
+          fontStyle="normal"
         />
-        <Text style={paragraph}>Not expecting this email?</Text>
+        <Font
+          fontFamily="Poppins"
+          fallbackFontFamily="sans-serif"
+          fontWeight={400}
+          fontStyle="normal"
+        />
+      </Head>
 
-        <Text style={paragraph}>
-          Contact{' '}
-          <Link
-            href="mailto:support@justaname.id"
-            style={{
-              color: '#8517E3',
-              textDecoration: 'underline',
-              fontWeight: 'bold',
-            }}
-          >
-            support@justaname.id
-          </Link>{' '}
-          if you did not request this code.
-        </Text>
+      <Body style={styles.body}>
+        <Container style={styles.container}>
+          <Section style={styles.section}>
+            <div>{title}</div>
+            {children}
+          </Section>
 
-        <Text
-          style={{
-            color: '#9B92FF',
-            textAlign: 'center',
-            fontSize: '15px',
-            margin: 0,
-            marginTop: '20px',
-            fontStyle: 'italic',
-            fontWeight: '900',
-            lineHeight: '20px',
-          }}
-        >
-          Securely powered by JustaName.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-);
+          <div style={styles.footer}>
+            <div style={styles.contactInfo}>
+              <Text style={styles.contactText}>
+                Contact <strong style={styles.supportEmail}>support@justaname.id</strong> if you did not request this code.
+              </Text>
+              <strong style={styles.unsubscribeText}>Unsubscribe</strong>
+            </div>
 
-const main = {
-  backgroundColor: '#D2C1FF',
-  fontFamily: 'Poppins,Verdana,Arial,sans-serif',
-  padding: '0px',
+            <div style={styles.logoContainer}>
+              <Img
+                src="https://justaname-bucket.s3.eu-central-1.amazonaws.com/email-templates/jan-logo.svg"
+                alt="JustaName"
+                style={styles.logo}
+              />
+              <Text style={styles.poweredByText}>
+                Securely powered by JustaName.
+              </Text>
+            </div>
+          </div>
+        </Container>
+      </Body>
+    </Html>
+  );
 };
 
-const container = {
-  borderRadius: '20px',
-  border: '2px solid #5E577F',
-  background: '#FFF',
-  boxShadow: '-10px 10px 0px 0px #5E577F',
-  width: '100%',
-  minWidth: '600px',
-  padding: '40px',
+const styles = {
+  html: {
+    backgroundColor: '#FFF',
+    padding: '20px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+  },
+  body: {
+    backgroundColor: '#FFF',
+    fontFamily: 'Poppins, Verdana, Arial, sans-serif',
+    padding: '0',
+  },
+  container: {
+    borderRadius: '5px',
+    border: '0.5px solid #5E577F',
+    background: '#FFF',
+    width: '100%',
+    maxWidth: '550px',
+    padding: '20px',
+  },
+  section: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'flex-start' as const,
+    gap: '10px',
+    alignSelf: 'stretch',
+    textAlign: 'center',
+  },
+  footer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '10px',
+    marginTop: '20px',
+  },
+  contactInfo: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'flex-start',
+  },
+  contactText: {
+    textAlign: 'center',
+    color: '#5E577F',
+    fontSize: '8px',
+    fontWeight: '700',
+    margin: '0',
+    lineHeight: '10px',
+  },
+  supportEmail: {
+    color: '#3280F4',
+  },
+  unsubscribeText: {
+    color: '#3280F4',
+    fontSize: '8px',
+  },
+  logoContainer: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'flex-end',
+  },
+  logo: {
+    width: '62px',
+  },
+  poweredByText: {
+    color: '#3280F4',
+    fontSize: '8px',
+    fontWeight: '900',
+    margin: '0',
+    lineHeight: '10px',
+  },
 };
 
-const logo = {
-  margin: '20px auto',
-  width: '150px',
-};
-
-const paragraph = {
-  color: '#444',
-  fontSize: '15px',
-  fontFamily: 'Poppins,Verdana,Arial,sans-serif',
-  letterSpacing: '0',
-  lineHeight: '23px',
-  padding: '0 40px',
-  margin: '0',
-  textAlign: 'center' as const,
-};
+export default BaseEmail;
