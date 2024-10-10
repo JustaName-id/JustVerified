@@ -1,7 +1,6 @@
 export class OTPException extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'OTPException';
   }
 
   static invalid() {

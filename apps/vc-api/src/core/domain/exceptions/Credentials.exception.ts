@@ -1,7 +1,6 @@
 export class CredentialsException extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'CredentialsException';
   }
 
   static invalid() {

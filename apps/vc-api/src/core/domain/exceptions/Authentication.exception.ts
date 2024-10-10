@@ -3,10 +3,7 @@ export class AuthenticationException extends Error {
     super(message);
   }
 
-  static withError(error: unknown) {
-    if (error instanceof Error) {
+  static withError(error: Error) {
       return new AuthenticationException(error.message);
-    }
-    return new AuthenticationException('Authentication failed.');
   }
 }
