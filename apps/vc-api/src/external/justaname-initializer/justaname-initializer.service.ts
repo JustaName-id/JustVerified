@@ -1,8 +1,7 @@
-
 import { IEnsManagerService } from '../../core/applications/ens-manager/iens-manager.service';
 import { SignInRequest } from '../../core/applications/ens-manager/requests/sign-in.request';
 import { SignInResponse } from '../../core/applications/ens-manager/responses/sign-in.response';
-import { JustaName, SubnameRecordsResponse } from '@justaname.id/sdk';
+import { JustaName, SubnameResponse } from '@justaname.id/sdk';
 import { Inject } from '@nestjs/common';
 import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../core/applications/environment/ienvironment.getter';
 import { GetRecordsRequest } from '../../core/applications/ens-manager/requests/get-records.request';
@@ -12,6 +11,9 @@ import {
   IKeyManagementFetcher,
   KEY_MANAGEMENT_FETCHER
 } from '../../core/applications/key-management/ikey-management.fetcher';
+import { JustaNameInitializerException } from '../../core/domain/exceptions/JustaNameInitializer.exception';
+import { AuthenticationException } from '../../core/domain/exceptions/Authentication.exception';
+import { ChainId } from '../../core/domain/entities/environment';
 
 export class JustaNameInitializerService implements IEnsManagerService {
 
@@ -21,22 +23,25 @@ export class JustaNameInitializerService implements IEnsManagerService {
     @Inject(KEY_MANAGEMENT_FETCHER) private readonly keyManagementFetcher: IKeyManagementFetcher
   ) {
     this.justaname = JustaName.init({
-      config: {
-        chainId: this.environmentGetter.getChainId(),
-        domain: this.environmentGetter.getSiweDomain(),
-        origin:this.environmentGetter.getSiweOrigin(),
-      },
-      ensDomain: this.environmentGetter.getEnsDomain(),
-      providerUrl: (this.environmentGetter.getChainId() === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') + this.environmentGetter.getInfuraProjectId()
+      dev: this.environmentGetter.getEnv() === 'staging' || this.environmentGetter.getEnv() === 'development'
     })
   }
 
   async signIn(params: SignInRequest): Promise<SignInResponse> {
-    const sign = await this.justaname.signIn.signIn(params.message,params.signature)
+    try {
+      const sign = await this.justaname.signIn.signIn({
+          message: params.message,
+          signature: params.signature
+      }
+      );
 
-    return {
-      address: sign.data.address,
-      ens: sign.ens
+      return {
+        address: sign.data.address,
+        ens: sign.ens,
+        chainId: sign.data.chainId as ChainId,
+      };
+    } catch (error) {
+      throw AuthenticationException.withError(error);
     }
   }
 
@@ -45,58 +50,63 @@ export class JustaNameInitializerService implements IEnsManagerService {
   }
 
   async getRecords(params: GetRecordsRequest): Promise<GetRecordsResponse> {
-    const providerUrl = (params.chainId === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') + this.environmentGetter.getInfuraProjectId()
+    try {
+      const providerUrl = (params.chainId === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') + this.environmentGetter.getInfuraProjectId()
 
-    const records: SubnameRecordsResponse = await this.justaname.subnames.getRecordsByFullName({
-      fullName: params.ens,
-      providerUrl: providerUrl,
-      chainId: params.chainId,
-    })
+      const records: SubnameResponse = await this.justaname.subnames.getRecords({
+        ens: params.ens,
+        providerUrl: providerUrl,
+      })
 
-    return this.mapSubnameRecordsResponseToGetRecordsResponse(records)
+      return this.mapSubnameRecordsResponseToGetRecordsResponse(records)
+    } catch (error) {
+      throw JustaNameInitializerException.withError(error);
+    }
   }
 
-  checkIfMAppEnabled(ens: string): Promise<boolean> {
+  checkIfMAppEnabled(ens: string, chainId: ChainId): Promise<boolean> {
     return this.justaname.mApps.checkIfMAppIsEnabled({
       mApp: this.environmentGetter.getEnsDomain(),
       ens: ens,
-      chainId: this.environmentGetter.getChainId()
+      chainId: chainId
     })
   }
 
-  async appendVcInMAppEnabledEns(ens: string, vc: VerifiableEthereumEip712Signature2021, field: string): Promise<boolean> {
-    const message = await this.justaname.mApps.requestAppendMAppFieldChallenge({
-      mApp: this.environmentGetter.getEnsDomain(),
-      subname: ens,
-      address: this.keyManagementFetcher.fetchKey().publicKey,
+  async appendVcInMAppEnabledEns(ens: string, chainId: ChainId, vc: VerifiableEthereumEip712Signature2021, field: string): Promise<boolean> {
+    try {
+      const message = await this.justaname.mApps.requestAppendMAppFieldChallenge({
+        mApp: this.environmentGetter.getEnsDomain(),
+        subname: ens,
+        chainId: chainId,
+      address: this.keyManagementFetcher.fetchKey(chainId).publicKey,
     })
+      const signature = await this.keyManagementFetcher.signMessage(message.challenge, chainId)
 
+      const appended = await this.justaname.mApps.appendMAppField({
+        subname: ens,
+        fields: [{
+          key: field,
+          value: JSON.stringify(vc),
+        }]
+      }, {
+        xAddress: this.keyManagementFetcher.fetchKey(chainId).publicKey,
+        xMessage: message.challenge,
+        xSignature: signature
+      })
 
-    const signature = await this.keyManagementFetcher.signMessage(message.challenge)
-
-
-    const appended = await this.justaname.mApps.appendMAppField({
-      subname: ens,
-      fields: [{
-        key: field,
-        value: JSON.stringify(vc),
-      }]
-    }, {
-      xAddress: this.keyManagementFetcher.fetchKey().publicKey,
-      xMessage: message.challenge,
-      xSignature: signature
-    })
-
-    return !!appended
+      return !!appended
+    } catch (error) {
+      throw JustaNameInitializerException.withError(error);
+    }
   }
 
-  private mapSubnameRecordsResponseToGetRecordsResponse(records: SubnameRecordsResponse): GetRecordsResponse {
+  private mapSubnameRecordsResponseToGetRecordsResponse(response: SubnameResponse): GetRecordsResponse {
     return {
-      texts: records.texts,
-      resolverAddress: records.resolverAddress,
-      contentHash: records.contentHash,
-      coins: records.coins,
-      isJAN: records.isJAN,
+      texts: response?.records?.texts,
+      resolverAddress: response?.records?.resolverAddress,
+      contentHash: response?.records?.contentHash,
+      coins: response?.records?.coins,
+      isJAN: response.isJAN,
     }
   }
 }

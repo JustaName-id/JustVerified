@@ -42,7 +42,6 @@ export class CredentialAgentInitiator {
     agent: Agent;
     identifier: Identifier;
   }> {
-
     const identifier = await this.agent.didManagerImport({
       did: 'did:ens:' + (chainId === 1 ? '' : 'sepolia:') + ensDomain + '#' + publicKey,
       provider: 'did:ens',

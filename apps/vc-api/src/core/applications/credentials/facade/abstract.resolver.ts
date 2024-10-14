@@ -12,6 +12,7 @@ import {ENS_MANAGER_SERVICE, IEnsManagerService} from "../../ens-manager/iens-ma
 import {HttpService} from "@nestjs/axios";
 import {CredentialCallbackResponse} from "./credential.callback.response";
 import {BaseCallback} from "./base.callback";
+import { ChainId } from '../../../domain/entities/environment';
 
 
 export abstract class AbstractResolver<
@@ -60,39 +61,41 @@ export abstract class AbstractResolver<
 
   async successfulCredentialGeneration(
     vc: VerifiableEthereumEip712Signature2021,
-    subname: string
+    subname: string,
+    chainId: ChainId
   ): Promise<void> {
-    const checkIfMAppEnabled = await this.ensManagerService.checkIfMAppEnabled(subname);
+    const checkIfMAppEnabled = await this.ensManagerService.checkIfMAppEnabled(subname, chainId);
     if (checkIfMAppEnabled) {
       await this.ensManagerService.appendVcInMAppEnabledEns(
         subname,
+        chainId,
         vc,
         this.getKey()
       );
     }
   }
 
-  encryptState({ens, authId}: { ens: string; authId: string }): string {
-    const stateObject = { ens, authId };
+  encryptState({ens, chainId, authId}: { ens: string; chainId: ChainId; authId: string }): string {
+    const stateObject = { ens, chainId, authId };
     return this.cryptoEncryption.encrypt(JSON.stringify(stateObject));
   }
 
-  decryptState(state: string): { ens: string; authId: string } {
+  decryptState(state: string): { ens: string; chainId: ChainId; authId: string } {
     return JSON.parse(this.cryptoEncryption.decrypt(state));
   }
 
-  getEnsAndAuthId(data: T): { ens: string; authId: string } {
-    const { ens, authId } = this.decryptState(data.state);
-    return { ens, authId };
+  getEnsAndAuthId(data: T): { ens: string; chainId: ChainId; authId: string } {
+    const { ens, chainId, authId } = this.decryptState(data.state);
+    return { ens, chainId, authId };
   }
 
   async generateCredential(
     data: T,
   ): Promise<CredentialCallbackResponse> {
     const credentialSubject = await this.extractCredentialSubject(data);
-    const { ens , authId} = this.getEnsAndAuthId(data);
+    const { ens , chainId, authId} = this.getEnsAndAuthId(data);
 
-    const did = await this.didResolver.getEnsDid(ens)
+    const did = await this.didResolver.getEnsDid(ens, chainId)
     const ethereumEip712Signature2021 = new EthereumEip712Signature2021<K>({
       type: this.getType(),
       context: this.getContext(),
@@ -110,10 +113,11 @@ export abstract class AbstractResolver<
     });
 
     const verifiableCredential = (await this.credentialCreator.createCredential(
-      ethereumEip712Signature2021
+      ethereumEip712Signature2021,
+      chainId
     )) as VerifiableEthereumEip712Signature2021<K>;
 
-    await this.successfulCredentialGeneration(verifiableCredential, ens);
+    await this.successfulCredentialGeneration(verifiableCredential, ens, chainId);
 
     return {
       dataKey: this.getDataKey(),

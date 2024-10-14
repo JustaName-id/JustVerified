@@ -7,12 +7,15 @@ import {IKeyManagementFetcher, KEY_MANAGEMENT_FETCHER} from "../../core/applicat
 import {CREDENTIAL_AGENT_MAPPER, ICredentialAgentMapper} from "./mapper/icredential-agent.mapper";
 import { Agent, CredentialAgentInitiator, Identifier } from './credential.agent.initiator';
 import { IDIDResolver } from '../../core/applications/did/resolver/idid.resolver';
+import { ChainId } from '../../core/domain/entities/environment';
 
 @Injectable()
 export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,IDIDResolver, OnModuleInit {
 
-  private agent: Agent
-  private identifier: Identifier
+  private mainnetAgent: Agent
+  private mainnetIdentifier: Identifier
+  private sepoliaAgent: Agent
+  private sepoliaIdentifier: Identifier
 
   constructor(
     @Inject(ENVIRONMENT_GETTER)
@@ -29,36 +32,56 @@ export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,
   }
 
   async  onModuleInit(){
+    const mainnetChainId = 1;
+    const sepoliaChainId = 11155111;
 
     const { agent, identifier } = await this.agentInitiator.createAgentWithIdentifier(
       this.environmentGetter.getEnsDomain(),
-      this.keyManagementFetcher.fetchKey().publicKey,
-      this.keyManagementFetcher.fetchKey().privateKey,
-      this.environmentGetter.getChainId()
+      this.keyManagementFetcher.fetchKey(mainnetChainId).publicKey,
+      this.keyManagementFetcher.fetchKey(mainnetChainId).privateKey,
+      mainnetChainId
     )
-    this.agent = agent
-    this.identifier = identifier
+    this.mainnetAgent = agent
+    this.mainnetIdentifier = identifier
+
+    const {agent: sepoliaAgent, identifier: sepoliaIdentifier} = await this.agentInitiator.createAgentWithIdentifier(
+      this.environmentGetter.getEnsDomain(),
+      this.keyManagementFetcher.fetchKey(sepoliaChainId).publicKey,
+      this.keyManagementFetcher.fetchKey(sepoliaChainId).privateKey,
+      sepoliaChainId
+    )
+
+    this.sepoliaAgent = sepoliaAgent
+    this.sepoliaIdentifier = sepoliaIdentifier
   }
 
-  async createCredential(credential: EthereumEip712Signature2021): Promise<VerifiableEthereumEip712Signature2021> {
-    const verifiedCredential =  await this.agent.createVerifiableCredentialEIP712(
-      this.credentialAgentMapper.mapEthereumEip712Signature2021ToVeramoICreateVerifiableCredentialEIP712Args(this.identifier.did,credential)
+  async createCredential(credential: EthereumEip712Signature2021, chainId: ChainId): Promise<VerifiableEthereumEip712Signature2021> {
+    const verifiedCredential =  await this.getAgent(chainId).createVerifiableCredentialEIP712(
+      this.credentialAgentMapper.mapEthereumEip712Signature2021ToVeramoICreateVerifiableCredentialEIP712Args(this.getIdentifier(chainId).did, credential)
     )
 
     return this.credentialAgentMapper.mapVeramoVerifiedCredentialToVerifiedEthereumEip721Signature2021(verifiedCredential)
   }
 
-  async getEnsDid(ens: string): Promise<string> {
-    const didUrl = 'did:ens:' + (this.environmentGetter.getChainId() === 1 ? '' : 'sepolia:') + ens
-    const did = await this.agent.resolveDid({
+  async getEnsDid(ens: string, chainId: ChainId): Promise<string> {
+    const didUrl = 'did:ens:' + (chainId === 1 ? '' : 'sepolia:') + ens
+    const did = await this.getAgent(chainId).resolveDid({
       didUrl
     })
     return typeof did.didDocument.authentication[0] === 'string' ? did.didDocument.authentication[0] : did.didDocument.authentication[0].id
   }
 
-  verifyCredential(verifiedEthereumEip712Signature2021: VerifiableEthereumEip712Signature2021): Promise<boolean> {
-    return this.agent.verifyVerifiableCredentialEIP712({
+  verifyCredential(verifiedEthereumEip712Signature2021: VerifiableEthereumEip712Signature2021, chainId: ChainId): Promise<boolean> {
+    return this.getAgent(chainId).verifyVerifiableCredentialEIP712({
       credential: this.credentialAgentMapper.mapVerifiedEthereumEip721Signature2021ToVeramoVerifiedCredential(verifiedEthereumEip712Signature2021)
     })
+  }
+
+  private getAgent(chainId: ChainId): Agent {
+    return chainId === 1 ? this.mainnetAgent : this.sepoliaAgent
+  }
+
+  private getIdentifier(chainId: ChainId): Identifier {
+    return chainId === 1 ? this.mainnetIdentifier : this.sepoliaIdentifier
   }
 }

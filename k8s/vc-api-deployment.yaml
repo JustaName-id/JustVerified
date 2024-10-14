@@ -43,6 +43,11 @@ spec:
                 secretKeyRef:
                   name: foosecret-verifications
                   key: SIGNING_PRIVATE_KEY
+            - name: SIGNING_PRIVATE_KEY_SEPOLIA_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: SIGNING_PRIVATE_KEY_SEPOLIA_DOMAIN
             - name: ENVIRONMENT
               valueFrom:
                 secretKeyRef:
@@ -98,26 +103,16 @@ spec:
                 secretKeyRef:
                   name: foosecret-verifications
                   key: ENS_DOMAIN
-            - name: CHAIN_ID
+            - name: ENS_DOMAIN_SEPOLIA
               valueFrom:
                 secretKeyRef:
                   name: foosecret-verifications
-                  key: CHAIN_ID
+                  key: ENS_DOMAIN_SEPOLIA
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: foosecret-verifications
                   key: JWT_SECRET
-            - name: SIWE_DOMAIN
-              valueFrom:
-                secretKeyRef:
-                  name: foosecret-verifications
-                  key: SIWE_DOMAIN
-            - name: SIWE_ORIGIN
-              valueFrom:
-                secretKeyRef:
-                  name: foosecret-verifications
-                  key: SIWE_ORIGIN
             - name: ENCRYPT_KEY
               valueFrom:
                 secretKeyRef:
