@@ -78,10 +78,10 @@ export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,
   }
 
   private getAgent(chainId: ChainId): Agent {
-    return chainId ? this.mainnetAgent : this.sepoliaAgent
+    return chainId === 1 ? this.mainnetAgent : this.sepoliaAgent
   }
 
   private getIdentifier(chainId: ChainId): Identifier {
-    return chainId ? this.mainnetIdentifier : this.sepoliaIdentifier
+    return chainId === 1 ? this.mainnetIdentifier : this.sepoliaIdentifier
   }
 }

@@ -34,11 +34,9 @@ export class AuthController {
       signature: body.signature
     })
 
-
     const token = this.jwtService.sign({ ens, address, chainId }, {
       expiresIn: moment().add(1, 'hour').unix()
     });
-
 
     res.cookie('justverifiedtoken', token, { httpOnly: true, secure: true, sameSite: 'none' });
 
