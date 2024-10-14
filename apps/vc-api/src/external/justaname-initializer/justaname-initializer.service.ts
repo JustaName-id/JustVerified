@@ -23,7 +23,21 @@ export class JustaNameInitializerService implements IEnsManagerService {
     @Inject(KEY_MANAGEMENT_FETCHER) private readonly keyManagementFetcher: IKeyManagementFetcher
   ) {
     this.justaname = JustaName.init({
-      dev: this.environmentGetter.getEnv() === 'staging' || this.environmentGetter.getEnv() === 'development'
+      dev: this.environmentGetter.getEnv() === 'staging' || this.environmentGetter.getEnv() === 'development',
+      config: {
+        origin: this.environmentGetter.getOrigin(),
+        domain: this.environmentGetter.getDomain(),
+      },
+      networks: [
+        {
+          chainId: 1,
+          providerUrl: 'https://mainnet.infura.io/v3/' + this.environmentGetter.getInfuraProjectId()
+        },
+        {
+          chainId: 11155111,
+          providerUrl: 'https://sepolia.infura.io/v3/' + this.environmentGetter.getInfuraProjectId()
+        }
+      ]
     })
   }
 
