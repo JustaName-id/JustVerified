@@ -133,6 +133,16 @@ spec:
                 secretKeyRef:
                   name: foosecret-verifications
                   key: RESEND_API_KEY
+            - name: OBJECT
+              valueFrom:
+                  secretKeyRef:
+                    name: foosecret-verifications
+                    key: OBJECT
+            - name: DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: DOMAIN
 ---
 apiVersion: v1
 kind: Service
