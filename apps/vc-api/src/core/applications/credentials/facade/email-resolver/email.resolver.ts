@@ -70,7 +70,7 @@ EmailCredential
 
   async generateEmailOtp(emailOtpGenerateRequest: EmailOtpGenerateRequest): Promise<EmailOtpGenerateResponse> {
 
-    const { email, ens, authId } = emailOtpGenerateRequest;
+    const { email, ens, chainId, authId } = emailOtpGenerateRequest;
     const { otp, expiresAt } = this.generateOtp(email);
 
     if (this.otpStore.has(authId)) {
@@ -85,6 +85,7 @@ EmailCredential
 
     const encryptedState = this.encryptState({
       ens,
+      chainId,
       authId,
     });
 

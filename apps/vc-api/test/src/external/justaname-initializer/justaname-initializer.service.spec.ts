@@ -45,6 +45,7 @@ const getSignInRequest = (): SignInRequest => ({
 const getSignInResponse = (): SignInResponse => ({
   address: ADDRESS,
   ens: ENS,
+  chainId: CHAIN_ID,
 });
 
 const getEthereumEip712Signature2021 = (): EthereumEip712Signature2021 => {
@@ -67,9 +68,6 @@ describe('JustaName initializer service', () => {
         {
           provide: ENVIRONMENT_GETTER,
           useValue: createMock<IEnvironmentGetter>({
-            getChainId: jest.fn().mockReturnValue(CHAIN_ID),
-            getSiweDomain: jest.fn().mockReturnValue(SIWE_DOMAIN),
-            getSiweOrigin: jest.fn().mockReturnValue(SIWE_ORIGIN),
             getEnsDomain: jest.fn().mockReturnValue(ENS_DOMAIN),
             getInfuraProjectId: jest.fn().mockReturnValue(INFURA_PROJECT_ID),
           }),

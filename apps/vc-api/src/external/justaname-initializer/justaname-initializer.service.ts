@@ -1,7 +1,7 @@
 import { IEnsManagerService } from '../../core/applications/ens-manager/iens-manager.service';
 import { SignInRequest } from '../../core/applications/ens-manager/requests/sign-in.request';
 import { SignInResponse } from '../../core/applications/ens-manager/responses/sign-in.response';
-import { JustaName, SubnameRecordsResponse } from '@justaname.id/sdk';
+import { ChainId, JustaName, SubnameRecordsResponse } from '@justaname.id/sdk';
 import { Inject } from '@nestjs/common';
 import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../core/applications/environment/ienvironment.getter';
 import { GetRecordsRequest } from '../../core/applications/ens-manager/requests/get-records.request';
@@ -21,15 +21,7 @@ export class JustaNameInitializerService implements IEnsManagerService {
     @Inject(ENVIRONMENT_GETTER) private readonly environmentGetter: IEnvironmentGetter,
     @Inject(KEY_MANAGEMENT_FETCHER) private readonly keyManagementFetcher: IKeyManagementFetcher
   ) {
-    this.justaname = JustaName.init({
-      config: {
-        chainId: this.environmentGetter.getChainId(),
-        domain: this.environmentGetter.getSiweDomain(),
-        origin:this.environmentGetter.getSiweOrigin(),
-      },
-      ensDomain: this.environmentGetter.getEnsDomain(),
-      providerUrl: (this.environmentGetter.getChainId() === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') + this.environmentGetter.getInfuraProjectId()
-    })
+    this.justaname = JustaName.init({})
   }
 
   async signIn(params: SignInRequest): Promise<SignInResponse> {
@@ -42,6 +34,7 @@ export class JustaNameInitializerService implements IEnsManagerService {
       return {
         address: sign.data.address,
         ens: sign.ens,
+        chainId: sign.data.chainId as ChainId,
       };
     } catch (error) {
       throw AuthenticationException.withError(error);
@@ -55,32 +48,33 @@ export class JustaNameInitializerService implements IEnsManagerService {
   async getRecords(params: GetRecordsRequest): Promise<GetRecordsResponse> {
     try {
       const providerUrl = (params.chainId === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') + this.environmentGetter.getInfuraProjectId()
-      
+
       const records: SubnameRecordsResponse = await this.justaname.subnames.getRecordsByFullName({
         fullName: params.ens,
         providerUrl: providerUrl,
         chainId: params.chainId,
       })
-      
+
       return this.mapSubnameRecordsResponseToGetRecordsResponse(records)
     } catch (error) {
       throw JustaNameInitializerException.withError(error);
     }
   }
 
-  checkIfMAppEnabled(ens: string): Promise<boolean> {
+  checkIfMAppEnabled(ens: string, chainId: ChainId): Promise<boolean> {
     return this.justaname.mApps.checkIfMAppIsEnabled({
       mApp: this.environmentGetter.getEnsDomain(),
       ens: ens,
-      chainId: this.environmentGetter.getChainId()
+      chainId: chainId
     })
   }
 
-  async appendVcInMAppEnabledEns(ens: string, vc: VerifiableEthereumEip712Signature2021, field: string): Promise<boolean> {
+  async appendVcInMAppEnabledEns(ens: string, chainId: ChainId, vc: VerifiableEthereumEip712Signature2021, field: string): Promise<boolean> {
     try {
       const message = await this.justaname.mApps.requestAppendMAppFieldChallenge({
         mApp: this.environmentGetter.getEnsDomain(),
         subname: ens,
+        chainId: chainId,
       address: this.keyManagementFetcher.fetchKey().publicKey,
     })
       const signature = await this.keyManagementFetcher.signMessage(message.challenge)
@@ -96,7 +90,7 @@ export class JustaNameInitializerService implements IEnsManagerService {
         xMessage: message.challenge,
         xSignature: signature
       })
-    
+
       return !!appended
     } catch (error) {
       throw JustaNameInitializerException.withError(error);

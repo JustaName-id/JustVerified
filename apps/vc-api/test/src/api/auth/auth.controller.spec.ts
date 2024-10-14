@@ -14,6 +14,7 @@ import { AuthenticationException } from '../../../../src/core/domain/exceptions/
 
 const ENS = 'ENS';
 const ADDRESS = 'ADDRESS';
+const CHAINID = 11155111;
 const MESSAGE = 'MESSAGE';
 const SIGNATURE = 'SIGNATURE';
 const SIGNATURE_2 = 'SIGNATURE_2';
@@ -50,7 +51,7 @@ describe('Auth controller integration tests', () => {
 
     ensManagerService.signIn.mockImplementation(async (param) => {
       if (param.message === MESSAGE && param.signature === SIGNATURE) {
-        return { ens: ENS, address: ADDRESS };
+        return { ens: ENS, chainId: CHAINID, address: ADDRESS };
       }
       throw new AuthenticationException(ERROR_MESSAGE);
     });
