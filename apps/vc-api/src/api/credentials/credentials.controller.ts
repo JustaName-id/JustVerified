@@ -82,27 +82,23 @@ export class CredentialsController {
     @Query() authGetAuthUrlRequestApiQuery: any,
     @Res() res: Response
   ): Promise<void> {
-    try {
-      const verifiedEthereumEip712Signature2021 = await this.credentialCreatorFacade.socialCallback(
-        this.authControllerMapper.mapAuthCallbackApiRequestToCredentialCallbackRequest(
-          authGetAuthUrlRequestApiQuery,
-          authGetAuthUrlRequestApiParam)
-      )
+ 
+    const verifiedEthereumEip712Signature2021 = await this.credentialCreatorFacade.socialCallback(
+      this.authControllerMapper.mapAuthCallbackApiRequestToCredentialCallbackRequest(
+        authGetAuthUrlRequestApiQuery,
+        authGetAuthUrlRequestApiParam)
+    )
 
-      const { authId, dataKey, verifiableCredential } = verifiedEthereumEip712Signature2021
+    const { authId, dataKey, verifiableCredential } = verifiedEthereumEip712Signature2021
 
-      const subject = this.authSubjects.get(authId);
-      subject?.next({
-        authId,
-        result: {
-          verifiableCredential,
-          dataKey
-        }
-      });
-    }catch(e){
-
-    }
-
+    const subject = this.authSubjects.get(authId);
+    subject?.next({
+      authId,
+      result: {
+        verifiableCredential,
+        dataKey
+      }
+    });
 
     res.send(`
     <html>
