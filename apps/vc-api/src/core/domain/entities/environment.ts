@@ -48,4 +48,8 @@ export class Environment {
   ENCRYPT_SALT!: string;
 
   RESEND_API_KEY!: string;
+
+  ORIGIN!: string;
+
+  DOMAIN!: string;
 }
