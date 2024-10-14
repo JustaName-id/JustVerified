@@ -13,11 +13,13 @@ export type ChainId = typeof SupportedChainIds[number];
 export class Environment {
   SIGNING_PRIVATE_KEY!: string;
 
+  SIGNING_PRIVATE_KEY_SEPOLIA_DOMAIN!: string;
+
   ENVIRONMENT!: EnvironmentType;
 
   ENS_DOMAIN!: string;
 
-  CHAIN_ID!: ChainId;
+  ENS_DOMAIN_SEPOLIA!: string;
 
   INFURA_PROJECT_ID!: string;
 
@@ -40,10 +42,6 @@ export class Environment {
   TELEGRAM_BOT_USERNAME!: string;
 
   JWT_SECRET!: string;
-
-  SIWE_DOMAIN!: string;
-
-  SIWE_ORIGIN!: string;
 
   ENCRYPT_KEY!: string;
 

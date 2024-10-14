@@ -1,41 +1,32 @@
-import { plainToClass, Transform } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import {
   IsEnum,
-  IsNumber, IsNumberString,
   IsString,
   registerDecorator,
   validateSync,
   ValidationOptions
 } from 'class-validator';
 import { ethers } from 'ethers';
-import { ChainId, Environment, EnvironmentType, SupportedChainIds } from '../core/domain/entities/environment';
-import { x } from 'vitest/dist/reporters-yx5ZTtEV';
+import { Environment, EnvironmentType } from '../core/domain/entities/environment';
 
 class EnvironmentVariables implements Environment{
   @IsString({ message: 'SIGNING_PRIVATE_KEY must be a string' })
   @IsEthereumPrivateKey({ message: 'SIGNING_PRIVATE_KEY must be a valid private key' })
   SIGNING_PRIVATE_KEY!: string;
 
+  @IsString({ message: 'SIGNING_PRIVATE_KEY_SEPOLIA_DOMAIN must be a string' })
+  @IsEthereumPrivateKey({ message: 'SIGNING_PRIVATE_KEY_SEPOLIA_DOMAIN must be a valid private key' })
+  SIGNING_PRIVATE_KEY_SEPOLIA_DOMAIN!: string;
+
   @IsString({ message: 'ENVIROMENT must be a string' })
   @IsEnum(EnvironmentType, { message: 'ENVIRONMENT must be a valid environment' })
   ENVIRONMENT!: EnvironmentType;
 
-  @Transform(({ value }) => {
-      const intValue = parseInt(value)
-      if (isNaN(intValue)) {
-        throw new Error('CHAIN_ID must be a number')
-      }
-
-      const isValidChainId = (x: any): x is ChainId => SupportedChainIds.includes(x);
-
-      if (!isValidChainId(intValue)) {
-        throw new Error('CHAIN_ID must be a valid chain id (1, 11155111)')
-      }
-  })
-  CHAIN_ID!: ChainId;
-
   @IsString({ message: 'ENS_DOMAIN must be a string' })
   ENS_DOMAIN!: string;
+
+  @IsString({ message: 'ENS_DOMAIN_SEPOLIA must be a string' })
+  ENS_DOMAIN_SEPOLIA!: string;
 
   @IsString({message: 'INFURA_PROJECT_ID must be a string'})
   INFURA_PROJECT_ID!: string;
@@ -69,12 +60,6 @@ class EnvironmentVariables implements Environment{
 
   @IsString({message: 'JWT_SECRET must be a string'})
   JWT_SECRET: string;
-
-  @IsString({message: 'SIWE_DOMAIN must be a string'})
-  SIWE_DOMAIN: string;
-
-  @IsString({message: 'SIWE_ORIGIN must be a string'})
-  SIWE_ORIGIN: string;
 
   @IsString({message: 'ENCRYPT_KEY must be a string'})
   ENCRYPT_KEY: string;

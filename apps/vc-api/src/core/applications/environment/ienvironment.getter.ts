@@ -1,14 +1,13 @@
-import { ChainId, EnvironmentType } from '../../domain/entities/environment';
+import { EnvironmentType } from '../../domain/entities/environment';
 
 export const ENVIRONMENT_GETTER = 'ENVIRONMENT_GETTER'
 
 export interface IEnvironmentGetter {
   getPk(): string;
+  getPkSepolia(): string;
   getEnv(): EnvironmentType;
   getEnsDomain(): string;
-  getSiweDomain(): string;
-  getSiweOrigin(): string;
-  getChainId(): ChainId
+  getEnsDomainSepolia(): string;
   getApiDomain(): string;
   getInfuraProjectId(): string;
   getGithubClientId(): string;

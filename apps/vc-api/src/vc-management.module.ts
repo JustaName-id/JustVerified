@@ -54,6 +54,8 @@ import { EMAIL_SENDER } from './core/applications/email-sender/iemail-sender.ser
 import { EmailSender } from './external/email-sender/email-sender.service';
 import {EmailResolver} from "./core/applications/credentials/facade/email-resolver/email.resolver";
 import {EMAIL_RESOLVER} from "./core/applications/credentials/facade/email-resolver/iemail.resolver";
+import { VCManagementApiFilters } from './api/filters/vc.api.filters';
+import { APP_FILTER } from '@nestjs/core';
 
 const dynamicImport = async (packageName: string) =>
   new Function(`return import('${packageName}')`)();
@@ -75,6 +77,10 @@ const dynamicImport = async (packageName: string) =>
     VerifyRecordsController
   ],
   providers: [
+    ...VCManagementApiFilters.map((filter) => ({
+      provide: APP_FILTER,
+      useClass: filter,
+    })),
     {
       useClass: CredentialsControllerMapper,
       provide: AUTH_CONTROLLER_MAPPER

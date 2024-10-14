@@ -16,8 +16,9 @@ import {CredentialsResendOtpRequestApi} from "./requests/credentials.resend-otp.
 import {CredentialsVerifyOtpRequestApi} from "./requests/credentials.verify-otp.request.api";
 import {CredentialsClearEmailRequestApi} from "./requests/credentials.clear-email.request.api";
 import {AuthCallbackApiResponse} from "./responses/credentials.callback.response.api";
+import { ChainId } from '../../core/domain/entities/environment';
 
-type Siwens = { address: string, ens: string };
+type Siwens = { address: string, ens: string, chainId: ChainId };
 
 @Controller('credentials')
 export class CredentialsController {
@@ -47,6 +48,7 @@ export class CredentialsController {
     const redirectUrl = await this.credentialCreatorFacade.getSocialAuthUrl(
       authGetAuthUrlRequestApi.authName,
       req.user?.ens,
+      req.user?.chainId,
       authId
     )
 
@@ -82,27 +84,23 @@ export class CredentialsController {
     @Query() authGetAuthUrlRequestApiQuery: any,
     @Res() res: Response
   ): Promise<void> {
-    try {
-      const verifiedEthereumEip712Signature2021 = await this.credentialCreatorFacade.socialCallback(
-        this.authControllerMapper.mapAuthCallbackApiRequestToCredentialCallbackRequest(
-          authGetAuthUrlRequestApiQuery,
-          authGetAuthUrlRequestApiParam)
-      )
 
-      const { authId, dataKey, verifiableCredential } = verifiedEthereumEip712Signature2021
+    const verifiedEthereumEip712Signature2021 = await this.credentialCreatorFacade.socialCallback(
+      this.authControllerMapper.mapAuthCallbackApiRequestToCredentialCallbackRequest(
+        authGetAuthUrlRequestApiQuery,
+        authGetAuthUrlRequestApiParam)
+    )
 
-      const subject = this.authSubjects.get(authId);
-      subject?.next({
-        authId,
-        result: {
-          verifiableCredential,
-          dataKey
-        }
-      });
-    }catch(e){
+    const { authId, dataKey, verifiableCredential } = verifiedEthereumEip712Signature2021
 
-    }
-
+    const subject = this.authSubjects.get(authId);
+    subject?.next({
+      authId,
+      result: {
+        verifiableCredential,
+        dataKey
+      }
+    });
 
     res.send(`
     <html>
@@ -131,6 +129,7 @@ export class CredentialsController {
     const state = await this.credentialCreatorFacade.getEmailOTP(
       query.email,
       req.user?.ens,
+      req.user?.chainId,
       authId
     )
 

@@ -7,6 +7,8 @@ import { CredentialCallbackResponse } from './credential.callback.response';
 import {EmailResolver} from "./email-resolver/email.resolver";
 import {EMAIL_RESOLVER, IEmailResolver} from "./email-resolver/iemail.resolver";
 import {EmailCallback} from "./email-resolver/email.callback";
+import { SocialResolverNotFoundException } from '../../../domain/exceptions/SocialResolverNotFound.exception';
+import { ChainId } from '../../../domain/entities/environment';
 
 @Injectable()
 export class CredentialCreatorFacade implements ICredentialCreatorFacade {
@@ -18,8 +20,7 @@ export class CredentialCreatorFacade implements ICredentialCreatorFacade {
     @Inject(EMAIL_RESOLVER)
     private readonly emailResolver: IEmailResolver,
 
-  ) {
-  }
+  ) {}
 
   getSocialResolver<T>(credentialName: string) {
     for(const resolver of this.subjectResolver.getSocialResolvers()){
@@ -27,19 +28,19 @@ export class CredentialCreatorFacade implements ICredentialCreatorFacade {
         return resolver;
       }
     }
-    throw new Error(`No resolver found for ${credentialName}`);
+    throw SocialResolverNotFoundException.forCredentialName(credentialName);
   }
 
-  async getSocialAuthUrl(credentialName: string, ens: string, authId: string): Promise<string> {
-    return this.getSocialResolver(credentialName).getAuthUrl({ens, authId});
+  async getSocialAuthUrl(credentialName: string, ens: string, chainId: ChainId, authId: string): Promise<string> {
+    return this.getSocialResolver(credentialName).getAuthUrl({ens, chainId, authId});
   }
 
   async socialCallback(credentialCallbackRequest: CredentialCallbackRequest): Promise<CredentialCallbackResponse> {
     return await this.getSocialResolver(credentialCallbackRequest.credentialName).generateCredential(credentialCallbackRequest.callbackData);
   }
 
-  async getEmailOTP(email: string, ens: string, authId:string): Promise<string> {
-    const state = await this.emailResolver.generateEmailOtp({email, authId, ens})
+  async getEmailOTP(email: string, ens: string, chainId: ChainId, authId:string): Promise<string> {
+    const state = await this.emailResolver.generateEmailOtp({email, authId, ens, chainId})
     return state.state
   }
 
