@@ -6,6 +6,7 @@ import { GithubCallback } from './callback/github.callback';
 import { GithubToken } from './token/github.token';
 import { GithubAuth } from './auth/github.auth';
 import { VerifiableEthereumEip712Signature2021 } from '../../../../../domain/entities/ethereumEip712Signature';
+import { ChainId } from '../../../../../domain/entities/environment';
 
 export class GithubSocialResolver extends AbstractSocialResolver<
   GithubCallback,
@@ -27,8 +28,8 @@ export class GithubSocialResolver extends AbstractSocialResolver<
     return ['VerifiableGithubAccount'];
   }
 
-  getAuthUrl({ens, authId}): string {
-    const stateObject = { ens, authId };
+  getAuthUrl({ens, chainId, authId}: {ens: string; chainId: ChainId; authId: string}): string {
+    const stateObject = { ens, chainId, authId };
     const encryptedState = this.cryptoEncryption.encrypt(JSON.stringify(stateObject));
     const clientId = this.environmentGetter.getGithubClientId();
     const scope = 'read:user';

@@ -2635,7 +2635,7 @@
     "@tanstack/react-query" "^5.28.4"
     ethers "^6.11.1"
 
-"@justaname.id/sdk@0.2.91", "@justaname.id/sdk@^0.2.91":
+"@justaname.id/sdk@0.2.91":
   version "0.2.91"
   resolved "https://registry.yarnpkg.com/@justaname.id/sdk/-/sdk-0.2.91.tgz#971b5da654e81b354db45565dc1c7e1adfcc7b3a"
   integrity sha512-jJ7DEq1ZsNSatupn6Yv50qdfhdhfe045xC8yMqpeaz01TJXDPopgH8n0tj1Ei0BLO/59qHHb4CJOETUNrIU8DA==
@@ -2644,10 +2644,27 @@
     axios "^1.6.0"
     qs "^6.12.0"
 
+"@justaname.id/sdk@0.2.98":
+  version "0.2.98"
+  resolved "https://registry.yarnpkg.com/@justaname.id/sdk/-/sdk-0.2.98.tgz#2bb1d1495e9bf01deb8332b3fee4746d839ba13f"
+  integrity sha512-nOKiP+SH29ycFkspRVRcZXcHDbh97pbs3mvHG0hutnt+weY+VMc1or25WumFChl8oJypAg41NpbiIYmbh5dO8A==
+  dependencies:
+    "@justaname.id/siwens" "0.0.31"
+    axios "^1.6.0"
+    qs "^6.12.0"
+
 "@justaname.id/siwens@0.0.24", "@justaname.id/siwens@^0.0.24":
   version "0.0.24"
   resolved "https://registry.yarnpkg.com/@justaname.id/siwens/-/siwens-0.0.24.tgz#af8172f6c7034394c82311ea213ec4075458faf2"
   integrity sha512-cW8+znUTH07gcupu/TqL3DeoWmiS2RlRu6bOUd8OxhonzrQ3RAB3W/HQnZJ0RoQC6H4v5yI0jsOr6M8KDC9niQ==
+  dependencies:
+    ethers "^6.11.1"
+    siwe "^2.3.2"
+
+"@justaname.id/siwens@0.0.31":
+  version "0.0.31"
+  resolved "https://registry.yarnpkg.com/@justaname.id/siwens/-/siwens-0.0.31.tgz#8919e17d8bb09d1e39cf720e1c2e5a1a115c0dac"
+  integrity sha512-uGUlHVmkP8IYkdA/TqUwdqefTB/apOUcJSTG0GTLqV/ljIAy95zsJa2313U/j0PfpGGcZX5J8PwAZ8E8m7wl0Q==
   dependencies:
     ethers "^6.11.1"
     siwe "^2.3.2"

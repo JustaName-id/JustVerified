@@ -14,6 +14,7 @@ import { AuthenticationException } from '../../../../src/core/domain/exceptions/
 
 const ENS = 'ENS';
 const ADDRESS = 'ADDRESS';
+const CHAINID = 11155111;
 const MESSAGE = 'MESSAGE';
 const SIGNATURE = 'SIGNATURE';
 const SIGNATURE_2 = 'SIGNATURE_2';
@@ -50,7 +51,7 @@ describe('Auth controller integration tests', () => {
 
     ensManagerService.signIn.mockImplementation(async (param) => {
       if (param.message === MESSAGE && param.signature === SIGNATURE) {
-        return { ens: ENS, address: ADDRESS };
+        return { ens: ENS, chainId: CHAINID, address: ADDRESS };
       }
       throw new AuthenticationException(ERROR_MESSAGE);
     });
@@ -80,7 +81,7 @@ describe('Auth controller integration tests', () => {
         .send({ message: MESSAGE, signature: SIGNATURE })
         .expect((res) => {
           expect(res.status).toBe(200);
-          expect(res.body).toEqual({ ens: ENS, address: ADDRESS });
+          expect(res.body).toEqual({ ens: ENS, chainId: CHAINID, address: ADDRESS });
           expect(res.headers['set-cookie']).toBeDefined();
           expect(res.headers['set-cookie'][0]).toContain('justverifiedtoken=' + TOKEN);
           expect(res.headers['set-cookie'][0]).toContain('HttpOnly');

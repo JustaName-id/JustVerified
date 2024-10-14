@@ -8,6 +8,7 @@ import {EmailResolver} from "./email-resolver/email.resolver";
 import {EMAIL_RESOLVER, IEmailResolver} from "./email-resolver/iemail.resolver";
 import {EmailCallback} from "./email-resolver/email.callback";
 import { SocialResolverNotFoundException } from '../../../domain/exceptions/SocialResolverNotFound.exception';
+import { ChainId } from '../../../domain/entities/environment';
 
 @Injectable()
 export class CredentialCreatorFacade implements ICredentialCreatorFacade {
@@ -30,16 +31,16 @@ export class CredentialCreatorFacade implements ICredentialCreatorFacade {
     throw SocialResolverNotFoundException.forCredentialName(credentialName);
   }
 
-  async getSocialAuthUrl(credentialName: string, ens: string, authId: string): Promise<string> {
-    return this.getSocialResolver(credentialName).getAuthUrl({ens, authId});
+  async getSocialAuthUrl(credentialName: string, ens: string, chainId: ChainId, authId: string): Promise<string> {
+    return this.getSocialResolver(credentialName).getAuthUrl({ens, chainId, authId});
   }
 
   async socialCallback(credentialCallbackRequest: CredentialCallbackRequest): Promise<CredentialCallbackResponse> {
     return await this.getSocialResolver(credentialCallbackRequest.credentialName).generateCredential(credentialCallbackRequest.callbackData);
   }
 
-  async getEmailOTP(email: string, ens: string, authId:string): Promise<string> {
-    const state = await this.emailResolver.generateEmailOtp({email, authId, ens})
+  async getEmailOTP(email: string, ens: string, chainId: ChainId, authId:string): Promise<string> {
+    const state = await this.emailResolver.generateEmailOtp({email, authId, ens, chainId})
     return state.state
   }
 

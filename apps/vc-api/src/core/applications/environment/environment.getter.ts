@@ -1,7 +1,7 @@
 import {Injectable} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
 import {IEnvironmentGetter} from "./ienvironment.getter";
-import { ChainId, Environment, EnvironmentType } from '../../domain/entities/environment';
+import { Environment, EnvironmentType } from '../../domain/entities/environment';
 
 @Injectable()
 export class EnvironmentGetter implements IEnvironmentGetter {
@@ -11,16 +11,20 @@ export class EnvironmentGetter implements IEnvironmentGetter {
     return this.configService.get('SIGNING_PRIVATE_KEY');
   }
 
+  getPkSepolia(): string {
+    return this.configService.get('SIGNING_PRIVATE_KEY_SEPOLIA_DOMAIN');
+  }
+
   getEnv(): EnvironmentType {
     return this.configService.get<EnvironmentType>('ENVIRONMENT');
   }
 
-  getChainId(): ChainId {
-    return parseInt(this.configService.get('CHAIN_ID')) as ChainId;
-  }
-
   getEnsDomain(): string {
     return this.configService.get<string>('ENS_DOMAIN');
+  }
+
+  getEnsDomainSepolia(): string {
+    return this.configService.get<string>('ENS_DOMAIN_SEPOLIA');
   }
 
   getInfuraProjectId(): string {
@@ -61,14 +65,6 @@ export class EnvironmentGetter implements IEnvironmentGetter {
 
   getTelegramBotUsername(): string {
     return this.configService.get<string>('TELEGRAM_BOT_USERNAME');
-  }
-
-  getSiweDomain(): string {
-    return this.configService.get<string>('SIWE_DOMAIN');
-  }
-
-  getSiweOrigin(): string {
-    return this.configService.get<string>('SIWE_ORIGIN');
   }
 
   getEncryptKey(): string {

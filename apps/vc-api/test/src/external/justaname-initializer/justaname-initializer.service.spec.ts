@@ -23,8 +23,6 @@ const ENS = 'ENS';
 const ERROR_MESSAGE = 'ERROR_MESSAGE';
 
 const CHAIN_ID = 11155111;
-const SIWE_DOMAIN = 'SIWE_DOMAIN';
-const SIWE_ORIGIN = 'SIWE_ORIGIN';
 const ENS_DOMAIN = 'ENS_DOMAIN';
 const INFURA_PROJECT_ID = 'INFURA_PROJECT_ID';
 
@@ -45,6 +43,7 @@ const getSignInRequest = (): SignInRequest => ({
 const getSignInResponse = (): SignInResponse => ({
   address: ADDRESS,
   ens: ENS,
+  chainId: CHAIN_ID,
 });
 
 const getEthereumEip712Signature2021 = (): EthereumEip712Signature2021 => {
@@ -67,9 +66,6 @@ describe('JustaName initializer service', () => {
         {
           provide: ENVIRONMENT_GETTER,
           useValue: createMock<IEnvironmentGetter>({
-            getChainId: jest.fn().mockReturnValue(CHAIN_ID),
-            getSiweDomain: jest.fn().mockReturnValue(SIWE_DOMAIN),
-            getSiweOrigin: jest.fn().mockReturnValue(SIWE_ORIGIN),
             getEnsDomain: jest.fn().mockReturnValue(ENS_DOMAIN),
             getInfuraProjectId: jest.fn().mockReturnValue(INFURA_PROJECT_ID),
           }),
@@ -113,7 +109,7 @@ describe('JustaName initializer service', () => {
       jest
         .spyOn(
           justaNameInitializerService.justaname.subnames,
-          'getRecordsByFullName'
+          'getRecords'
         )
         .mockRejectedValue(new Error(ERROR_MESSAGE));
 
@@ -140,6 +136,7 @@ describe('JustaName initializer service', () => {
       await expect(
         justaNameInitializerService.appendVcInMAppEnabledEns(
           ENS,
+          CHAIN_ID,
           {} as VerifiableEthereumEip712Signature2021,
           FIELD
         )
