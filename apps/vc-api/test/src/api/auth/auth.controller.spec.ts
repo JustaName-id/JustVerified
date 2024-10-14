@@ -81,7 +81,7 @@ describe('Auth controller integration tests', () => {
         .send({ message: MESSAGE, signature: SIGNATURE })
         .expect((res) => {
           expect(res.status).toBe(200);
-          expect(res.body).toEqual({ ens: ENS, address: ADDRESS });
+          expect(res.body).toEqual({ ens: ENS, chainId: CHAINID, address: ADDRESS });
           expect(res.headers['set-cookie']).toBeDefined();
           expect(res.headers['set-cookie'][0]).toContain('justverifiedtoken=' + TOKEN);
           expect(res.headers['set-cookie'][0]).toContain('HttpOnly');

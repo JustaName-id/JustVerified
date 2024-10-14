@@ -23,8 +23,6 @@ const ENS = 'ENS';
 const ERROR_MESSAGE = 'ERROR_MESSAGE';
 
 const CHAIN_ID = 11155111;
-const SIWE_DOMAIN = 'SIWE_DOMAIN';
-const SIWE_ORIGIN = 'SIWE_ORIGIN';
 const ENS_DOMAIN = 'ENS_DOMAIN';
 const INFURA_PROJECT_ID = 'INFURA_PROJECT_ID';
 
@@ -111,7 +109,7 @@ describe('JustaName initializer service', () => {
       jest
         .spyOn(
           justaNameInitializerService.justaname.subnames,
-          'getRecordsByFullName'
+          'getRecords'
         )
         .mockRejectedValue(new Error(ERROR_MESSAGE));
 
@@ -138,6 +136,7 @@ describe('JustaName initializer service', () => {
       await expect(
         justaNameInitializerService.appendVcInMAppEnabledEns(
           ENS,
+          CHAIN_ID,
           {} as VerifiableEthereumEip712Signature2021,
           FIELD
         )

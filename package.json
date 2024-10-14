@@ -4,11 +4,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@justaname.id/react": "^0.3.94",
-    "@justaname.id/react-signin": "^0.0.27",
-    "@justaname.id/react-ui": "^0.0.15",
-    "@justaname.id/sdk": "^0.2.91",
-    "@justaname.id/siwens": "^0.0.24",
+    "@justaname.id/sdk": "0.2.98",
     "@nestjs/common": "^10.0.2",
     "@nestjs/config": "^3.2.3",
     "@nestjs/core": "^10.0.2",

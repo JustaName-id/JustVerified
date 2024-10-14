@@ -95,7 +95,7 @@ export abstract class AbstractResolver<
     const credentialSubject = await this.extractCredentialSubject(data);
     const { ens , chainId, authId} = this.getEnsAndAuthId(data);
 
-    const did = await this.didResolver.getEnsDid(ens)
+    const did = await this.didResolver.getEnsDid(ens, chainId)
     const ethereumEip712Signature2021 = new EthereumEip712Signature2021<K>({
       type: this.getType(),
       context: this.getContext(),
@@ -113,7 +113,8 @@ export abstract class AbstractResolver<
     });
 
     const verifiableCredential = (await this.credentialCreator.createCredential(
-      ethereumEip712Signature2021
+      ethereumEip712Signature2021,
+      chainId
     )) as VerifiableEthereumEip712Signature2021<K>;
 
     await this.successfulCredentialGeneration(verifiableCredential, ens, chainId);
