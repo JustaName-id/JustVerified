@@ -78,4 +78,12 @@ export class EnvironmentGetter implements IEnvironmentGetter {
   getResendApiKey(): string {
     return this.configService.get<string>('RESEND_API_KEY');
   }
+
+  getOrigin(): string {
+    return this.configService.get<string>('ORIGIN');
+  }
+
+  getDomain(): string {
+    return this.configService.get<string>('DOMAIN');
+  }
 }

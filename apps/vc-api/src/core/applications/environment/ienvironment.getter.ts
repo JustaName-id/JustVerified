@@ -21,4 +21,6 @@ export interface IEnvironmentGetter {
   getEncryptKey(): string;
   getEncryptSalt(): string;
   getResendApiKey(): string;
+  getOrigin(): string;
+  getDomain(): string;
 }

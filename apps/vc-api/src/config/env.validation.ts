@@ -69,6 +69,12 @@ class EnvironmentVariables implements Environment{
 
   @IsString({message: 'RESEND_API_KEY must be a string'})
   RESEND_API_KEY: string;
+
+  @IsString({message: 'ORIGIN must be a string'})
+  ORIGIN: string;
+
+  @IsString({message: 'DOMAIN must be a string'})
+  DOMAIN: string;
 }
 
 function IsEthereumPrivateKey(validationOptions?: ValidationOptions) {
