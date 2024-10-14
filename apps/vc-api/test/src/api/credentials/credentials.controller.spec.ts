@@ -110,7 +110,7 @@ describe('Credentials controller integration tests', () => {
         .get('/credentials/email')
         .query({ email: EMAIL })
         .expect((res) => {
-          expect(res.status).toBe(500);
+          expect(res.status).toBe(502);
           expect(res.body.message).toBe(ERROR_MESSAGE);
         });
     });

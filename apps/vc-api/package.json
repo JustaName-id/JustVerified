@@ -34,6 +34,8 @@
     "@react-email/components": "^0.0.25",
     "react": "18.3.1",
     "resend": "^4.0.0",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "@nestjs/testing": "^10.0.2",
+    "@golevelup/ts-jest": "^0.5.6"
   }
 }
