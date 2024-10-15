@@ -1,96 +1,284 @@
-# Justanid
+# JustVerified
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+This repository contains a Verifiable Credentials Management API built with NestJS. It allows users to generate and verify verifiable credentials (VCs) using social accounts (GitHub, Twitter, Discord, Telegram), email verification, and integrates with the Ethereum Name Service (ENS). The API supports generating VCs, verifying VCs, and managing records on ENS names.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## Features
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+- **Verifiable Credentials Generation**: Generate verifiable credentials using social accounts (GitHub, Twitter, Discord, Telegram) and email verification.
+- **ENS Integration**: Manage ENS subdomain records, append VCs to ENS records, and verify records.
+- **Authentication**: Authenticate users using Ethereum addresses and ENS domains.
+- **Credential Verification**: Verify the validity of VCs and ensure they are issued by trusted issuers.
+- **Social Account Verification**: Integrate with social platforms for account verification.
+- **Email Verification**: Send OTPs to verify email addresses.
 
-## Run tasks
+## Architecture
 
-To run tasks with Nx use:
+The application is built using the NestJS framework, following a modular architecture. Key components include:
 
-```sh
-npx nx <target> <project-name>
+- **Controllers**: Handle incoming HTTP requests and return responses.
+- **Services**: Contain business logic and interact with external services or databases.
+- **Resolvers**: Resolve data for VCs, including social accounts and email.
+- **Agents**: Use [Veramo](https://veramo.io/) to create and verify verifiable credentials.
+- **Mappers**: Map data between different formats and layers.
+- **Filters**: Handle exceptions and errors.
+
+## Prerequisites
+
+
+## Getting Started
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/JustaName-id/JustVerified.git
+cd JustVerified
 ```
 
-For example:
+2. Install the dependencies:
 
-```sh
-npx nx build myproject
+```bash
+yarn
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+### Environment Variables
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Create a .env file in the root directory and set the environment variables similar to the .env.example file.
 
-## Add new projects
+### Running the Application
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+Start the application in development mode:
 
-To install a new plugin you can use the `nx add` command. Here's an example of adding the React plugin:
-```sh
-npx nx add @nx/react
+```bash
+nx serve vc-api
 ```
 
-Use the plugin's generator to create new projects. For example, to create a new React app or library:
+The application will be available at http://localhost:3000/verifications/v1.
 
-```sh
-# Genenerate an app
-npx nx g @nx/react:app demo
+## API Documentation
 
-# Generate a library
-npx nx g @nx/react:lib some-lib
+### Authentication
+
+#### Get Nonce
+
+**Endpoint**: `GET /auth/nonce`
+
+**Description**: Generates a nonce for signing in.
+
+**Response**:
+
+```json
+{
+  "nonce": "1234567890abcdef"
+}
+```
+#### Sign In
+
+**Endpoint**: `POST /auth/signin`
+
+**Description**: Authenticates a user by verifying their Ethereum signature.
+
+**Request Body**:
+
+```json
+{
+  "message": "<Signed_Nonce_Message>",
+  "signature": "<Ethereum_Signature>"
+}
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+**Response**:
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
-npx nx connect
+```json
+{
+  "ens": "user.yourdomain.eth",
+  "address": "0xYourEthereumAddress",
+  "chainId": 1
+}
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+#### Get Current Session
+**Endpoint**: `GET /auth/current`
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+**Description**: Retrieves the current authenticated session.
 
-### Step 2
+**Response**:
 
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
+```json
+{
+  "ens": "user.yourdomain.eth",
+  "address": "0xYourEthereumAddress",
+  "chainId": 1
+}
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+#### Sign out
 
-## Install Nx Console
+**Endpoint**: `POST /auth/signout`
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+**Description**: Signs out the current user.
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+**Response**:
 
-## Useful links
+```json
+{
+  "message": "You have been signed out"
+}
+```
 
-Learn more:
+### Credentials 
 
-- [Learn more about this workspace setup](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+#### Get Social Auth URL
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+**Endpoint**: `GET /credentials/social/:authName`
+
+**Description**: Generates an authentication URL for social platforms.
+
+**Parameters:
+
+- `authName`: The name of the social platform (e.g., `github`, `twitter`, `discord`, `telegram`).
+
+**Response**:
+
+Streamed response with the authentication URL.
+
+#### Social Callback
+
+**Endpoint**: `GET /credentials/social/:authName/callback`
+
+**Description**: Callback endpoint for social authentication.
+
+**Parameters:
+- `authName`: The name of the social platform (e.g., `github`, `twitter`, `discord`, `telegram`).
+
+**Query Parameters:**
+- `code`: The authorization code from the social platform.
+- `state`: Encrypted state containing user information.
+
+**Response**:
+HTML response indicating success or failure.
+
+#### Generate Email OTP
+
+**Endpoint**: `POST /credentials/email`
+
+**Description**: Sends an OTP to the specified email address for verification.
+
+**Query Parameters:**
+- `email`: The email address to verify.
+
+**Response**:
+```json
+{
+  "state": "<Encrypted_State>"
+}
+```
+
+#### Resend Email OTP
+
+**Endpoint**: `POST /credentials/email/resend`
+
+**Description**: Resends the OTP to the email address.
+
+**Request Body**:
+```json
+{
+  "state": "<Encrypted_State>"
+}
+```
+
+**Response**:
+HTTP 200 OK
+
+#### Verify Email OTP
+
+**Endpoint**: `POST /credentials/email/verify`
+
+**Description**: Verifies the OTP provided by the user.
+
+**Request Body**:
+```json
+{
+  "state": "<Encrypted_State>",
+  "otp": "<User_Entered_OTP>"
+}
+```
+
+**Response**:
+
+```json
+{
+  "dataKey": "email_yourdomain.eth",
+  "verifiedCredential": {
+    "@context": [...],
+    "type": [...],
+    "credentialSubject": {
+      "email": "user@example.com",
+      "did": "did:ens:user.yourdomain.eth#<Public_Key>"
+    },
+    "issuer": {
+      "id": "did:ens:yourdomain.eth#<Public_Key>"
+    },
+    "proof": {...},
+    "expirationDate": "2024-10-15T12:34:56Z",
+    "issuanceDate": "2023-10-15T12:34:56Z"
+  }
+}
+```
+#### Clear Email State
+
+**Endpoint**: `POST /credentials/email/clear`
+
+**Description**: Clears the email verification state.
+
+**Request Body**:
+```json
+{
+  "state": "<Encrypted_State>"
+}
+```
+
+**Response**:
+HTTP 200 OK
+
+### Verify Records
+
+#### Verify Records
+
+**Endpoint**: `GET /verify-records`
+
+**Description**: Verifies the records associated with an ENS name.
+
+**Query Parameters:**
+- `ens`: The ENS name to verify.
+- `chainId`: The chain ID (1 for Mainnet, 11155111 for Sepolia).
+- `credentials`: An array of VCs to verify.
+- `matchStandard`(optional): Whether to match to the user set records. Default is false.
+- `issuer`(optional): The issuer domain. Defaults to `justverified.eth`.
+
+**Response**:
+
+```json
+{
+  "records": {
+    "com.twitter": true,
+    "com.github": false,
+    "email": true
+  }
+}
+```
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request for any changes.
+
+When contributing, please follow the existing code style and conventions.
+
+
+
+
+
+
+
+
