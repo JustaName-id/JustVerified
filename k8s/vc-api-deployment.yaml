@@ -128,11 +128,11 @@ spec:
                 secretKeyRef:
                   name: foosecret-verifications
                   key: RESEND_API_KEY
-            - name: OBJECT
+            - name: ORIGIN
               valueFrom:
                 secretKeyRef:
                   name: foosecret-verifications
-                  key: OBJECT
+                  key: ORIGIN
             - name: DOMAIN
               valueFrom:
                 secretKeyRef:
