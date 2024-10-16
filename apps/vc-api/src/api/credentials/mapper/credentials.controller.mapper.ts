@@ -18,7 +18,7 @@ export class CredentialsControllerMapper implements IcredentialsControllerMapper
   ): AuthCallbackApiResponse {
     return {
       dataKey: credentialCallbackResponse.dataKey,
-      verifiedCredential: {
+      verifiableCredential: {
         type: credentialCallbackResponse.verifiableCredential.type,
         '@context': credentialCallbackResponse.verifiableCredential['@context'],
         credentialSubject: credentialCallbackResponse.verifiableCredential.credentialSubject,
