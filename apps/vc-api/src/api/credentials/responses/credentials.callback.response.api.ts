@@ -149,7 +149,7 @@ export class EthereumEip712Signature2021ApiResponse<T extends CredentialSubjectV
 }
 
 @ApiExtraModels(ProofApiResponse, IssuerApiResponse)
-export class VerifiedEthereumEip712Signature2021ApiResponse<T extends CredentialSubjectValueApiResponse = {}> extends EthereumEip712Signature2021ApiResponse<T> {
+export class VerifiableEthereumEip712Signature2021ApiResponse<T extends CredentialSubjectValueApiResponse = {}> extends EthereumEip712Signature2021ApiResponse<T> {
   @ApiResponseProperty({ type: ProofApiResponse })
   @ValidateNested()
   @Type(() => ProofApiResponse)
@@ -163,15 +163,15 @@ export class VerifiedEthereumEip712Signature2021ApiResponse<T extends Credential
 }
 
 
-@ApiExtraModels(VerifiedEthereumEip712Signature2021ApiResponse)
+@ApiExtraModels(VerifiableEthereumEip712Signature2021ApiResponse)
 export class AuthCallbackApiResponse {
 
   @ApiResponseProperty()
   @IsString()
   dataKey: string;
 
-  @ApiResponseProperty({ type: VerifiedEthereumEip712Signature2021ApiResponse })
+  @ApiResponseProperty({ type: VerifiableEthereumEip712Signature2021ApiResponse })
   @ValidateNested()
-  @Type(() => VerifiedEthereumEip712Signature2021ApiResponse)
-  verifiedCredential: VerifiedEthereumEip712Signature2021ApiResponse;
+  @Type(() => VerifiableEthereumEip712Signature2021ApiResponse)
+  verifiableCredential: VerifiableEthereumEip712Signature2021ApiResponse;
 }
