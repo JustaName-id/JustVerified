@@ -59,7 +59,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtGuard)
-  @Get('signout')
+  @Post('signout')
   async signOut(
     @Req() req: Request,
     @Res() res: Response
