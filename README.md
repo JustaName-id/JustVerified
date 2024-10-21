@@ -69,9 +69,7 @@ The application will be available at http://localhost:3000/verifications/v1.
 **Response**:
 
 ```json
-{
-  "nonce": "1234567890abcdef"
-}
+"1234567890abcdef"
 ```
 #### Sign In
 
