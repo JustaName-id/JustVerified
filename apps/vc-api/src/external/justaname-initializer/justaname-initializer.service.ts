@@ -45,9 +45,9 @@ export class JustaNameInitializerService implements IEnsManagerService {
     try {
       const sign = await this.justaname.signIn.signIn({
           message: params.message,
-          signature: params.signature
-      }
-      );
+          signature: params.signature,
+          nonce: params.nonce
+      });
 
       return {
         address: sign.data.address,
