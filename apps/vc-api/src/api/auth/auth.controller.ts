@@ -55,7 +55,6 @@ export class AuthController {
 
       return res.status(200).send({ens, address, chainId});
     }catch (e) {
-      console.log(e);
       res.status(422).send({message: e.message});
     }
 
