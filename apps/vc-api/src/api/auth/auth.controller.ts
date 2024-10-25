@@ -6,6 +6,7 @@ import moment from 'moment';
 import { JwtGuard } from '../../guards/jwt.guard';
 import { ENS_MANAGER_SERVICE, IEnsManagerService } from '../../core/applications/ens-manager/iens-manager.service';
 import { ChainId } from '../../core/domain/entities/environment';
+import {JwtNonceGuard} from "../../guards/jwt-nonce.guard";
 
 type Siwens = { address: string, ens: string, chainId: ChainId };
 
@@ -19,28 +20,43 @@ export class AuthController {
   ) {}
 
   @Get('nonce')
-  async getNonce() {
-    return this.ensManagerService.generateNonce()
+  async getNonce(
+    @Res() res: Response,
+    @Req() req: Request
+  ) {
+    const nonce = this.ensManagerService.generateNonce()
+    const token = this.jwtService.sign({ nonce }, {
+      expiresIn: 3600
+    });
+    res.cookie('justverifiednonce', token, { httpOnly: true, secure: true, sameSite: 'none' });
+    res.status(200).send( nonce );
   }
 
+  @UseGuards(JwtNonceGuard)
   @Post('signin')
   async signInChallenge(
     @Body() body: AuthSigninApiRequest,
     @Res() res: Response,
-    @Req() req: Request
+    @Req() req: Request & { nonce: { nonce: string  } }
   ) {
-    const { address, ens, chainId } = await this.ensManagerService.signIn({
-      message: body.message,
-      signature: body.signature
-    })
+    res.clearCookie('justverifiednonce', { httpOnly: true, secure: true, sameSite: 'none' });
+    try {
+      const {address, ens, chainId} = await this.ensManagerService.signIn({
+        message: body.message,
+        signature: body.signature,
+        nonce: req.nonce.nonce,
+      })
 
-    const token = this.jwtService.sign({ ens, address, chainId }, {
-      expiresIn: moment().add(1, 'hour').unix()
-    });
+      const token = this.jwtService.sign({ens, address, chainId}, {
+        expiresIn: 3600
+      });
 
-    res.cookie('justverifiedtoken', token, { httpOnly: true, secure: true, sameSite: 'none' });
+      res.cookie('justverifiedtoken', token, {httpOnly: true, secure: true, sameSite: 'none'});
 
-    return res.status(200).send({ ens, address, chainId });
+      return res.status(200).send({ens, address, chainId});
+    }catch (e) {
+      res.status(422).send({message: e.message});
+    }
 
   }
 
@@ -59,12 +75,13 @@ export class AuthController {
   }
 
   @UseGuards(JwtGuard)
-  @Get('signout')
+  @Post('signout')
   async signOut(
     @Req() req: Request,
     @Res() res: Response
   ) {
-    res.clearCookie('justverifiedtoken');
+    res.clearCookie('justverifiedtoken', { httpOnly: true, secure: true, sameSite: 'none' });
+    res.clearCookie('justverifiednonce', { httpOnly: true, secure: true, sameSite: 'none' });
     res.status(200).send({ message: 'You have been signed out' });
   }
 }
