@@ -9245,11 +9245,6 @@ crypto-random-string@^2.0.0:
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-2.0.0.tgz#ef2a7a966ec11083388369baa02ebead229b30d5"
   integrity sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==
 
-crypto@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/crypto/-/crypto-1.0.1.tgz#2af1b7cad8175d24c8a1b0778255794a21803037"
-  integrity sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==
-
 css-declaration-sorter@^6.3.1:
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/css-declaration-sorter/-/css-declaration-sorter-6.4.1.tgz#28beac7c20bad7f1775be3a7129d7eae409a3a71"
@@ -17407,13 +17402,6 @@ rollup-plugin-copy@^3.5.0:
     globby "10.0.1"
     is-plain-object "^3.0.0"
 
-rollup-plugin-import-assert@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-import-assert/-/rollup-plugin-import-assert-3.0.1.tgz#102c185099a59425d64d0771697f07941d0f9cea"
-  integrity sha512-7WynDI8B3F/ahhOEus1sDjKCPN3sV5ciV4t717kYlJOst59wJ76e3ig05mQJZZhc8AWpo4V0QMT7mrJpWShh0A==
-  dependencies:
-    string-to-template-literal "^2.0.0"
-
 rollup-plugin-postcss@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/rollup-plugin-postcss/-/rollup-plugin-postcss-4.0.2.tgz#15e9462f39475059b368ce0e49c800fa4b1f7050"
@@ -17460,13 +17448,6 @@ rollup-pluginutils@^2.8.2:
   integrity sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==
   dependencies:
     estree-walker "^0.6.1"
-
-rollup-preserve-directives@^1.1.1:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/rollup-preserve-directives/-/rollup-preserve-directives-1.1.2.tgz#c6954aba9f767988c681e00d41a46af521ce764f"
-  integrity sha512-OOaYh4zO0Dcd/eVWGB8H69CgTiohl+jJqc2TLtjLENVIQaV2rxO3OW6RILzCQOdDvPT+/rzwRp+97OXhem895Q==
-  dependencies:
-    magic-string "^0.30.5"
 
 rollup@^4.14.0, rollup@^4.20.0:
   version "4.24.3"
@@ -18265,11 +18246,6 @@ string-length@^5.0.1:
   dependencies:
     char-regex "^2.0.0"
     strip-ansi "^7.0.1"
-
-string-to-template-literal@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/string-to-template-literal/-/string-to-template-literal-2.0.0.tgz#0ce56bf42052d53049243e11dbf045b9ad687f9e"
-  integrity sha512-AbTUWHXMyoRlTFP9qe013dfGTFq1XbcBLUoLC7PcumbJewtUwNXCvnko5cH2gZkUFC7kD2Fwxiv4YIndkU0xHA==
 
 "string-width-cjs@npm:string-width@^4.2.0":
   version "4.2.3"
