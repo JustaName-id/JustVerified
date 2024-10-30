@@ -1,5 +1,5 @@
 # Stage 1: Install dependencies in a separate layer to leverage Docker cache
-FROM node:lts-alpine as deps
+FROM node:18.18.0-alpine as deps
 WORKDIR /usr/src/app
 COPY dist/apps/vc-api/package.json dist/apps/vc-api/yarn.lock ./
 RUN apk add --no-cache --virtual .build-deps python3 make g++ && \
