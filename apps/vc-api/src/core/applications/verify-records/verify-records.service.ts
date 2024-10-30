@@ -39,7 +39,6 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     }
 
     const subnameRecords = await this.subnameRecordsFetcher.fetchRecords(ens, chainId, [...credentials, ...credentials.map((record) => `${record}_${validIssuer}`)]);
-
     let responses: VerifyRecordsResponse = {}
 
       for (const record of credentials) {
@@ -69,8 +68,9 @@ export class VerifyRecordsService implements IVerifyRecordsService {
          [record]: false
        };
      }
+
      // 4) check if it belongs to the subname, if not return false
-     const didSubnameWithFragment = vc.credentialSubject.did.split(':')[3];
+     const didSubnameWithFragment = chainId == 1 ? vc.credentialSubject.did.split(':')[2] : vc.credentialSubject.did.split(':')[3];
      const didSubname = didSubnameWithFragment.split('#')[0];
 
      if (didSubname !== subnameRecords.subname) {
@@ -82,7 +82,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
      // 5) check the issuer did, if not return false
      const issuerDid = vc.issuer.id.split(':');
      const issuerChain = issuerDid[2];
-     const issuerNameFragment = issuerDid[3];
+     const issuerNameFragment = chainId == 1 ? issuerDid[2] : issuerDid[3];
      const issuerName = issuerNameFragment.split('#')[0];
 
      if (issuerName !== issuer || this.chainIdMapping[issuerChain] !== chainId) {
