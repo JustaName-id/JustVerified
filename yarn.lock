@@ -1376,10 +1376,10 @@
     dns-packet "^5.6.1"
     typescript-logging "^1.0.1"
 
-"@ensdomains/ensjs@^4.0.1-alpha.0":
-  version "4.0.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@ensdomains/ensjs/-/ensjs-4.0.1-alpha.0.tgz#912ec26decc6903d1d101ad06a7a4ebf0d1cccb5"
-  integrity sha512-IGaxCfvEibLKhPDhEC6zYUnhXgHFalZLsoZq0R58KmuzmJbWkQ1jwzbhVPXBfMYuGwcr4iz/4auiNT0x5aS7Zg==
+"@ensdomains/ensjs@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@ensdomains/ensjs/-/ensjs-4.0.0.tgz#663a3a2d404137158848601ba5d35edc6e2b5154"
+  integrity sha512-iI6ieuP0TeSK46JCP21EGxyup5rPE5rMmDMTrpRs+u3iwk42Bx3e4oG5sEtTRmxnXFO9uaSqk+WSXEMcHyPKxQ==
   dependencies:
     "@adraffy/ens-normalize" "1.10.1"
     "@ensdomains/address-encoder" "1.1.1"
@@ -2575,19 +2575,19 @@
   resolved "https://registry.yarnpkg.com/@jsonjoy.com/util/-/util-1.5.0.tgz#6008e35b9d9d8ee27bc4bfaa70c8cbf33a537b4c"
   integrity sha512-ojoNsrIuPI9g6o8UxhraZQSyF2ByJanAY4cTFbc8Mf2AXEF4aQRGY1dJxyJpuyav8r9FGflEt/Ff3u5Nt6YMPA==
 
-"@justaname.id/sdk@0.2.98":
-  version "0.2.98"
-  resolved "https://registry.yarnpkg.com/@justaname.id/sdk/-/sdk-0.2.98.tgz#2bb1d1495e9bf01deb8332b3fee4746d839ba13f"
-  integrity sha512-nOKiP+SH29ycFkspRVRcZXcHDbh97pbs3mvHG0hutnt+weY+VMc1or25WumFChl8oJypAg41NpbiIYmbh5dO8A==
+"@justaname.id/sdk@0.2.105":
+  version "0.2.105"
+  resolved "https://registry.yarnpkg.com/@justaname.id/sdk/-/sdk-0.2.105.tgz#7093f1d46744959926db813fae127f1660e36260"
+  integrity sha512-iaXx1vxfS2Pxg3Y6uCc8iSjvCxfkK+bDhvD6Mp4MeqmREix369khQPfEO+8QC5NT33N57HTzlxiTr9g25K88fQ==
   dependencies:
-    "@justaname.id/siwens" "0.0.31"
+    "@justaname.id/siwens" "0.0.38"
     axios "^1.6.0"
     qs "^6.12.0"
 
-"@justaname.id/siwens@0.0.31":
-  version "0.0.31"
-  resolved "https://registry.yarnpkg.com/@justaname.id/siwens/-/siwens-0.0.31.tgz#8919e17d8bb09d1e39cf720e1c2e5a1a115c0dac"
-  integrity sha512-uGUlHVmkP8IYkdA/TqUwdqefTB/apOUcJSTG0GTLqV/ljIAy95zsJa2313U/j0PfpGGcZX5J8PwAZ8E8m7wl0Q==
+"@justaname.id/siwens@0.0.38":
+  version "0.0.38"
+  resolved "https://registry.yarnpkg.com/@justaname.id/siwens/-/siwens-0.0.38.tgz#c832241d97cf709562c06e111184c3c9c7d95984"
+  integrity sha512-FiBqs4EhryGBKNpUmB2OxtozRnGK457U85TaVGUwxNbnrRBKjkEBObpmVS5k5xqem0TGoWDphemWp5TD6wzs/A==
   dependencies:
     ethers "^6.11.1"
     siwe "^2.3.2"
@@ -6521,7 +6521,7 @@
   resolved "https://registry.yarnpkg.com/@vanilla-extract/sprinkles/-/sprinkles-1.6.3.tgz#733968d653cc2395538b5c29f04dcdb0a2ca15c5"
   integrity sha512-oCHlQeYOBIJIA2yWy2GnY5wE2A7hGHDyJplJo4lb+KEIBcJWRnDJDg8ywDwQS5VfWJrBBO3drzYZPFpWQjAMiQ==
 
-"@veramo-community/lds-ecdsa-secp256k1-recovery2020@github:uport-project/EcdsaSecp256k1RecoverySignature2020":
+"@veramo-community/lds-ecdsa-secp256k1-recovery2020@uport-project/EcdsaSecp256k1RecoverySignature2020":
   version "0.0.8"
   resolved "https://codeload.github.com/uport-project/EcdsaSecp256k1RecoverySignature2020/tar.gz/ab0db52de6f4e6663ef271a48009ba26e688ef9b"
   dependencies:
@@ -8980,6 +8980,11 @@ cookie-signature@1.0.7:
   resolved "https://registry.yarnpkg.com/cookie-signature/-/cookie-signature-1.0.7.tgz#ab5dd7ab757c54e60f37ef6550f481c426d10454"
   integrity sha512-NXdYc3dLr47pBkpUCHtKSwIOQXLVn8dZEuywboCOJY/osA0wFSLlSawr3KN8qXJEyX66FcONTH8EIlVuK0yyFA==
 
+cookie@0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.6.0.tgz#2798b04b071b0ecbff0dbb62a505a8efa4e19051"
+  integrity sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==
+
 cookie@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.7.1.tgz#2f73c42142d5d5cf71310a74fc4ae61670e5dbc9"
@@ -11029,6 +11034,43 @@ express-session@^1.18.0:
     parseurl "~1.3.3"
     safe-buffer "5.2.1"
     uid-safe "~2.1.5"
+
+express@4.21.0:
+  version "4.21.0"
+  resolved "https://registry.yarnpkg.com/express/-/express-4.21.0.tgz#d57cb706d49623d4ac27833f1cbc466b668eb915"
+  integrity sha512-VqcNGcj/Id5ZT1LZ/cfihi3ttTn+NJmkli2eZADigjq29qTlWi/hAQ43t/VLPq8+UX06FCEx3ByOYet6ZFblng==
+  dependencies:
+    accepts "~1.3.8"
+    array-flatten "1.1.1"
+    body-parser "1.20.3"
+    content-disposition "0.5.4"
+    content-type "~1.0.4"
+    cookie "0.6.0"
+    cookie-signature "1.0.6"
+    debug "2.6.9"
+    depd "2.0.0"
+    encodeurl "~2.0.0"
+    escape-html "~1.0.3"
+    etag "~1.8.1"
+    finalhandler "1.3.1"
+    fresh "0.5.2"
+    http-errors "2.0.0"
+    merge-descriptors "1.0.3"
+    methods "~1.1.2"
+    on-finished "2.4.1"
+    parseurl "~1.3.3"
+    path-to-regexp "0.1.10"
+    proxy-addr "~2.0.7"
+    qs "6.13.0"
+    range-parser "~1.2.1"
+    safe-buffer "5.2.1"
+    send "0.19.0"
+    serve-static "1.16.2"
+    setprototypeof "1.2.0"
+    statuses "2.0.1"
+    type-is "~1.6.18"
+    utils-merge "1.0.1"
+    vary "~1.1.2"
 
 express@4.21.1, express@^4.19.2:
   version "4.21.1"
@@ -14031,7 +14073,7 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-jsonld@5.2.0, jsonld@^8.3.2, "jsonld@github:digitalcredentials/jsonld.js#v10.1.x", "jsonld@github:digitalcredentials/jsonld.js#v10.x":
+jsonld@5.2.0, jsonld@^8.3.2, jsonld@digitalcredentials/jsonld.js#v10.1.x, jsonld@digitalcredentials/jsonld.js#v10.x:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/jsonld/-/jsonld-8.3.2.tgz#7033f8994aed346b536e9046025f7f1fe9669934"
   integrity sha512-MwBbq95szLwt8eVQ1Bcfwmgju/Y5P2GdtlHE2ncyfuYjIdEhluUVyj1eudacf1mOkWIoS9GpDBTECqhmq7EOaA==
