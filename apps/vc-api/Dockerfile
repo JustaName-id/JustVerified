@@ -1,5 +1,5 @@
 # Stage 1: Install dependencies in a separate layer to leverage Docker cache
-FROM node:lts-alpine as deps
+FROM node:18.18.0-alpine as deps
 WORKDIR /usr/src/app
 COPY dist/apps/vc-api/package.json dist/apps/vc-api/yarn.lock ./
 RUN apk add --no-cache --virtual .build-deps python3 make g++ && \
@@ -9,13 +9,13 @@ RUN apk add --no-cache --virtual .build-deps python3 make g++ && \
 
 # Stage 2: Build the application
 # Note: Assuming main.js doesn't require a build process. If it does, you would need to copy source files and build here.
-FROM node:lts-alpine as build
+FROM node:18.18.0-alpine as build
 WORKDIR /usr/src/app
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY dist/apps/vc-api/ ./
 
 # Stage 3: Production image, copy all the files and run the app
-FROM node:lts-alpine as runner
+FROM node:18.18.0-alpine as runner
 RUN apk add --no-cache dumb-init && \
     addgroup -S appgroup && adduser -S appuser -G appgroup
 ENV NODE_ENV production
