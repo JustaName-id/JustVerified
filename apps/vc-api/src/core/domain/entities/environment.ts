@@ -41,6 +41,8 @@ export class Environment {
 
   TELEGRAM_BOT_USERNAME!: string;
 
+  TELEGRAM_STATIC_PAGE_URL!: string;
+
   JWT_SECRET!: string;
 
   ENCRYPT_KEY!: string;
