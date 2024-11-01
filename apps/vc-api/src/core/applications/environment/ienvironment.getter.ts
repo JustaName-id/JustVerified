@@ -18,6 +18,7 @@ export interface IEnvironmentGetter {
   getTwitterClientSecret(): string;
   getTelegramBotToken(): string;
   getTelegramBotUsername(): string;
+  getTelegramStaticPageUrl(): string;
   getEncryptKey(): string;
   getEncryptSalt(): string;
   getResendApiKey(): string;

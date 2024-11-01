@@ -21,16 +21,10 @@ export class TelegramSocialResolver extends AbstractSocialResolver<
   }
   getAuthUrl(authUrlRequest: GetAuthUrlRequest): string {
     const state = this.encryptState(authUrlRequest);
-    return `<html>
-      <body>
-        <script async src="https://telegram.org/js/telegram-widget.js?15"
-                data-telegram-login="${this.environmentGetter.getTelegramBotUsername()}"
-                data-size="large"
-                data-auth-url="${this.environmentGetter.getApiDomain()}/credentials/socials/telegram/callback?state=${state}"
-                data-request-access="write">
-        </script>
-      </body>
-    </html>`;
+
+    const telegramStaticPageUrl = this.environmentGetter.getTelegramStaticPageUrl();
+
+    return `${telegramStaticPageUrl}?state=${state}`;
   }
 
   async extractCredentialSubject(
