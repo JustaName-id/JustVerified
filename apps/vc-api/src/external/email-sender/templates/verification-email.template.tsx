@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BaseEmail } from '../components/base';
 import { Title } from '../components/title';
-import { Text } from '@react-email/components';
+import { Container, Text } from '@react-email/components';
 import { EmailNotificationContent } from '../../../core/domain/entities/emailNotificationContent';
 
 interface OtpEmailProps extends EmailNotificationContent {
@@ -16,68 +16,65 @@ export const VerificationEmail: React.FC<OtpEmailProps> & {
   return (
     <BaseEmail
       title={
-        <span
+        <Title
+          text={'Verify your email'}
+          color={'#000000'}
+          fontSize={'24px'}
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
+            textAlign: 'center',
+            margin: '0 auto',
+            lineHeight: 'normal',
+            fontWeight: '700'
+          }}
+        />
+      }
+      type='otp'
+      email={email}
+      preview={'Verify your email with the OTP'}
+    >
+      <React.Fragment>
+
+        <Text
+          style={{
+            color: '#000000',
+            textAlign: 'center',
+            fontSize: '14px',
+            fontStyle: 'normal',
+            fontWeight: '400',
+            lineHeight: '16px',
+            marginTop: '10px',
+            margin: '0',
+          }}
+        >
+          Please verify your email by entering the OTP below:
+        </Text>
+        <Container
+          style={{
+            marginTop: '20px',
+            marginBottom: '20px',
+            paddingTop: 20,
+            width: '100%',
+            paddingBottom: 20,
+            backgroundColor: 'rgba(217, 217, 217, 0.35)',
             textAlign: 'center',
           }}
         >
-          <Title
-            text="Verify your email"
-            color="#9B92FF"
-            fontSize="32px"
-            style={{
-              marginLeft: '10px',
-            }}
-          />
-        </span>
-      }
-      email={email}
-      preview="Verify your email with the OTP"
-    >
-      <React.Fragment>
-        <div style={{ textAlign: 'center' }}>
           <Text
             style={{
-              color: '#5E577F',
-              textAlign: 'center',
-              fontSize: '14px',
+              color: '#3280F4',
+              fontSize: '40px',
               fontStyle: 'normal',
-              fontWeight: '400',
-              lineHeight: '20px',
-              margin: '20px 0',
-            }}
-          >
-            Please verify your email by entering the OTP below:
-          </Text>
-          <div>
-            <Text
-              style={{
-                fontSize: '24px',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                margin: '20px 0',
-                color: '#9B92FF',
-              }}
-            >
-              {otp}
-            </Text>
-          </div>
-          <Text
-            style={{
-              color: '#5E577F',
+              fontWeight: 700,
+              lineHeight: 'normal',
               textAlign: 'center',
-              fontSize: '12px',
-              marginTop: '20px',
+              letterSpacing: '10px',
+              margin: '0',
             }}
           >
-            Enter this OTP on the verification page to complete the process.
+            {otp}
           </Text>
-        </div>
+        </Container>
+
       </React.Fragment>
     </BaseEmail>
   );
@@ -87,6 +84,6 @@ export default VerificationEmail;
 
 // Define the preview properties for this email
 VerificationEmail.PreviewProps = {
-  otp: "123456",
+  otp: "12345678",
   email: 'example@example.com'
 };

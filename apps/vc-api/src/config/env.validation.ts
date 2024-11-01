@@ -58,6 +58,9 @@ class EnvironmentVariables implements Environment{
   @IsString({message: 'TELEGRAM_BOT_USERNAME must be a string'})
   TELEGRAM_BOT_USERNAME!: string;
 
+  @IsString({message: 'TELEGRAM_STATIC_PAGE_URL must be a string'})
+  TELEGRAM_STATIC_PAGE_URL!: string;
+
   @IsString({message: 'JWT_SECRET must be a string'})
   JWT_SECRET: string;
 
