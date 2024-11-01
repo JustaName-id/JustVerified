@@ -138,6 +138,11 @@ spec:
                 secretKeyRef:
                   name: foosecret-verifications
                   key: DOMAIN
+            - name: TELEGRAM_STATIC_PAGE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: foosecret-verifications
+                  key: TELEGRAM_STATIC_PAGE_URL
 ---
 apiVersion: v1
 kind: Service

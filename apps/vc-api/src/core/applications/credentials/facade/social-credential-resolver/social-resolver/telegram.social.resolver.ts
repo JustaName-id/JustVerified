@@ -31,6 +31,7 @@ export class TelegramSocialResolver extends AbstractSocialResolver<
     params: TelegramCallback
   ): Promise<TelegramCredential> {
     const { hash, state, ...telegramData } = params;
+
     const dataCheckString = Object.keys(telegramData)
       .sort()
       .map((key) => `${key}=${telegramData[key]}`)
