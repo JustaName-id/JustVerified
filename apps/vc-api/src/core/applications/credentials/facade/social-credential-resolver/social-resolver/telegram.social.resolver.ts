@@ -30,7 +30,7 @@ export class TelegramSocialResolver extends AbstractSocialResolver<
   async extractCredentialSubject(
     params: TelegramCallback
   ): Promise<TelegramCredential> {
-    const { hash, ...telegramData } = params;
+    const { hash, state, ...telegramData } = params;
 
     const dataCheckString = Object.keys(telegramData)
       .sort()
