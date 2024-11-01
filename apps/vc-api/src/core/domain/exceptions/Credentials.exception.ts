@@ -4,6 +4,6 @@ export class CredentialsException extends Error {
   }
 
   static invalid() {
-    return new CredentialsException('Invalid data: Authentication failed');
+    return new CredentialsException('CredentialsException: Authentication failed');
   }
 }
