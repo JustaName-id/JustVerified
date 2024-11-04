@@ -66,7 +66,6 @@ export class TwitterSocialResolver extends AbstractSocialResolver<
         grant_type: 'authorization_code',
         code: params.code,
         redirect_uri: this.getCallbackUrl(),
-        client_id: this.environmentGetter.getTwitterClientId(),
         code_verifier: codeVerifier,
       }).toString(),
       {
