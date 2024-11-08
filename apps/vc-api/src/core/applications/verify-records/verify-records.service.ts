@@ -81,9 +81,16 @@ export class VerifyRecordsService implements IVerifyRecordsService {
 
      // 5) check the issuer did, if not return false
      const issuerDid = vc.issuer.id.split(':');
-     const issuerChain = issuerDid[2];
+
+     let issuerChain = issuerDid[2];
+
+     if(issuerChain !== "sepolia") {
+        issuerChain = "mainnet";
+     }
      const issuerNameFragment = chainId == 1 ? issuerDid[2] : issuerDid[3];
+
      const issuerName = issuerNameFragment.split('#')[0];
+
 
      if (issuerName !== issuer || this.chainIdMapping[issuerChain] !== chainId) {
        return {
@@ -93,7 +100,12 @@ export class VerifyRecordsService implements IVerifyRecordsService {
 
      // 6) check if it's on the correct chain, if not return false (for both the issuer did and credential subject did, and the chainId in the proof)
      const subjectDid = vc.credentialSubject.did.split(':');
-     const subjectChain = subjectDid[2]; // Extract chain from DID
+
+     let subjectChain = subjectDid[2]; // Extract chain from DID
+      if(subjectChain !== "sepolia") {
+          subjectChain = "mainnet";
+      }
+
      if (this.chainIdMapping[subjectChain] !== chainId || Number(vc.proof.eip712.domain.chainId) !== chainId) {
        return {
          [record]: false
