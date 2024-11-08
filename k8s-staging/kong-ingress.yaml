@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: kong-alb
   namespace: verifications-staging-namespace
+  annotations:
+    konghq.com/response-buffering: "false"
 spec:
   ingressClassName: kong
   rules:
