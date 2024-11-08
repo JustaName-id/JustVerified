@@ -1,6 +1,6 @@
 import { IsArray, IsInt, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {ChainId} from "@justaname.id/sdk";
 import {Credentials} from "../../../core/domain/entities/credentials";
 
@@ -20,6 +20,7 @@ export class VerifyRecordsApiRequest {
 
   @ApiProperty()
   @IsOptional()
+  @Transform(({ value }) => value === 'true')
   matchStandard?: boolean = false;
 
   @ApiProperty()
