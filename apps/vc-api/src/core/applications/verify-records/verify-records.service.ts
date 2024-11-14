@@ -38,7 +38,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
       throw ChainIdInvalidException.withId(chainId);
     }
 
-    const subnameRecords = await this.subnameRecordsFetcher.fetchRecords(ens, chainId, [...credentials, ...credentials.map((record) => `${record}_${validIssuer}`)]);
+    const subnameRecords = await this.subnameRecordsFetcher.fetchRecords(ens[0], chainId, [...credentials, ...credentials.map((record) => `${record}_${validIssuer}`)]);
     let responses: VerifyRecordsResponse = {}
 
       for (const record of credentials) {
