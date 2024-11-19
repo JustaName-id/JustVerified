@@ -22,14 +22,14 @@ export class VerifyRecordsController {
   @Get('')
   async verifyRecords(
     @Query() query: VerifyRecordsApiRequest
-  ): Promise<VerifyRecordsApiResponse> {
+  ): Promise<VerifyRecordsApiResponse[]> {
     const response = await this.verifyRecordsService.verifyRecords(
       this.verifyRecordsControllerMapper.mapVerifyRecordsApiRequestToVerifyRecordsRequest(
         query
       )
     );
 
-    return this.verifyRecordsControllerMapper.mapVerifyRecordsResponseToVerifyRecordsApiResponse(
+    return this.verifyRecordsControllerMapper.mapVerifyRecordsResponsesToVerifyRecordsApiResponses(
       response
     );
   }

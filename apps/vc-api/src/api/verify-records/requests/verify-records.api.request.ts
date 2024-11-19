@@ -18,6 +18,8 @@ export class VerifyRecordsApiRequest {
 
   @ApiProperty()
   @IsArray()
+  @IsString({ each: true })
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   credentials: Credentials[];
 
   @ApiProperty()

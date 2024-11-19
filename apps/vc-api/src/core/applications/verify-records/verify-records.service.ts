@@ -29,7 +29,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     this.domain = this.environmentGetter.getEnsDomain();
   }
 
-  async verifyRecords(verifyRecordsRequest: VerifyRecordsRequest): Promise<VerifyRecordsResponse> {
+  async verifyRecords(verifyRecordsRequest: VerifyRecordsRequest): Promise<VerifyRecordsResponse[]> {
     const { ens, chainId, credentials, issuer } = verifyRecordsRequest;
 
     const validIssuer = issuer ? issuer : this.domain;
@@ -38,18 +38,25 @@ export class VerifyRecordsService implements IVerifyRecordsService {
       throw ChainIdInvalidException.withId(chainId);
     }
 
-    const subnameRecords = await this.subnameRecordsFetcher.fetchRecords(ens[0], chainId, [...credentials, ...credentials.map((record) => `${record}_${validIssuer}`)]);
-    let responses: VerifyRecordsResponse = {}
+    const subnameRecords = await this.subnameRecordsFetcher.fetchRecordsFromManySubnames(ens, chainId, [...credentials, ...credentials.map((record) => `${record}_${validIssuer}`)]);
+    const responses: VerifyRecordsResponse[] = [];
 
+    for (const subnameRecord of subnameRecords) {
+      let records = {};
       for (const record of credentials) {
-        const response = this._recordVerifier(record, subnameRecords, chainId, validIssuer, verifyRecordsRequest.matchStandard);
-        responses = { ...responses, ...response };
+        const response = this._recordVerifier(record, subnameRecord, chainId, validIssuer, verifyRecordsRequest.matchStandard);
+        records = { ...records, ...response };
       }
+      responses.push({
+        subname: subnameRecord.subname,
+        records: records
+      });
+    }
 
     return responses;
   }
 
-   private _recordVerifier(record: string, subnameRecords: Subname, chainId: number, issuer: string, matchStandard: boolean): VerifyRecordsResponse {
+   private _recordVerifier(record: string, subnameRecords: Subname, chainId: number, issuer: string, matchStandard: boolean): { [key: string]: boolean } {
      // 1) check if record_issuer exists in subnameRecords, if not return false
      const foundRecordIssuer = subnameRecords.metadata.textRecords.find((item) => item.key === `${record}_${issuer}`);
      if (!foundRecordIssuer) {

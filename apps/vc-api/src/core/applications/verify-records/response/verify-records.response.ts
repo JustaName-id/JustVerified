@@ -1,3 +1,6 @@
 export class VerifyRecordsResponse {
-  [key: string]: boolean;
+  subname: string;
+  records: {
+    [key: string]: boolean;
+  }
 }
