@@ -12,6 +12,8 @@ import {TelegramCredential} from "../../domain/credentials/telegram.credential";
 import {EmailCredential} from "../../domain/credentials/email.credential";
 import {DiscordCredential} from "../../domain/credentials/discord.credential";
 import { ChainIdInvalidException } from '../../domain/exceptions/ChainIdInvalid.exception';
+import { CREDENTIAL_CREATOR, ICredentialCreator } from '../credentials/creator/icredential.creator';
+import { ChainId } from '../../domain/entities/environment';
 
 @Injectable()
 export class VerifyRecordsService implements IVerifyRecordsService {
@@ -25,6 +27,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     @Inject(SUBNAME_RECORDS_FETCHER)
     private readonly subnameRecordsFetcher: ISubnameRecordsFetcher,
     @Inject(ENVIRONMENT_GETTER) private readonly environmentGetter: IEnvironmentGetter,
+    @Inject(CREDENTIAL_CREATOR) private readonly credentialCreator: ICredentialCreator
   ) {
     this.domain = this.environmentGetter.getEnsDomain();
   }
@@ -42,14 +45,14 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     let responses: VerifyRecordsResponse = {}
 
       for (const record of credentials) {
-        const response = this._recordVerifier(record, subnameRecords, chainId, validIssuer, verifyRecordsRequest.matchStandard);
+        const response = await this._recordVerifier(record, subnameRecords, chainId, validIssuer, verifyRecordsRequest.matchStandard);
         responses = { ...responses, ...response };
       }
 
     return responses;
   }
 
-   private _recordVerifier(record: string, subnameRecords: Subname, chainId: number, issuer: string, matchStandard: boolean): VerifyRecordsResponse {
+   private async _recordVerifier(record: string, subnameRecords: Subname, chainId: ChainId, issuer: string, matchStandard: boolean): Promise<VerifyRecordsResponse> {
      // 1) check if record_issuer exists in subnameRecords, if not return false
      const foundRecordIssuer = subnameRecords.metadata.textRecords.find((item) => item.key === `${record}_${issuer}`);
      if (!foundRecordIssuer) {
@@ -112,6 +115,15 @@ export class VerifyRecordsService implements IVerifyRecordsService {
        };
      }
 
+     // calculate time taken for this function
+     // 7) verify signature
+     const veramoVerification = await this.credentialCreator.verifyCredential(vc, chainId);
+     if (!veramoVerification) {
+       return {
+         [record]: false
+       }
+      }
+
      const typedVc = vc as VerifiableEthereumEip712Signature2021;
 
      const type = typedVc.type[1];
@@ -138,7 +150,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
           break;
      }
 
-     // 7) check that the value of the username of the credentialSubject matches the value of the record inside the subnameRecords, if not return false
+     // 8) check that the value of the username of the credentialSubject matches the value of the record inside the subnameRecords, if not return false
      if(matchStandard) {
        const foundRecord = subnameRecords.metadata.textRecords.find((item) => item.key === record);
 
