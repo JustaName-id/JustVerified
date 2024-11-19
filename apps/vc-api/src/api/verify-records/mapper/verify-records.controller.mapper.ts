@@ -21,11 +21,12 @@ export class VerifyRecordsControllerMapper implements IVerifyRecordsControllerMa
     };
   }
 
-  mapVerifyRecordsResponseToVerifyRecordsApiResponse(verifyRecordsResponses: VerifyRecordsResponse): VerifyRecordsApiResponse {
-    return {
-      records: {
-        ...verifyRecordsResponses
-      }
-    };
+  mapVerifyRecordsResponsesToVerifyRecordsApiResponses(verifyRecordsResponses: VerifyRecordsResponse[]): VerifyRecordsApiResponse[] {
+    return verifyRecordsResponses.map((response) => {
+      return {
+        subname: response.subname,
+        records: response.records
+      };
+    });
   }
 }

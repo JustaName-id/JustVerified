@@ -66,6 +66,10 @@ describe('Auth controller integration tests', () => {
       throw new Error(ERROR_MESSAGE);
     });
 
+    jwtService.verifyAsync.mockImplementation((payload) => {
+      return Promise.resolve({ nonce: payload });
+    });
+
     app = module.createNestApplication();
     await app.init();
   });
