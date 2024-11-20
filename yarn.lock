@@ -2575,22 +2575,19 @@
   resolved "https://registry.yarnpkg.com/@jsonjoy.com/util/-/util-1.5.0.tgz#6008e35b9d9d8ee27bc4bfaa70c8cbf33a537b4c"
   integrity sha512-ojoNsrIuPI9g6o8UxhraZQSyF2ByJanAY4cTFbc8Mf2AXEF4aQRGY1dJxyJpuyav8r9FGflEt/Ff3u5Nt6YMPA==
 
-"@justaname.id/sdk@0.2.105":
-  version "0.2.105"
-  resolved "https://registry.yarnpkg.com/@justaname.id/sdk/-/sdk-0.2.105.tgz#7093f1d46744959926db813fae127f1660e36260"
-  integrity sha512-iaXx1vxfS2Pxg3Y6uCc8iSjvCxfkK+bDhvD6Mp4MeqmREix369khQPfEO+8QC5NT33N57HTzlxiTr9g25K88fQ==
+"@justaname.id/sdk@^0.2.146":
+  version "0.2.146"
+  resolved "https://registry.yarnpkg.com/@justaname.id/sdk/-/sdk-0.2.146.tgz#3364f34b955424e4fe76adfd940313a5d9f2caeb"
+  integrity sha512-boEBG/My79seDI/0SOvujAqMZqu7B6CRwfO5qvMfCgH0MkFiGfRf7TL16/SrPam0wHk+Vx/pasIrdfbmkwE5kQ==
   dependencies:
-    "@justaname.id/siwens" "0.0.38"
+    "@justaname.id/siwens" "0.0.79"
     axios "^1.6.0"
     qs "^6.12.0"
 
-"@justaname.id/siwens@0.0.38":
-  version "0.0.38"
-  resolved "https://registry.yarnpkg.com/@justaname.id/siwens/-/siwens-0.0.38.tgz#c832241d97cf709562c06e111184c3c9c7d95984"
-  integrity sha512-FiBqs4EhryGBKNpUmB2OxtozRnGK457U85TaVGUwxNbnrRBKjkEBObpmVS5k5xqem0TGoWDphemWp5TD6wzs/A==
-  dependencies:
-    ethers "^6.11.1"
-    siwe "^2.3.2"
+"@justaname.id/siwens@0.0.79":
+  version "0.0.79"
+  resolved "https://registry.yarnpkg.com/@justaname.id/siwens/-/siwens-0.0.79.tgz#8be73714eeb4e30f817754cce2e91496a5123b5e"
+  integrity sha512-y+MqZvjlBIHsK4PytmFVmPsnPD06P/N7AKcctOOBF4DTJQqWMUFyfIiReCtSFDXvJyBFXCTqaIV7BeAqHyL2vw==
 
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.5"
@@ -16780,10 +16777,17 @@ qrcode@1.5.4:
     pngjs "^5.0.0"
     yargs "^15.3.1"
 
-qs@6.13.0, qs@^6.10.0, qs@^6.11.0, qs@^6.12.0, qs@^6.12.3, qs@^6.4.0:
+qs@6.13.0, qs@^6.10.0, qs@^6.11.0, qs@^6.12.3, qs@^6.4.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.13.0.tgz#6ca3bd58439f7e245655798997787b0d88a51906"
   integrity sha512-+38qI9SOr8tfZ4QmJNplMUxqjbe7LKvvZgWdExBOmd+egZTtjLB67Gu0HRX3u/XOq7UU2Nx6nsjvS16Z9uwfpg==
+  dependencies:
+    side-channel "^1.0.6"
+
+qs@^6.12.0:
+  version "6.13.1"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.13.1.tgz#3ce5fc72bd3a8171b85c99b93c65dd20b7d1b16e"
+  integrity sha512-EJPeIn0CYrGu+hli1xilKAPXODtJ12T0sP63Ijx2/khC2JtuaN3JyNIpvmnkmaEtha9ocbG4A4cMcr+TvqvwQg==
   dependencies:
     side-channel "^1.0.6"
 
@@ -19936,6 +19940,7 @@ wordwrap@^1.0.0:
   integrity sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
