@@ -16,6 +16,7 @@ import {
   IVerifyRecordsService,
   VERIFY_RECORDS_SERVICE,
 } from '../../../../src/core/applications/verify-records/iverify-records.service';
+import { FETCH_CHAIN_ID_SERVICE, IFetchChainIdService } from '../../../../src/core/applications/provider-services/ifetch-chain-id.service';
 
 const ENS = 'ENS';
 const ERROR_MESSAGE = 'ERROR_MESSAGE';
@@ -23,22 +24,20 @@ const SOCIAL_CREDENTIAL: SocialCredentials = 'github';
 const CHAIN_ID = 11155111;
 const CHAIN_ID_2 = 31337;
 const ISSUER = 'ISSUER';
-
+const PROVIDER_URL = 'PROVIDER_URL';
 const RECORD_KEY = 'RECORD_KEY';
 const RECORD_VALUE = true;
 
 const getVerifyRecordsApiRequest = (): VerifyRecordsApiRequest => ({
   ens: [ENS],
-  chainId: CHAIN_ID,
   credentials: [SOCIAL_CREDENTIAL],
   issuer: ISSUER,
+  providerUrl: PROVIDER_URL,
 });
 
-const getVerifyRecordsRequest = (
-  chainId: number = CHAIN_ID
-): VerifyRecordsRequest => ({
+const getVerifyRecordsRequest = (): VerifyRecordsRequest => ({
   ens: [ENS],
-  chainId,
+  providerUrl: PROVIDER_URL,
   credentials: [SOCIAL_CREDENTIAL],
   issuer: ISSUER,
 });
@@ -61,6 +60,7 @@ describe('Verify records controller integration tests', () => {
   let app: INestApplication;
   let verifyRecordsService: DeepMocked<IVerifyRecordsService>;
   let verifyRecordsControllerMapper: DeepMocked<IVerifyRecordsControllerMapper>;
+  let fetchChainIdService: DeepMocked<IFetchChainIdService>;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -70,6 +70,10 @@ describe('Verify records controller integration tests', () => {
           provide: APP_FILTER,
           useClass: filter,
         })),
+        {
+          provide: FETCH_CHAIN_ID_SERVICE,
+          useValue: createMock<IFetchChainIdService>(),
+        },
         {
           provide: VERIFY_RECORDS_SERVICE,
           useValue: createMock<IVerifyRecordsService>(),
@@ -89,9 +93,14 @@ describe('Verify records controller integration tests', () => {
       DeepMocked<IVerifyRecordsControllerMapper>
     >('VERIFY_RECORDS_CONTROLLER_MAPPER');
 
+    fetchChainIdService = module.get<DeepMocked<IFetchChainIdService>>(
+      FETCH_CHAIN_ID_SERVICE
+    );
+
     verifyRecordsControllerMapper.mapVerifyRecordsApiRequestToVerifyRecordsRequest.mockReturnValue(getVerifyRecordsRequest());
     verifyRecordsControllerMapper.mapVerifyRecordsResponsesToVerifyRecordsApiResponses.mockReturnValue([getVerifyRecordsApiResponse()])
 
+    fetchChainIdService.getChainId.mockResolvedValueOnce(CHAIN_ID);
 
     app = module.createNestApplication();
     await app.init();

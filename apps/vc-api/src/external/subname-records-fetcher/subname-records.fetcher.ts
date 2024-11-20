@@ -16,10 +16,8 @@ export class SubnameRecordsFetcher implements ISubnameRecordsFetcher {
     @Inject(ENS_MANAGER_SERVICE) private readonly ensManagerService: IEnsManagerService
   ) {}
 
-  async fetchRecords(subname: string, chainId: ChainId, texts?: string[]): Promise<Subname> {
-
+  async fetchRecords(providerUrl: string, subname: string, chainId: ChainId, texts?: string[]): Promise<Subname> {
     let records: GetRecordsResponse;
-    const providerUrl = (chainId === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') + this.environmentGetter.getInfuraProjectId()
 
     if(texts) {
       const client = createClient({
@@ -48,10 +46,8 @@ export class SubnameRecordsFetcher implements ISubnameRecordsFetcher {
     return this.mapSubnameRecordsResponseToSubname(subname, records);
   }
 
-  async fetchRecordsFromManySubnames(subnames: string[], chainId: ChainId, texts?: string[]): Promise<Subname[]> {
-
+  async fetchRecordsFromManySubnames(providerUrl: string, subnames: string[], chainId: ChainId, texts?: string[]): Promise<Subname[]> {
     let records: GetRecordsResponse[];
-    const providerUrl = (chainId === 1 ? 'https://mainnet.infura.io/v3/' :'https://sepolia.infura.io/v3/') + this.environmentGetter.getInfuraProjectId()
     
     if(texts) {
       const client = createClient({

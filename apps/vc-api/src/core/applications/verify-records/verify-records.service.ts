@@ -12,6 +12,8 @@ import {TelegramCredential} from "../../domain/credentials/telegram.credential";
 import {EmailCredential} from "../../domain/credentials/email.credential";
 import {DiscordCredential} from "../../domain/credentials/discord.credential";
 import { ChainIdInvalidException } from '../../domain/exceptions/ChainIdInvalid.exception';
+import { FETCH_CHAIN_ID_SERVICE, IFetchChainIdService } from '../provider-services/ifetch-chain-id.service';
+import { RecordVerifierCheckerResponse } from './response/record-verifier-checker.response';
 
 @Injectable()
 export class VerifyRecordsService implements IVerifyRecordsService {
@@ -25,20 +27,23 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     @Inject(SUBNAME_RECORDS_FETCHER)
     private readonly subnameRecordsFetcher: ISubnameRecordsFetcher,
     @Inject(ENVIRONMENT_GETTER) private readonly environmentGetter: IEnvironmentGetter,
+    @Inject(FETCH_CHAIN_ID_SERVICE) private readonly fetchChainIdService: IFetchChainIdService,
   ) {
     this.domain = this.environmentGetter.getEnsDomain();
   }
 
   async verifyRecords(verifyRecordsRequest: VerifyRecordsRequest): Promise<VerifyRecordsResponse[]> {
-    const { ens, chainId, credentials, issuer } = verifyRecordsRequest;
+    const { ens, credentials, issuer, providerUrl } = verifyRecordsRequest;
 
     const validIssuer = issuer ? issuer : this.domain;
+
+    const chainId = await this.fetchChainIdService.getChainId(providerUrl);
 
     if (chainId !== 1 && chainId !== 11155111) {
       throw ChainIdInvalidException.withId(chainId);
     }
 
-    const subnameRecords = await this.subnameRecordsFetcher.fetchRecordsFromManySubnames(ens, chainId, [...credentials, ...credentials.map((record) => `${record}_${validIssuer}`)]);
+    const subnameRecords = await this.subnameRecordsFetcher.fetchRecordsFromManySubnames(providerUrl, ens, chainId, [...credentials, ...credentials.map((record) => `${record}_${validIssuer}`)]);
     const responses: VerifyRecordsResponse[] = [];
 
     for (const subnameRecord of subnameRecords) {
@@ -56,7 +61,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     return responses;
   }
 
-   private _recordVerifier(record: string, subnameRecords: Subname, chainId: number, issuer: string, matchStandard: boolean): { [key: string]: boolean } {
+   private _recordVerifier(record: string, subnameRecords: Subname, chainId: number, issuer: string, matchStandard: boolean): RecordVerifierCheckerResponse {
      // 1) check if record_issuer exists in subnameRecords, if not return false
      const foundRecordIssuer = subnameRecords.metadata.textRecords.find((item) => item.key === `${record}_${issuer}`);
      if (!foundRecordIssuer) {

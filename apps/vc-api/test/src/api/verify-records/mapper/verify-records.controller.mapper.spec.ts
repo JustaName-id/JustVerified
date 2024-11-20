@@ -7,7 +7,6 @@ import { VerifyRecordsRequest } from "../../../../../src/core/applications/verif
 import { VerifyRecordsResponse } from "../../../../../src/core/applications/verify-records/response/verify-records.response";
 import { VerifyRecordsApiResponse } from "../../../../../src/api/verify-records/responses/verify-records.api.response";
 const ENS = 'ENS';
-const CHAIN_ID = 1;
 const CREDENTIALS = 'github';
 const ISSUER = 'ISSUER';
 const MATCH_STANDARD = true;
@@ -15,24 +14,25 @@ const SUBNAME = 'SUBNAME';
 const RECORDS = {
     'RECORD_1': true,
 };
+const PROVIDER_URL = 'PROVIDER_URL';
 
 const getVerifyRecordsApiRequest = (): VerifyRecordsApiRequest => {
     return {
         ens: [ENS],
-        chainId: CHAIN_ID,
         credentials: [CREDENTIALS],
         issuer: ISSUER,
-        matchStandard: MATCH_STANDARD
+        matchStandard: MATCH_STANDARD,
+        providerUrl: PROVIDER_URL
     };
 };
 
 const getVerifyRecordsRequest = (): VerifyRecordsRequest => {
     return {
         ens: [ENS],
-        chainId: CHAIN_ID,
         credentials: [CREDENTIALS],
         issuer: ISSUER,
-        matchStandard: MATCH_STANDARD
+        matchStandard: MATCH_STANDARD,
+        providerUrl: PROVIDER_URL
     };
 };
 

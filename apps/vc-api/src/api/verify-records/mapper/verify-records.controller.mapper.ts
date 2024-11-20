@@ -13,8 +13,8 @@ export class VerifyRecordsControllerMapper implements IVerifyRecordsControllerMa
     verifyRecordsApiRequest: VerifyRecordsApiRequest,
   ): VerifyRecordsRequest {
     return {
+      providerUrl: verifyRecordsApiRequest.providerUrl,
       ens: verifyRecordsApiRequest.ens,
-      chainId: verifyRecordsApiRequest.chainId,
       credentials: verifyRecordsApiRequest.credentials,
       issuer: verifyRecordsApiRequest.issuer,
       matchStandard: verifyRecordsApiRequest.matchStandard
