@@ -44,10 +44,15 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     const subnameRecords = await this.subnameRecordsFetcher.fetchRecords(ens, chainId, [...credentials, ...credentials.map((record) => `${record}_${validIssuer}`)]);
     let responses: VerifyRecordsResponse = {}
 
-      for (const record of credentials) {
-        const response = await this._recordVerifier(record, subnameRecords, chainId, validIssuer, verifyRecordsRequest.matchStandard);
-        responses = { ...responses, ...response };
-      }
+    const verificationPromises = credentials.map(record =>
+      this._recordVerifier(record, subnameRecords, chainId, validIssuer, verifyRecordsRequest.matchStandard)
+    );
+
+    const results = await Promise.all(verificationPromises);
+
+    for (const response of results) {
+      responses = { ...responses, ...response };
+    }
 
     return responses;
   }
@@ -101,13 +106,21 @@ export class VerifyRecordsService implements IVerifyRecordsService {
        };
      }
 
-     // 6) check if it's on the correct chain, if not return false (for both the issuer did and credential subject did, and the chainId in the proof)
+     // 6) verify signature
+     const veramoVerification = await this.credentialCreator.verifyCredential(vc, chainId);
+     if (!veramoVerification) {
+       return {
+         [record]: false
+       }
+      }
+
+     // 7) check if it's on the correct chain, if not return false (for both the issuer did and credential subject did, and the chainId in the proof)
      const subjectDid = vc.credentialSubject.did.split(':');
 
      let subjectChain = subjectDid[2]; // Extract chain from DID
-      if(subjectChain !== "sepolia") {
-          subjectChain = "mainnet";
-      }
+     if(subjectChain !== "sepolia") {
+       subjectChain = "mainnet";
+     }
 
      if (this.chainIdMapping[subjectChain] !== chainId || Number(vc.proof.eip712.domain.chainId) !== chainId) {
        return {
@@ -115,14 +128,6 @@ export class VerifyRecordsService implements IVerifyRecordsService {
        };
      }
 
-     // calculate time taken for this function
-     // 7) verify signature
-     const veramoVerification = await this.credentialCreator.verifyCredential(vc, chainId);
-     if (!veramoVerification) {
-       return {
-         [record]: false
-       }
-      }
 
      const typedVc = vc as VerifiableEthereumEip712Signature2021;
 
