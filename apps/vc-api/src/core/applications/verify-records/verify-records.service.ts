@@ -14,6 +14,8 @@ import {DiscordCredential} from "../../domain/credentials/discord.credential";
 import { ChainIdInvalidException } from '../../domain/exceptions/ChainIdInvalid.exception';
 import { FETCH_CHAIN_ID_SERVICE, IFetchChainIdService } from '../provider-services/ifetch-chain-id.service';
 import { RecordVerifierCheckerResponse } from './response/record-verifier-checker.response';
+import { CREDENTIAL_CREATOR, ICredentialCreator } from '../credentials/creator/icredential.creator';
+import { ChainId } from '../../domain/entities/environment';
 
 @Injectable()
 export class VerifyRecordsService implements IVerifyRecordsService {
@@ -28,6 +30,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     private readonly subnameRecordsFetcher: ISubnameRecordsFetcher,
     @Inject(ENVIRONMENT_GETTER) private readonly environmentGetter: IEnvironmentGetter,
     @Inject(FETCH_CHAIN_ID_SERVICE) private readonly fetchChainIdService: IFetchChainIdService,
+    @Inject(CREDENTIAL_CREATOR) private readonly credentialCreator: ICredentialCreator
   ) {
     this.domain = this.environmentGetter.getEnsDomain();
   }
@@ -47,26 +50,32 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     const responses: VerifyRecordsResponse[] = [];
 
     for (const subnameRecord of subnameRecords) {
-      let records = {};
-      for (const record of credentials) {
-        const response = this._recordVerifier(record, subnameRecord, chainId, validIssuer, verifyRecordsRequest.matchStandard);
-        records = { ...records, ...response };
-      }
-      responses.push({
-        subname: subnameRecord.subname,
-        records: records
-      });
+      const verificationPromises = credentials.map(record =>
+        this._recordVerifier(record, subnameRecord, chainId, validIssuer, verifyRecordsRequest.matchStandard)
+      );
+
+      const results = await Promise.all(verificationPromises);
+      
+      const mergedRecords = results.reduce((acc, curr) => ({
+        ...acc,
+        records: { ...acc.records, ...curr.records }
+      }), { subname: subnameRecord.subname, records: {} });
+
+      responses.push(mergedRecords);
     }
 
     return responses;
   }
 
-   private _recordVerifier(record: string, subnameRecords: Subname, chainId: number, issuer: string, matchStandard: boolean): RecordVerifierCheckerResponse {
+   private async _recordVerifier(record: string, subnameRecords: Subname, chainId: ChainId, issuer: string, matchStandard: boolean): Promise<VerifyRecordsResponse> {
      // 1) check if record_issuer exists in subnameRecords, if not return false
      const foundRecordIssuer = subnameRecords.metadata.textRecords.find((item) => item.key === `${record}_${issuer}`);
      if (!foundRecordIssuer) {
        return {
-         [record]: false
+         subname: subnameRecords.subname,
+         records: {
+           [record]: false
+         }
        }
      }
 
@@ -77,7 +86,10 @@ export class VerifyRecordsService implements IVerifyRecordsService {
      const expirationDate = new Date(vc.expirationDate);
      if (expirationDate < currentDate) {
        return {
-         [record]: false
+         subname: subnameRecords.subname,
+         records: {
+           [record]: false
+         }
        };
      }
 
@@ -87,7 +99,10 @@ export class VerifyRecordsService implements IVerifyRecordsService {
 
      if (didSubname !== subnameRecords.subname) {
        return {
-         [record]: false
+         subname: subnameRecords.subname,
+         records: {
+           [record]: false
+         }
        };
      }
 
@@ -106,23 +121,41 @@ export class VerifyRecordsService implements IVerifyRecordsService {
 
      if (issuerName !== issuer || this.chainIdMapping[issuerChain] !== chainId) {
        return {
-         [record]: false
+         subname: subnameRecords.subname,
+         records: {
+           [record]: false
+         }
        };
      }
 
-     // 6) check if it's on the correct chain, if not return false (for both the issuer did and credential subject did, and the chainId in the proof)
+     // 6) verify signature
+     const veramoVerification = await this.credentialCreator.verifyCredential(vc, chainId);
+     if (!veramoVerification) {
+       return {
+         subname: subnameRecords.subname,
+         records: {
+           [record]: false
+         }
+       };
+      }
+
+     // 7) check if it's on the correct chain, if not return false (for both the issuer did and credential subject did, and the chainId in the proof)
      const subjectDid = vc.credentialSubject.did.split(':');
 
      let subjectChain = subjectDid[2]; // Extract chain from DID
-      if(subjectChain !== "sepolia") {
-          subjectChain = "mainnet";
-      }
+     if(subjectChain !== "sepolia") {
+       subjectChain = "mainnet";
+     }
 
      if (this.chainIdMapping[subjectChain] !== chainId || Number(vc.proof.eip712.domain.chainId) !== chainId) {
        return {
-         [record]: false
+         subname: subnameRecords.subname,
+         records: {
+           [record]: false
+         }
        };
      }
+
 
      const typedVc = vc as VerifiableEthereumEip712Signature2021;
 
@@ -150,23 +183,34 @@ export class VerifyRecordsService implements IVerifyRecordsService {
           break;
      }
 
-     // 7) check that the value of the username of the credentialSubject matches the value of the record inside the subnameRecords, if not return false
+     // 8) check that the value of the username of the credentialSubject matches the value of the record inside the subnameRecords, if not return false
      if(matchStandard) {
        const foundRecord = subnameRecords.metadata.textRecords.find((item) => item.key === record);
 
        if (!foundRecord) {
          return {
-           [record]: false
+           subname: subnameRecords.subname,
+           records: {
+             [record]: false
+           }
          }
        }
 
        if (handle !== foundRecord.value) {
          return {
-           [record]: false
+           subname: subnameRecords.subname,
+           records: {
+             [record]: false
+           }
          };
        }
      }
 
-     return { [record]: true };
+     return {
+       subname: subnameRecords.subname,
+       records: {
+         [record]: true
+       }
+     };
   }
 }

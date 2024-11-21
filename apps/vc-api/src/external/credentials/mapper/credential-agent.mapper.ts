@@ -6,8 +6,8 @@ import {ICreateVerifiableCredentialEIP712Args} from "@veramo/credential-eip712";
 export class CredentialAgentMapper implements ICredentialAgentMapper {
   mapVerifiedEthereumEip721Signature2021ToVeramoVerifiedCredential(verifiedEthereumEip712Signature2021: VerifiableEthereumEip712Signature2021): VerifiableCredential {
     return {
-      issuanceDate: verifiedEthereumEip712Signature2021.issuanceDate.toLocaleDateString(),
-      expirationDate: verifiedEthereumEip712Signature2021.expirationDate.toLocaleDateString(),
+      issuanceDate: new Date(verifiedEthereumEip712Signature2021.issuanceDate).toISOString(),
+      expirationDate: new Date(verifiedEthereumEip712Signature2021.expirationDate).toISOString(),
       "@context": verifiedEthereumEip712Signature2021["@context"],
       type: verifiedEthereumEip712Signature2021.type,
       credentialSubject: verifiedEthereumEip712Signature2021.credentialSubject,
