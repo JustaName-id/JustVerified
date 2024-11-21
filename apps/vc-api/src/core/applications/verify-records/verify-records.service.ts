@@ -12,6 +12,8 @@ import {TelegramCredential} from "../../domain/credentials/telegram.credential";
 import {EmailCredential} from "../../domain/credentials/email.credential";
 import {DiscordCredential} from "../../domain/credentials/discord.credential";
 import { ChainIdInvalidException } from '../../domain/exceptions/ChainIdInvalid.exception';
+import { CREDENTIAL_CREATOR, ICredentialCreator } from '../credentials/creator/icredential.creator';
+import { ChainId } from '../../domain/entities/environment';
 
 @Injectable()
 export class VerifyRecordsService implements IVerifyRecordsService {
@@ -25,6 +27,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     @Inject(SUBNAME_RECORDS_FETCHER)
     private readonly subnameRecordsFetcher: ISubnameRecordsFetcher,
     @Inject(ENVIRONMENT_GETTER) private readonly environmentGetter: IEnvironmentGetter,
+    @Inject(CREDENTIAL_CREATOR) private readonly credentialCreator: ICredentialCreator
   ) {
     this.domain = this.environmentGetter.getEnsDomain();
   }
@@ -41,15 +44,20 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     const subnameRecords = await this.subnameRecordsFetcher.fetchRecords(ens, chainId, [...credentials, ...credentials.map((record) => `${record}_${validIssuer}`)]);
     let responses: VerifyRecordsResponse = {}
 
-      for (const record of credentials) {
-        const response = this._recordVerifier(record, subnameRecords, chainId, validIssuer, verifyRecordsRequest.matchStandard);
-        responses = { ...responses, ...response };
-      }
+    const verificationPromises = credentials.map(record =>
+      this._recordVerifier(record, subnameRecords, chainId, validIssuer, verifyRecordsRequest.matchStandard)
+    );
+
+    const results = await Promise.all(verificationPromises);
+
+    for (const response of results) {
+      responses = { ...responses, ...response };
+    }
 
     return responses;
   }
 
-   private _recordVerifier(record: string, subnameRecords: Subname, chainId: number, issuer: string, matchStandard: boolean): VerifyRecordsResponse {
+   private async _recordVerifier(record: string, subnameRecords: Subname, chainId: ChainId, issuer: string, matchStandard: boolean): Promise<VerifyRecordsResponse> {
      // 1) check if record_issuer exists in subnameRecords, if not return false
      const foundRecordIssuer = subnameRecords.metadata.textRecords.find((item) => item.key === `${record}_${issuer}`);
      if (!foundRecordIssuer) {
@@ -98,19 +106,28 @@ export class VerifyRecordsService implements IVerifyRecordsService {
        };
      }
 
-     // 6) check if it's on the correct chain, if not return false (for both the issuer did and credential subject did, and the chainId in the proof)
+     // 6) verify signature
+     const veramoVerification = await this.credentialCreator.verifyCredential(vc, chainId);
+     if (!veramoVerification) {
+       return {
+         [record]: false
+       }
+      }
+
+     // 7) check if it's on the correct chain, if not return false (for both the issuer did and credential subject did, and the chainId in the proof)
      const subjectDid = vc.credentialSubject.did.split(':');
 
      let subjectChain = subjectDid[2]; // Extract chain from DID
-      if(subjectChain !== "sepolia") {
-          subjectChain = "mainnet";
-      }
+     if(subjectChain !== "sepolia") {
+       subjectChain = "mainnet";
+     }
 
      if (this.chainIdMapping[subjectChain] !== chainId || Number(vc.proof.eip712.domain.chainId) !== chainId) {
        return {
          [record]: false
        };
      }
+
 
      const typedVc = vc as VerifiableEthereumEip712Signature2021;
 
@@ -138,7 +155,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
           break;
      }
 
-     // 7) check that the value of the username of the credentialSubject matches the value of the record inside the subnameRecords, if not return false
+     // 8) check that the value of the username of the credentialSubject matches the value of the record inside the subnameRecords, if not return false
      if(matchStandard) {
        const foundRecord = subnameRecords.metadata.textRecords.find((item) => item.key === record);
 
