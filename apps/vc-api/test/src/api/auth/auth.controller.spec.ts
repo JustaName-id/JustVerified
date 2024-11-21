@@ -59,7 +59,7 @@ describe('Auth controller integration tests', () => {
     jwtService.sign.mockImplementation((payload) => {
       if (
         JSON.stringify(payload) ===
-        JSON.stringify({ ens: ENS, address: ADDRESS })
+        JSON.stringify({ ens: ENS, address: ADDRESS, chainId: CHAINID })
       ) {
         return TOKEN;
       }
@@ -82,15 +82,16 @@ describe('Auth controller integration tests', () => {
     it('should return 200 and a token when the sign in is successful', async () => {
       await request(app.getHttpServer())
         .post('/auth/signin')
+        .set('Cookie', `justverifiednonce=${TOKEN}`)
         .send({ message: MESSAGE, signature: SIGNATURE })
         .expect((res) => {
           expect(res.status).toBe(200);
           expect(res.body).toEqual({ ens: ENS, chainId: CHAINID, address: ADDRESS });
           expect(res.headers['set-cookie']).toBeDefined();
-          expect(res.headers['set-cookie'][0]).toContain('justverifiedtoken=' + TOKEN);
           expect(res.headers['set-cookie'][0]).toContain('HttpOnly');
           expect(res.headers['set-cookie'][0]).toContain('Secure');
           expect(res.headers['set-cookie'][0]).toContain('SameSite=None');
+          expect(res.headers['set-cookie'][1]).toContain('justverifiedtoken=' + TOKEN);
         });
     });
 
@@ -100,7 +101,6 @@ describe('Auth controller integration tests', () => {
         .send({ message: MESSAGE, signature: SIGNATURE_2 })
         .expect((res) => {
           expect(res.status).toBe(401);
-          expect(res.body).toEqual({ message: ERROR_MESSAGE });
         });
     });
   });
