@@ -2,7 +2,7 @@
 FROM node:18.18.0-alpine as deps
 WORKDIR /usr/src/app
 COPY dist/apps/vc-api/package.json dist/apps/vc-api/yarn.lock ./
-RUN apk add --no-cache --virtual .build-deps python3 make g++ && \
+RUN apk add --no-cache --virtual .build-deps python3 make g++ git && \
     echo "@community http://dl-cdn.alpinelinux.org/alpine/v3.18/community" >> /etc/apk/repositories && \
     yarn install --production && \
     apk del .build-deps

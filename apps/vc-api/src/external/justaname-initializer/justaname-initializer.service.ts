@@ -1,7 +1,7 @@
 import { IEnsManagerService } from '../../core/applications/ens-manager/iens-manager.service';
 import { SignInRequest } from '../../core/applications/ens-manager/requests/sign-in.request';
 import { SignInResponse } from '../../core/applications/ens-manager/responses/sign-in.response';
-import { JustaName, SubnameResponse } from '@justaname.id/sdk';
+import { JustaName, SubnameResponse, ChainId } from '@justaname.id/sdk';
 import { Inject } from '@nestjs/common';
 import { ENVIRONMENT_GETTER, IEnvironmentGetter } from '../../core/applications/environment/ienvironment.getter';
 import { GetRecordsRequest } from '../../core/applications/ens-manager/requests/get-records.request';
@@ -13,7 +13,6 @@ import {
 } from '../../core/applications/key-management/ikey-management.fetcher';
 import { JustaNameInitializerException } from '../../core/domain/exceptions/JustaNameInitializer.exception';
 import { AuthenticationException } from '../../core/domain/exceptions/Authentication.exception';
-import { ChainId } from '../../core/domain/entities/environment';
 
 export class JustaNameInitializerService implements IEnsManagerService {
 

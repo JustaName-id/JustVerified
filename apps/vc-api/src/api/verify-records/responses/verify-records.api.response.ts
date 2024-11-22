@@ -2,6 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class VerifyRecordsApiResponse {
   @ApiProperty({
+    type: 'string',
+    example: 'subname.domain.eth'
+  })
+  subname: string;
+
+
+  @ApiProperty({
     type: 'object',
     additionalProperties: {
       type: 'boolean'

@@ -71,10 +71,12 @@ export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,
     return typeof did.didDocument.authentication[0] === 'string' ? did.didDocument.authentication[0] : did.didDocument.authentication[0].id
   }
 
-  verifyCredential(verifiedEthereumEip712Signature2021: VerifiableEthereumEip712Signature2021, chainId: ChainId): Promise<boolean> {
-    return this.getAgent(chainId).verifyVerifiableCredentialEIP712({
+  async verifyCredential(verifiedEthereumEip712Signature2021: VerifiableEthereumEip712Signature2021, chainId: ChainId): Promise<boolean> {
+    const verifiedCredential = await this.getAgent(chainId).verifyCredentialEIP712({
       credential: this.credentialAgentMapper.mapVerifiedEthereumEip721Signature2021ToVeramoVerifiedCredential(verifiedEthereumEip712Signature2021)
     })
+
+    return verifiedCredential
   }
 
   private getAgent(chainId: ChainId): Agent {

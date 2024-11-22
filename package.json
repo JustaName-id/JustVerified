@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@ensdomains/ensjs": "4.0.0",
-    "@justaname.id/sdk": "0.2.105",
+    "@justaname.id/sdk": "0.2.146",
     "@nestjs/common": "^10.0.2",
     "@nestjs/config": "^3.2.3",
     "@nestjs/core": "^10.0.2",
@@ -36,7 +36,7 @@
     "crypto": "^1.0.1",
     "crypto-js": "^4.2.0",
     "ens-did-resolver": "^1.0.4",
-    "ethers": "^6.13.2",
+    "ethers": "^6.13.4",
     "ethr-did-resolver": "^10.1.10",
     "express-session": "^1.18.0",
     "moment": "^2.30.1",
