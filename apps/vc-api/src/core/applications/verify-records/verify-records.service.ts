@@ -13,9 +13,8 @@ import {EmailCredential} from "../../domain/credentials/email.credential";
 import {DiscordCredential} from "../../domain/credentials/discord.credential";
 import { ChainIdInvalidException } from '../../domain/exceptions/ChainIdInvalid.exception';
 import { FETCH_CHAIN_ID_SERVICE, IFetchChainIdService } from '../provider-services/ifetch-chain-id.service';
-import { RecordVerifierCheckerResponse } from './response/record-verifier-checker.response';
 import { CREDENTIAL_CREATOR, ICredentialCreator } from '../credentials/creator/icredential.creator';
-import { ChainId } from '../../domain/entities/environment';
+import { ChainId } from '@justaname.id/sdk';
 
 @Injectable()
 export class VerifyRecordsService implements IVerifyRecordsService {
@@ -55,7 +54,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
       );
 
       const results = await Promise.all(verificationPromises);
-      
+
       const mergedRecords = results.reduce((acc, curr) => ({
         ...acc,
         records: { ...acc.records, ...curr.records }
