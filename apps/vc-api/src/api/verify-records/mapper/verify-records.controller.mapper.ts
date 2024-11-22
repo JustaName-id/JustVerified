@@ -13,19 +13,20 @@ export class VerifyRecordsControllerMapper implements IVerifyRecordsControllerMa
     verifyRecordsApiRequest: VerifyRecordsApiRequest,
   ): VerifyRecordsRequest {
     return {
+      providerUrl: verifyRecordsApiRequest.providerUrl,
       ens: verifyRecordsApiRequest.ens,
-      chainId: verifyRecordsApiRequest.chainId,
       credentials: verifyRecordsApiRequest.credentials,
       issuer: verifyRecordsApiRequest.issuer,
       matchStandard: verifyRecordsApiRequest.matchStandard
     };
   }
 
-  mapVerifyRecordsResponseToVerifyRecordsApiResponse(verifyRecordsResponses: VerifyRecordsResponse): VerifyRecordsApiResponse {
-    return {
-      records: {
-        ...verifyRecordsResponses
-      }
-    };
+  mapVerifyRecordsResponsesToVerifyRecordsApiResponses(verifyRecordsResponses: VerifyRecordsResponse[]): VerifyRecordsApiResponse[] {
+    return verifyRecordsResponses.map((response) => {
+      return {
+        subname: response.subname,
+        records: response.records
+      };
+    });
   }
 }

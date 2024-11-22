@@ -1,7 +1,7 @@
 export class VerifyRecordsRequest {
-  ens: string;
-  credentials: string[];
-  chainId: number;
-  matchStandard?: boolean;
+  providerUrl: string;
+  ens: string[];
   issuer: string;
+  credentials: string[];
+  matchStandard?: boolean;
 }
