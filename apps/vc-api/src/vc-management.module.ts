@@ -56,6 +56,8 @@ import {EmailResolver} from "./core/applications/credentials/facade/email-resolv
 import {EMAIL_RESOLVER} from "./core/applications/credentials/facade/email-resolver/iemail.resolver";
 import { VCManagementApiFilters } from './api/filters/vc.api.filters';
 import { APP_FILTER } from '@nestjs/core';
+import { FetchChainIdService } from './external/provider-services/fetch-chain-id.service';
+import { FETCH_CHAIN_ID_SERVICE } from './core/applications/provider-services/ifetch-chain-id.service';
 
 const dynamicImport = async (packageName: string) =>
   new Function(`return import('${packageName}')`)();
@@ -81,6 +83,10 @@ const dynamicImport = async (packageName: string) =>
       provide: APP_FILTER,
       useClass: filter,
     })),
+    {
+      useClass: FetchChainIdService,
+      provide: FETCH_CHAIN_ID_SERVICE
+    },
     {
       useClass: CredentialsControllerMapper,
       provide: AUTH_CONTROLLER_MAPPER

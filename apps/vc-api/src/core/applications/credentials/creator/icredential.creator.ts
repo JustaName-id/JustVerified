@@ -9,4 +9,5 @@ export const CREDENTIAL_CREATOR = 'CREDENTIAL_CREATOR';
 
 export interface ICredentialCreator {
   createCredential(credential: EthereumEip712Signature2021, chainId: ChainId): Promise<VerifiableEthereumEip712Signature2021>
+  verifyCredential(credential: VerifiableEthereumEip712Signature2021, chainId: ChainId): Promise<boolean>
 }

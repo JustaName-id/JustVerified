@@ -10,7 +10,7 @@ export interface IVerifyRecordsControllerMapper {
     verifyRecordsApiRequest: VerifyRecordsApiRequest,
   ): VerifyRecordsRequest;
 
-  mapVerifyRecordsResponseToVerifyRecordsApiResponse(
-    verifyRecordsResponse: VerifyRecordsResponse
-  ): VerifyRecordsApiResponse;
+  mapVerifyRecordsResponsesToVerifyRecordsApiResponses(
+    verifyRecordsResponses: VerifyRecordsResponse[]
+  ): VerifyRecordsApiResponse[];
 }

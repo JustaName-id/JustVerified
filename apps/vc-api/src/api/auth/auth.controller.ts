@@ -57,7 +57,6 @@ export class AuthController {
     }catch (e) {
       res.status(422).send({message: e.message});
     }
-
   }
 
   @UseGuards(JwtGuard)
