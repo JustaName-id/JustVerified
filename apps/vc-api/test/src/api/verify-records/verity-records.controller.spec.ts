@@ -50,8 +50,8 @@ const getVerifyRecordsResponse = (): VerifyRecordsResponse => ({
 });
 
 const getVerifyRecordsApiResponse = (): VerifyRecordsApiResponse => ({
-  subname: ENS,
-  records: {
+  ens: ENS,
+  credentials: {
     [RECORD_KEY]: RECORD_VALUE,
   },
 });
