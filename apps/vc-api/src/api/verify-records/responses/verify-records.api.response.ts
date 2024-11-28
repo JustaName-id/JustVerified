@@ -18,5 +18,5 @@ export class VerifyRecordsApiResponse {
       record2: false
     }
   })
-  records: { [key: string]: boolean };
+  credentials: { [key: string]: boolean };
 }

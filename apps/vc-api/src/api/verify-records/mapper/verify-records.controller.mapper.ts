@@ -25,7 +25,7 @@ export class VerifyRecordsControllerMapper implements IVerifyRecordsControllerMa
     return verifyRecordsResponses.map((response) => {
       return {
         ens: response.subname,
-        records: response.records
+        credentials: response.records
       };
     });
   }
