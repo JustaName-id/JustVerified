@@ -5,7 +5,7 @@ export class VerifyRecordsApiResponse {
     type: 'string',
     example: 'subname.domain.eth'
   })
-  subname: string;
+  ens: string;
 
 
   @ApiProperty({

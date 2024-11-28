@@ -24,7 +24,7 @@ export class VerifyRecordsControllerMapper implements IVerifyRecordsControllerMa
   mapVerifyRecordsResponsesToVerifyRecordsApiResponses(verifyRecordsResponses: VerifyRecordsResponse[]): VerifyRecordsApiResponse[] {
     return verifyRecordsResponses.map((response) => {
       return {
-        subname: response.subname,
+        ens: response.subname,
         records: response.records
       };
     });
