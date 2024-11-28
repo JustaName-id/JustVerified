@@ -45,8 +45,8 @@ const getVerifyRecordsResponse = (): VerifyRecordsResponse => {
 
 const getVerifyRecordsApiResponse = (): VerifyRecordsApiResponse => {
     return {
-        subname: SUBNAME,
-        records: RECORDS
+        ens: SUBNAME,
+        credentials: RECORDS
     };
 };
 

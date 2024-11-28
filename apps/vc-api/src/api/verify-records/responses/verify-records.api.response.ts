@@ -5,7 +5,7 @@ export class VerifyRecordsApiResponse {
     type: 'string',
     example: 'subname.domain.eth'
   })
-  subname: string;
+  ens: string;
 
 
   @ApiProperty({
@@ -18,5 +18,5 @@ export class VerifyRecordsApiResponse {
       record2: false
     }
   })
-  records: { [key: string]: boolean };
+  credentials: { [key: string]: boolean };
 }
