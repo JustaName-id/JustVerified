@@ -8,6 +8,10 @@ export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/openpassport-static',
 
+  define: {
+    'global': {},
+  },
+
   server: {
     port: 4200,
     host: 'localhost',
