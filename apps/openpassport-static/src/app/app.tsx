@@ -1,12 +1,13 @@
-import { OpenPassportVerifier, OpenPassportDynamicAttestation } from '@openpassport/core';
+import { OpenPassportVerifier } from '@openpassport/core';
 import { OpenPassportQRcode } from '@openpassport/qrcode';
 
 export function App() {
   const scope = "JustaName | Proof Of Humanity";
   const openPassportVerifier = new OpenPassportVerifier('prove_offchain', scope).allowMockPassports();
   const address = new URLSearchParams(window.location.search).get('address');
+  const state = new URLSearchParams(window.location.search).get('state');
 
-  if (!address) {
+  if (!address || !state) {
     return <h2>Please provide an address parameter in the URL to continue</h2>;
   }
 

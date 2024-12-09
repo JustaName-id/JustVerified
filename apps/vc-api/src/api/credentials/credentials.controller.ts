@@ -44,6 +44,7 @@ export class CredentialsController {
     const subject = new Subject<SubjectData>();
     this.authSubjects.set(authId, subject);
 
+    // TODO: use req.user instead of req.body['user']
     const redirectUrl = await this.credentialCreatorFacade.getSocialAuthUrl(
       authGetAuthUrlRequestApi.authName,
       req.body['user'].ens,
