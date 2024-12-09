@@ -28,7 +28,7 @@ export class GithubSocialResolver extends AbstractSocialResolver<
     return ['VerifiableGithubAccount'];
   }
 
-  getAuthUrl({ens, chainId, authId}: {ens: string; chainId: ChainId; authId: string}): string {
+  async getAuthUrl({ens, chainId, authId}: {ens: string; chainId: ChainId; authId: string}): Promise<string> {
     const stateObject = { ens, chainId, authId };
     const encryptedState = this.cryptoEncryption.encrypt(JSON.stringify(stateObject));
     const clientId = this.environmentGetter.getGithubClientId();

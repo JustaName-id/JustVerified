@@ -27,7 +27,7 @@ export class DiscordSocialResolver extends AbstractSocialResolver<
     return ['VerifiableDiscordAccount'];
   }
 
-  getAuthUrl(authUrlRequest:GetAuthUrlRequest): string {
+  async getAuthUrl(authUrlRequest:GetAuthUrlRequest): Promise<string> {
     const encryptedState = this.encryptState(authUrlRequest);
     const clientId = this.environmentGetter.getDiscordClientId();
     return `${

@@ -16,12 +16,17 @@ export class OpenPassportSocialResolver extends AbstractSocialResolver<
     getType(): string[] {
         return ['VerifiableOpenPassportAccount'];
     }
-    getAuthUrl(authUrlRequest: GetAuthUrlRequest): string {
+
+    async getAuthUrl(authUrlRequest: GetAuthUrlRequest): Promise<string> {
         const state = this.encryptState(authUrlRequest);
+        const records = await this.ensManagerService.getRecords({
+            ens: authUrlRequest.ens,
+            chainId: authUrlRequest.chainId
+        });
 
+        const address = records.coins.find((coin) => coin.id === 60)?.value;
         const openpassportStaticPageUrl = this.environmentGetter.getOpenPassportStaticPageUrl();
-
-        return `${openpassportStaticPageUrl}?state=${state}`;
+        return `${openpassportStaticPageUrl}?state=${state}&address=${address}`;
     }
 
     async extractCredentialSubject(

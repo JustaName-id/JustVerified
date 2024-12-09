@@ -19,7 +19,8 @@ export class TelegramSocialResolver extends AbstractSocialResolver<
   getType(): string[] {
     return ['VerifiableTelegramAccount'];
   }
-  getAuthUrl(authUrlRequest: GetAuthUrlRequest): string {
+  
+  async getAuthUrl(authUrlRequest: GetAuthUrlRequest): Promise<string> {
     const state = this.encryptState(authUrlRequest);
 
     const telegramStaticPageUrl = this.environmentGetter.getTelegramStaticPageUrl();
