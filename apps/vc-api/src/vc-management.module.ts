@@ -35,6 +35,7 @@ import {
 import {
   TwitterSocialResolver
 } from './core/applications/credentials/facade/social-credential-resolver/social-resolver/twitter.social.resolver';
+import { OpenPassportSocialResolver } from './core/applications/credentials/facade/social-credential-resolver/social-resolver/openpassport.social.resolver';
 import { CredentialsControllerMapper } from './api/credentials/mapper/credentials.controller.mapper';
 import { AUTH_CONTROLLER_MAPPER } from './api/credentials/mapper/icredentials.controller.mapper';
 import { AuthController } from './api/auth/auth.controller';
@@ -155,6 +156,7 @@ const dynamicImport = async (packageName: string) =>
     DiscordSocialResolver,
     TelegramSocialResolver,
     TwitterSocialResolver,
+    OpenPassportSocialResolver,
     {
       useClass: EmailResolver,
       provide: EMAIL_RESOLVER

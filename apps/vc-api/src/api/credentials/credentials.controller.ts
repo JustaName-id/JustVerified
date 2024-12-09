@@ -33,7 +33,7 @@ export class CredentialsController {
     private readonly authControllerMapper: IcredentialsControllerMapper
   ) {}
 
-  @UseGuards(JwtGuard)
+  // @UseGuards(JwtGuard)
   @Get('socials/:authName')
   async getAuthUrl(
     @Param() authGetAuthUrlRequestApi: CredentialsGetAuthUrlRequestApiRequestParam,
