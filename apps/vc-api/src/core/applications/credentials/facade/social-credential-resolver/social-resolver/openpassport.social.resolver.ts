@@ -1,9 +1,11 @@
+import { OpenPassportCredential } from 'apps/vc-api/src/core/domain/credentials/openpassport.credential';
 import { AbstractSocialResolver } from './abstract.social.resolver';
+import { OpenPassportCallback } from './callback/openpassport.callback';
 import { GetAuthUrlRequest } from './requests/get-auth-url.request';
 
 export class OpenPassportSocialResolver extends AbstractSocialResolver<
-    any,
-    any
+    OpenPassportCallback,
+    OpenPassportCredential
 > {
     getCredentialName(): string {
         return 'openpassport';
@@ -30,8 +32,12 @@ export class OpenPassportSocialResolver extends AbstractSocialResolver<
     }
 
     async extractCredentialSubject(
-        params: any
-    ): Promise<any> {
+        params: OpenPassportCallback
+    ): Promise<OpenPassportCredential> {
+        console.log(params.code);
+        console.log("##########################");
+        const decodedAttestation = JSON.parse(atob(params.code));
+        console.log(decodedAttestation);
         return
     }
 }

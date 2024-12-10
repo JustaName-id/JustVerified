@@ -14,6 +14,11 @@ import {CredentialCallbackResponse} from "./credential.callback.response";
 import {BaseCallback} from "./base.callback";
 import { ChainId } from '../../../domain/entities/environment';
 
+interface BaseState {
+  ens: string;
+  chainId: ChainId;
+  authId: string;
+}
 
 export abstract class AbstractResolver<
   T extends BaseCallback,
@@ -80,7 +85,7 @@ export abstract class AbstractResolver<
     return this.cryptoEncryption.encrypt(JSON.stringify(stateObject));
   }
 
-  decryptState(state: string): { ens: string; chainId: ChainId; authId: string } {
+  decryptState<T extends BaseState = BaseState> (state: string): T {
     return JSON.parse(this.cryptoEncryption.decrypt(state));
   }
 
@@ -94,8 +99,9 @@ export abstract class AbstractResolver<
   ): Promise<CredentialCallbackResponse> {
     const credentialSubject = await this.extractCredentialSubject(data);
     const { ens , chainId, authId} = this.getEnsAndAuthId(data);
-
+    console.log(ens, chainId, authId);
     const did = await this.didResolver.getEnsDid(ens, chainId)
+    console.log(did);
     const ethereumEip712Signature2021 = new EthereumEip712Signature2021<K>({
       type: this.getType(),
       context: this.getContext(),
@@ -111,14 +117,14 @@ export abstract class AbstractResolver<
         )
       ),
     });
-
+    console.log(ethereumEip712Signature2021);
     const verifiableCredential = (await this.credentialCreator.createCredential(
       ethereumEip712Signature2021,
       chainId
     )) as VerifiableEthereumEip712Signature2021<K>;
-
+    console.log(verifiableCredential);
     await this.successfulCredentialGeneration(verifiableCredential, ens, chainId);
-
+    console.log("final");
     return {
       dataKey: this.getDataKey(),
       verifiableCredential,

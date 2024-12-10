@@ -33,7 +33,7 @@ export class CredentialsController {
     private readonly authControllerMapper: IcredentialsControllerMapper
   ) {}
 
-  @UseGuards(JwtGuard)
+  // @UseGuards(JwtGuard)
   @Get('socials/:authName')
   async getAuthUrl(
     @Param() authGetAuthUrlRequestApi: CredentialsGetAuthUrlRequestApiRequestParam,
@@ -44,7 +44,7 @@ export class CredentialsController {
     const subject = new Subject<SubjectData>();
     this.authSubjects.set(authId, subject);
 
-    // TODO: use req.user instead of req.body['user']
+    // TODO: use req.user instead of req.body['user'] when JwtGuard is enabled
     const redirectUrl = await this.credentialCreatorFacade.getSocialAuthUrl(
       authGetAuthUrlRequestApi.authName,
       req.body['user'].ens,
@@ -84,13 +84,13 @@ export class CredentialsController {
     @Query() authGetAuthUrlRequestApiQuery: CredentialsGetAuthUrlApiRequestQuery,
     @Res() res: Response
   ): Promise<void> {
-
+    console.log(1);
     const verifiedEthereumEip712Signature2021 = await this.credentialCreatorFacade.socialCallback(
       this.authControllerMapper.mapAuthCallbackApiRequestToCredentialCallbackRequest(
         authGetAuthUrlRequestApiQuery,
         authGetAuthUrlRequestApiParam)
     )
-
+    console.log(2)
     const { authId, dataKey, verifiableCredential } = verifiedEthereumEip712Signature2021
 
     const subject = this.authSubjects.get(authId);
