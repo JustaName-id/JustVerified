@@ -111,11 +111,11 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     const foundRecordIssuer = subnameRecords.metadata.textRecords.find(
       (item) => item.key === `${record}_${issuer}`
     );
-    let vc: VerifiableEthereumEip712Signature2021;
     if (!foundRecordIssuer) {
       return this.setRecordVerification(subnameRecords.subname, record, false);
     }
     // 2) parse the value of record_issuer
+    let vc: VerifiableEthereumEip712Signature2021;
     try {
       vc = JSON.parse(
         foundRecordIssuer.value
@@ -129,7 +129,6 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     if (expirationDate < currentDate) {
       return this.setRecordVerification(subnameRecords.subname, record, false);
     }
-
     // 4) check if it belongs to the subname, if not return false
     const didSubnameWithFragment =
       chainId == 1
@@ -140,17 +139,15 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     if (didSubname !== subnameRecords.subname) {
       return this.setRecordVerification(subnameRecords.subname, record, false);
     }
-
     // 5) check the issuer did, if not return false
     const issuerDid = vc.issuer.id.split(':');
-
     let issuerChain = issuerDid[2];
 
     if (issuerChain !== 'sepolia') {
       issuerChain = 'mainnet';
     }
-    const issuerNameFragment = chainId == 1 ? issuerDid[2] : issuerDid[3];
 
+    const issuerNameFragment = chainId == 1 ? issuerDid[2] : issuerDid[3];
     const issuerName = issuerNameFragment.split('#')[0];
 
     if (issuerName !== issuer || this.chainIdMapping[issuerChain] !== chainId) {
@@ -173,11 +170,10 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     } catch (error) {
       return this.setRecordVerification(subnameRecords.subname, record, false);
     }
-
     // 7) check if it's on the correct chain, if not return false (for both the issuer did and credential subject did, and the chainId in the proof)
     const subjectDid = vc.credentialSubject.did.split(':');
-
     let subjectChain = subjectDid[2]; // Extract chain from DID
+
     if (subjectChain !== 'sepolia') {
       subjectChain = 'mainnet';
     }
@@ -190,10 +186,9 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     }
 
     const typedVc = vc as VerifiableEthereumEip712Signature2021;
-
     const type = typedVc.type[1];
-
     let handle = '';
+
     switch (type) {
       case 'VerifiableTwitterAccount':
         handle = (
@@ -223,7 +218,6 @@ export class VerifyRecordsService implements IVerifyRecordsService {
       default:
         break;
     }
-
     // 8) check that the value of the username of the credentialSubject matches the value of the record inside the subnameRecords, if not return false
     if (matchStandard) {
       const foundRecord = subnameRecords.metadata.textRecords.find(
@@ -246,7 +240,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
         );
       }
     }
-
+    
     return this.setRecordVerification(subnameRecords.subname, record, true);
   }
 
