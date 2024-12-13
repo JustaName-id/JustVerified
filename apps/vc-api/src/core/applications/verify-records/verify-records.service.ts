@@ -107,12 +107,13 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     issuer: string,
     matchStandard: boolean
   ): Promise<VerifyRecordsResponse> {
+    const { subname } = subnameRecords;
     // 1) check if record_issuer exists in subnameRecords, if not return false
     const foundRecordIssuer = subnameRecords.metadata.textRecords.find(
       (item) => item.key === `${record}_${issuer}`
     );
     if (!foundRecordIssuer) {
-      return this.setRecordVerification(subnameRecords.subname, record, false);
+      return this.setRecordVerification(subname, record, false);
     }
     // 2) parse the value of record_issuer
     let vc: VerifiableEthereumEip712Signature2021;
@@ -121,13 +122,13 @@ export class VerifyRecordsService implements IVerifyRecordsService {
         foundRecordIssuer.value
       ) as VerifiableEthereumEip712Signature2021;
     } catch (error) {
-      return this.setRecordVerification(subnameRecords.subname, record, false);
+      return this.setRecordVerification(subname, record, false);
     }
     // 3) check the expirationDate, if expired return false
     const currentDate = new Date();
     const expirationDate = new Date(vc.expirationDate);
     if (expirationDate < currentDate) {
-      return this.setRecordVerification(subnameRecords.subname, record, false);
+      return this.setRecordVerification(subname, record, false);
     }
     // 4) check if it belongs to the subname, if not return false
     const didSubnameWithFragment =
@@ -136,8 +137,8 @@ export class VerifyRecordsService implements IVerifyRecordsService {
         : vc.credentialSubject.did.split(':')[3];
     const didSubname = didSubnameWithFragment.split('#')[0];
 
-    if (didSubname !== subnameRecords.subname) {
-      return this.setRecordVerification(subnameRecords.subname, record, false);
+    if (didSubname !== subname) {
+      return this.setRecordVerification(subname, record, false);
     }
     // 5) check the issuer did, if not return false
     const issuerDid = vc.issuer.id.split(':');
@@ -151,7 +152,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     const issuerName = issuerNameFragment.split('#')[0];
 
     if (issuerName !== issuer || this.chainIdMapping[issuerChain] !== chainId) {
-      return this.setRecordVerification(subnameRecords.subname, record, false);
+      return this.setRecordVerification(subname, record, false);
     }
     // 6) verify signature
     let veramoVerification: boolean;
@@ -161,14 +162,10 @@ export class VerifyRecordsService implements IVerifyRecordsService {
         chainId
       );
       if (!veramoVerification) {
-        return this.setRecordVerification(
-          subnameRecords.subname,
-          record,
-          false
-        );
+        return this.setRecordVerification(subname, record, false);
       }
     } catch (error) {
-      return this.setRecordVerification(subnameRecords.subname, record, false);
+      return this.setRecordVerification(subname, record, false);
     }
     // 7) check if it's on the correct chain, if not return false (for both the issuer did and credential subject did, and the chainId in the proof)
     const subjectDid = vc.credentialSubject.did.split(':');
@@ -182,7 +179,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
       this.chainIdMapping[subjectChain] !== chainId ||
       Number(vc.proof.eip712.domain.chainId) !== chainId
     ) {
-      return this.setRecordVerification(subnameRecords.subname, record, false);
+      return this.setRecordVerification(subname, record, false);
     }
 
     const typedVc = vc as VerifiableEthereumEip712Signature2021;
@@ -225,30 +222,22 @@ export class VerifyRecordsService implements IVerifyRecordsService {
       );
 
       if (!foundRecord) {
-        return this.setRecordVerification(
-          subnameRecords.subname,
-          record,
-          false
-        );
+        return this.setRecordVerification(subname, record, false);
       }
 
       if (handle !== foundRecord.value) {
-        return this.setRecordVerification(
-          subnameRecords.subname,
-          record,
-          false
-        );
+        return this.setRecordVerification(subname, record, false);
       }
     }
-    
-    return this.setRecordVerification(subnameRecords.subname, record, true);
+
+    return this.setRecordVerification(subname, record, true);
   }
 
   private setRecordVerification(
     subname: string,
     record: string,
     value: boolean
-  ) {
+  ): VerifyRecordsResponse {
     return {
       subname,
       records: {
