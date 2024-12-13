@@ -112,7 +112,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     const foundRecordIssuer = subnameRecords.metadata.textRecords.find(
       (item) => item.key === `${record}_${issuer}`
     );
-    if (!foundRecordIssuer) {
+    if (!foundRecordIssuer || !foundRecordIssuer.value.length) {
       return this.setRecordVerification(subname, record, false);
     }
     // 2) parse the value of record_issuer
@@ -121,6 +121,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
       vc = JSON.parse(
         foundRecordIssuer.value
       ) as VerifiableEthereumEip712Signature2021;
+      if (!vc) return this.setRecordVerification(subname, record, false);
     } catch (error) {
       return this.setRecordVerification(subname, record, false);
     }
@@ -131,16 +132,21 @@ export class VerifyRecordsService implements IVerifyRecordsService {
       return this.setRecordVerification(subname, record, false);
     }
     // 4) check if it belongs to the subname, if not return false
+    if (!vc.credentialSubject || !vc.credentialSubject.did)
+      return this.setRecordVerification(subname, record, false);
+
     const didSubnameWithFragment =
       chainId == 1
         ? vc.credentialSubject.did.split(':')[2]
         : vc.credentialSubject.did.split(':')[3];
     const didSubname = didSubnameWithFragment.split('#')[0];
-
     if (didSubname !== subname) {
       return this.setRecordVerification(subname, record, false);
     }
     // 5) check the issuer did, if not return false
+    if (!vc.issuer || !vc.issuer.id)
+      return this.setRecordVerification(subname, record, false);
+
     const issuerDid = vc.issuer.id.split(':');
     let issuerChain = issuerDid[2];
 
