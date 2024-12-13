@@ -6,6 +6,7 @@ import { CredentialsExceptionFilter } from './credentials/credentials.filter';
 import { AuthenticationExceptionFilter } from './auth/authentication.filter';
 import { JustaNameInitializerExceptionFilter } from './auth/justaName-intializer.filter';
 import { Web3ProviderExceptionFilter } from './web3-provider/web3-provider.filter';
+import { RecordsFetchingExceptionFilter } from './verify-records/records-fetching.filter';
 
 export const VCManagementApiFilters = [
   OTPExceptionFilter,
@@ -16,4 +17,5 @@ export const VCManagementApiFilters = [
   CredentialsExceptionFilter,
   SocialResolverNotFoundExceptionFilter,
   Web3ProviderExceptionFilter,
+  RecordsFetchingExceptionFilter,
 ];
