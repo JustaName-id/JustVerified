@@ -84,13 +84,13 @@ export class CredentialsController {
     @Query() authGetAuthUrlRequestApiQuery: CredentialsGetAuthUrlApiRequestQuery,
     @Res() res: Response
   ): Promise<void> {
-    console.log(1);
+
     const verifiedEthereumEip712Signature2021 = await this.credentialCreatorFacade.socialCallback(
       this.authControllerMapper.mapAuthCallbackApiRequestToCredentialCallbackRequest(
         authGetAuthUrlRequestApiQuery,
         authGetAuthUrlRequestApiParam)
     )
-    console.log(2)
+
     const { authId, dataKey, verifiableCredential } = verifiedEthereumEip712Signature2021
 
     const subject = this.authSubjects.get(authId);

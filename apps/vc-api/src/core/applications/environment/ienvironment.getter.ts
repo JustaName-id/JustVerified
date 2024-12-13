@@ -20,6 +20,7 @@ export interface IEnvironmentGetter {
   getTelegramBotUsername(): string;
   getTelegramStaticPageUrl(): string;
   getOpenPassportStaticPageUrl(): string;
+  getOpenPassportScope(): string;
   getEncryptKey(): string;
   getEncryptSalt(): string;
   getResendApiKey(): string;

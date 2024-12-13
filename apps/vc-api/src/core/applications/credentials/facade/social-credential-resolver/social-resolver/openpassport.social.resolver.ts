@@ -1,24 +1,37 @@
-import { OpenPassportCredential } from 'apps/vc-api/src/core/domain/credentials/openpassport.credential';
+import { Inject } from "@nestjs/common";
+import { OpenPassportAttestation } from "@openpassport/core";
+import { OpenPassportCredential } from '../../../../../domain/credentials/openpassport.credential';
 import { AbstractSocialResolver } from './abstract.social.resolver';
 import { OpenPassportCallback } from './callback/openpassport.callback';
 import { GetAuthUrlRequest } from './requests/get-auth-url.request';
+import { CredentialsException } from '../../../../../domain/exceptions/Credentials.exception';
+import { IOpenPassportService, OPENPASSPORT_SERVICE } from "../../../../openpassport/iopenpassport.service";
 
 export class OpenPassportSocialResolver extends AbstractSocialResolver<
-    OpenPassportCallback,
-    OpenPassportCredential
+OpenPassportCallback,
+OpenPassportCredential
 > {
+
+    constructor(
+        @Inject(OPENPASSPORT_SERVICE) private readonly openPassportService: IOpenPassportService,
+    ) {
+        super();
+    }
+
     getCredentialName(): string {
         return 'openpassport';
     }
 
     getKey(): string {
-        return 'org.openpassport';
+        return 'app.openpassport';
     }
 
     getType(): string[] {
         return ['VerifiableOpenPassportAccount'];
     }
 
+    // TODO: check that the address in the request is the same as the address in the records
+    // TODO: throw an error if the address is not found in the records
     async getAuthUrl(authUrlRequest: GetAuthUrlRequest): Promise<string> {
         const state = this.encryptState(authUrlRequest);
         const records = await this.ensManagerService.getRecords({
@@ -34,10 +47,30 @@ export class OpenPassportSocialResolver extends AbstractSocialResolver<
     async extractCredentialSubject(
         params: OpenPassportCallback
     ): Promise<OpenPassportCredential> {
-        console.log(params.code);
-        console.log("##########################");
+        const decryptedState = this.cryptoEncryption.decrypt(params.state);
+        const { ens, chainId } = JSON.parse(decryptedState);
+
+        const records = await this.ensManagerService.getRecords({
+            ens: ens,
+            chainId: chainId
+        });
+
+        const addressFromRecords = records.coins.find((coin) => coin.id === 60)?.value;
         const decodedAttestation = JSON.parse(atob(params.code));
-        console.log(decodedAttestation);
-        return
+        const addressFromAttestation = `0x${decodedAttestation.credentialSubject.userId}`;
+
+        if (addressFromAttestation.toLowerCase() !== addressFromRecords.toLowerCase()) {
+            throw CredentialsException.addressMismatch();
+        }
+
+        const openPassportProof = {
+            proof: decodedAttestation.proof,
+            dsc: decodedAttestation.dsc,
+            dscProof: decodedAttestation.dscProof
+        }
+
+        await this.openPassportService.verify(openPassportProof as OpenPassportAttestation);
+
+        return openPassportProof;
     }
 }

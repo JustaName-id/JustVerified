@@ -64,6 +64,9 @@ class EnvironmentVariables implements Environment{
   @IsString({message: 'OPENPASSPORT_STATIC_PAGE_URL must be a string'})
   OPENPASSPORT_STATIC_PAGE_URL!: string;
 
+  @IsString({message: 'OPENPASSPORT_SCOPE must be a string'})
+  OPENPASSPORT_SCOPE!: string;
+
   @IsString({message: 'JWT_SECRET must be a string'})
   JWT_SECRET: string;
 

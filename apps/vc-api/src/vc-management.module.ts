@@ -59,6 +59,8 @@ import { VCManagementApiFilters } from './api/filters/vc.api.filters';
 import { APP_FILTER } from '@nestjs/core';
 import { FetchChainIdService } from './external/provider-services/fetch-chain-id.service';
 import { FETCH_CHAIN_ID_SERVICE } from './core/applications/provider-services/ifetch-chain-id.service';
+import { OpenPassportService } from './external/openpassport/openpassport.service';
+import { OPENPASSPORT_SERVICE } from './core/applications/openpassport/iopenpassport.service';
 
 const dynamicImport = async (packageName: string) =>
   new Function(`return import('${packageName}')`)();
@@ -151,6 +153,10 @@ const dynamicImport = async (packageName: string) =>
     {
       useClass: EmailSender,
       provide: EMAIL_SENDER
+    },
+    {
+      useClass: OpenPassportService,
+      provide: OPENPASSPORT_SERVICE
     },
     GithubSocialResolver,
     DiscordSocialResolver,

@@ -1,17 +1,24 @@
 import axios from 'axios';
-import { OpenPassportVerifier } from '@openpassport/core';
 import { OpenPassportQRcode } from '@openpassport/qrcode';
+import { OpenPassportAttestation, OpenPassportVerifier } from '@openpassport/core';
 
 export function App() {
-  const scope = "JustaName";
-  // TODO: remove mock passports
-  const openPassportVerifier = new OpenPassportVerifier('prove_offchain', scope).allowMockPassports();
   const address = new URLSearchParams(window.location.search).get('address');
   const state = new URLSearchParams(window.location.search).get('state');
+  
+  const environment = import.meta.env.VITE_APP_ENVIRONMENT;
+  const scope = import.meta.env.VITE_APP_OPENPASSPORT_SCOPE;
+  let openPassportVerifier = new OpenPassportVerifier('prove_offchain', scope);
 
-  const callback = async (encodedAttestation: string) => {
+  if (environment === 'development' || environment === 'staging') {
+    openPassportVerifier = openPassportVerifier.allowMockPassports();
+  }
+
+  const callback = async (attestation: OpenPassportAttestation) => {
     try {
-      const response = await axios.get(
+      const encodedAttestation = btoa(JSON.stringify(attestation));
+
+      await axios.get(
         `${import.meta.env.VITE_APP_API_DOMAIN}/credentials/socials/openpassport/callback`, 
         {
           params: {
@@ -20,7 +27,6 @@ export function App() {
           },
         }
       );
-      console.log('Callback response:', response.data);
     } catch (error) {
       console.error('Error in callback:', error);
     }
@@ -37,11 +43,7 @@ export function App() {
       userIdType={"hex"}
       openPassportVerifier={openPassportVerifier}
       onSuccess={async (attestation) => {
-        const encodedAttestation = btoa(JSON.stringify(attestation));
-        console.log(attestation);
-        console.log(encodedAttestation);
-
-        await callback(encodedAttestation);
+        await callback(attestation);
       }}
     />
   );
