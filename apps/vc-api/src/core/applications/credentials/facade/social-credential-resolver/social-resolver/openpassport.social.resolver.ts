@@ -71,6 +71,10 @@ OpenPassportCredential
 
         await this.openPassportService.verify(openPassportProof as OpenPassportAttestation);
 
-        return openPassportProof;
+        const stringifiedOpenPassportProof = JSON.stringify(openPassportProof);
+
+        return {
+            openPassportProof: stringifiedOpenPassportProof
+        };
     }
 }
