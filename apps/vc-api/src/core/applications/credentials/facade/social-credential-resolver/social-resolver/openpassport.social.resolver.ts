@@ -30,8 +30,6 @@ OpenPassportCredential
         return ['VerifiableOpenPassportAccount'];
     }
 
-    // TODO: check that the address in the request is the same as the address in the records
-    // TODO: throw an error if the address is not found in the records
     async getAuthUrl(authUrlRequest: GetAuthUrlRequest): Promise<string> {
         const state = this.encryptState(authUrlRequest);
         const records = await this.ensManagerService.getRecords({
