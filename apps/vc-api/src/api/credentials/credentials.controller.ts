@@ -33,7 +33,7 @@ export class CredentialsController {
     private readonly authControllerMapper: IcredentialsControllerMapper
   ) {}
 
-  // @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard)
   @Get('socials/:authName')
   async getAuthUrl(
     @Param() authGetAuthUrlRequestApi: CredentialsGetAuthUrlRequestApiRequestParam,
@@ -47,8 +47,8 @@ export class CredentialsController {
     // TODO: use req.user instead of req.body['user'] when JwtGuard is enabled
     const redirectUrl = await this.credentialCreatorFacade.getSocialAuthUrl(
       authGetAuthUrlRequestApi.authName,
-      req.body['user'].ens,
-      req.body['user'].chainId,
+      req.user.ens,
+      req.user.chainId,
       authId
     )
 
