@@ -6,7 +6,6 @@
     "node": ">=18.12.0 <=18.18.0"
   },
   "dependencies": {
-    "@nx/webpack": "19.7.2",
     "@veramo/core": "^6.0.0",
     "@veramo/credential-eip712": "^6.0.0",
     "class-transformer": "^0.5.1",
@@ -43,5 +42,8 @@
     "@nestjs/testing": "^10.0.2",
     "@justaname.id/sdk": "^0.2.146",
     "@openpassport/core": "^0.0.11"
+  },
+  "devDependencies": {
+    "@nx/webpack": "19.7.2"
   }
 }
