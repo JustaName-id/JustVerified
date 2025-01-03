@@ -148,11 +148,6 @@ spec:
                 secretKeyRef:
                   name: foosecret-verifications
                   key: TELEGRAM_STATIC_PAGE_URL
-            - name: OPENPASSPORT_SCOPE
-              valueFrom:
-                secretKeyRef:
-                  name: foosecret-verifications
-                  key: OPENPASSPORT_SCOPE
             - name: OPENPASSPORT_STATIC_PAGE_URL
               valueFrom:
                 secretKeyRef:
