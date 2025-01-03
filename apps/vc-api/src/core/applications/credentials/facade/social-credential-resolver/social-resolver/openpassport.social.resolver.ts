@@ -6,6 +6,7 @@ import { OpenPassportCallback } from './callback/openpassport.callback';
 import { GetAuthUrlRequest } from './requests/get-auth-url.request';
 import { CredentialsException } from '../../../../../domain/exceptions/Credentials.exception';
 import { IOpenPassportService, OPENPASSPORT_SERVICE } from "../../../../openpassport/iopenpassport.service";
+import { VerificationFailedException } from "../../../../../domain/exceptions/VerificationFailed.exception";
 
 export class OpenPassportSocialResolver extends AbstractSocialResolver<
 OpenPassportCallback,
@@ -67,7 +68,11 @@ OpenPassportCredential
             dscProof: decodedAttestation.dscProof
         }
 
-        await this.openPassportService.verify(openPassportProof as OpenPassportAttestation);
+        try {
+            await this.openPassportService.verify(openPassportProof as OpenPassportAttestation);
+        } catch (error) {
+            throw VerificationFailedException.openPassportVerificationFailed();
+        }
 
         const stringifiedOpenPassportProof = JSON.stringify(openPassportProof);
 
