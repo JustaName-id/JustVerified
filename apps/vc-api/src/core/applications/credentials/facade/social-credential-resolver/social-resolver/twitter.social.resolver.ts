@@ -36,7 +36,7 @@ export class TwitterSocialResolver extends AbstractSocialResolver<
   }
 
 
-  getAuthUrl(authUrlRequest:GetAuthUrlRequest): string {
+  async getAuthUrl(authUrlRequest:GetAuthUrlRequest): Promise<string> {
     const clientId = this.environmentGetter.getTwitterClientId();
     const encryptedState = this.encryptState(authUrlRequest);
     const codeVerifier = this.cryptoEncryption.generateCodeVerifier();

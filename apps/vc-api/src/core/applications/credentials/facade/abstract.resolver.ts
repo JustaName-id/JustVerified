@@ -14,6 +14,11 @@ import {CredentialCallbackResponse} from "./credential.callback.response";
 import {BaseCallback} from "./base.callback";
 import { ChainId } from '../../../domain/entities/environment';
 
+interface BaseState {
+  ens: string;
+  chainId: ChainId;
+  authId: string;
+}
 
 export abstract class AbstractResolver<
   T extends BaseCallback,
@@ -80,7 +85,7 @@ export abstract class AbstractResolver<
     return this.cryptoEncryption.encrypt(JSON.stringify(stateObject));
   }
 
-  decryptState(state: string): { ens: string; chainId: ChainId; authId: string } {
+  decryptState<T extends BaseState = BaseState> (state: string): T {
     return JSON.parse(this.cryptoEncryption.decrypt(state));
   }
 
@@ -94,8 +99,8 @@ export abstract class AbstractResolver<
   ): Promise<CredentialCallbackResponse> {
     const credentialSubject = await this.extractCredentialSubject(data);
     const { ens , chainId, authId} = this.getEnsAndAuthId(data);
-
     const did = await this.didResolver.getEnsDid(ens, chainId)
+
     const ethereumEip712Signature2021 = new EthereumEip712Signature2021<K>({
       type: this.getType(),
       context: this.getContext(),

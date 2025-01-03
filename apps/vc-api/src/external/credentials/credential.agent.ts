@@ -31,7 +31,7 @@ export class CredentialAgent implements ICredentialCreator, ICredentialVerifier,
   ) {
   }
 
-  async  onModuleInit(){
+  async onModuleInit(){
     const mainnetChainId = 1;
     const sepoliaChainId = 11155111;
 

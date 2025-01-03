@@ -10,7 +10,7 @@ import { filter, Subject, take } from 'rxjs';
 import { SubjectData } from './isubject.data';
 import { JwtGuard } from '../../guards/jwt.guard';
 import {CredentialsGenerateEmailOtpApiRequestQuery} from "./requests/credentials.generate-email-otp.request.api";
-import {CredentialsGetAuthUrlRequestApiRequestParam} from "./requests/credentials.get-auth-url.request.api";
+import {CredentialsGetAuthUrlApiRequestQuery, CredentialsGetAuthUrlRequestApiRequestParam} from "./requests/credentials.get-auth-url.request.api";
 import {CredentialsGenerateEmailResponseApi} from "./responses/credentials.generate.email.response.api";
 import {CredentialsResendOtpRequestApi} from "./requests/credentials.resend-otp.request.api";
 import {CredentialsVerifyOtpRequestApi} from "./requests/credentials.verify-otp.request.api";
@@ -40,15 +40,14 @@ export class CredentialsController {
     @Res() res: Response,
     @Req() req: Request & { user: Siwens }
   ): Promise<any> {
-
     const authId = uuidv4();
     const subject = new Subject<SubjectData>();
     this.authSubjects.set(authId, subject);
 
     const redirectUrl = await this.credentialCreatorFacade.getSocialAuthUrl(
       authGetAuthUrlRequestApi.authName,
-      req.user?.ens,
-      req.user?.chainId,
+      req.user.ens,
+      req.user.chainId,
       authId
     )
 
@@ -81,7 +80,7 @@ export class CredentialsController {
   @Get('socials/:authName/callback')
   async callback(
     @Param() authGetAuthUrlRequestApiParam: CredentialsGetAuthUrlRequestApiRequestParam,
-    @Query() authGetAuthUrlRequestApiQuery: any,
+    @Query() authGetAuthUrlRequestApiQuery: CredentialsGetAuthUrlApiRequestQuery,
     @Res() res: Response
   ): Promise<void> {
 

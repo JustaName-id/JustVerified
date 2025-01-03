@@ -71,6 +71,14 @@ export class EnvironmentGetter implements IEnvironmentGetter {
     return this.configService.get<string>('TELEGRAM_STATIC_PAGE_URL');
   }
 
+  getOpenPassportScope(): string {
+    return this.configService.get<string>('OPENPASSPORT_SCOPE');
+  }
+
+  getOpenPassportStaticPageUrl(): string {
+    return this.configService.get<string>('OPENPASSPORT_STATIC_PAGE_URL');
+  }
+
   getEncryptKey(): string {
     return this.configService.get<string>('ENCRYPT_KEY');
   }

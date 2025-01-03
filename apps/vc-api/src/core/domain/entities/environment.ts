@@ -43,6 +43,10 @@ export class Environment {
 
   TELEGRAM_STATIC_PAGE_URL!: string;
 
+  OPENPASSPORT_STATIC_PAGE_URL!: string;
+
+  OPENPASSPORT_SCOPE!: string;
+
   JWT_SECRET!: string;
 
   ENCRYPT_KEY!: string;
