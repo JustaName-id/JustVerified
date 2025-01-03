@@ -250,7 +250,7 @@ export class VerifyRecordsService implements IVerifyRecordsService {
       try {
         await this.openPassportService.verify(openPassportProof as OpenPassportAttestation);
       } catch (error) {
-        throw VerificationFailedException.openPassportVerificationFailed();
+        return this.setRecordVerification(subname, record, false);
       }
     }
 
