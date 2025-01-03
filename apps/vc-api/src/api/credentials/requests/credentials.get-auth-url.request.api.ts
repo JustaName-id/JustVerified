@@ -5,6 +5,7 @@ enum AuthName {
   Github = 'github',
   Discord = 'discord',
   Telegram = 'telegram',
+  OpenPassport = 'openpassport',
 }
 
 export class CredentialsGetAuthUrlRequestApiRequestParam

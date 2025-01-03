@@ -32,7 +32,7 @@ export class CredentialCreatorFacade implements ICredentialCreatorFacade {
   }
 
   async getSocialAuthUrl(credentialName: string, ens: string, chainId: ChainId, authId: string): Promise<string> {
-    return this.getSocialResolver(credentialName).getAuthUrl({ens, chainId, authId});
+    return await this.getSocialResolver(credentialName).getAuthUrl({ens, chainId, authId});
   }
 
   async socialCallback(credentialCallbackRequest: CredentialCallbackRequest): Promise<CredentialCallbackResponse> {
