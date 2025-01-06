@@ -9,7 +9,7 @@ This repository contains a Verifiable Credentials Management API built with Nest
 - **Authentication**: Authenticate users using Ethereum addresses and ENS domains.
 - **Credential Verification**: Verify the validity of VCs and ensure they are issued by trusted issuers.
 - **Social Account Verification**: Integrate with social platforms for account verification.
-- **Email Verification**: Send OTPs to verify email addresses.
+- **Email Verification**: Send OTPs to verify email addresses. 
 
 ## Architecture
 
