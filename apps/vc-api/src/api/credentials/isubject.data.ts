@@ -2,7 +2,8 @@ import { VerifiableEthereumEip712Signature2021 } from '../../core/domain/entitie
 
 export interface SubjectData {
   authId: string;
-  result: {
+  heartbeat: boolean
+  result?: {
     verifiableCredential: VerifiableEthereumEip712Signature2021;
     dataKey: string;
   };

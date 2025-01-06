@@ -1,12 +1,12 @@
-import {Body, Controller, Get, Inject, Param, Post, Query, Req, Res, Session, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Inject, Param, Post, Query, Req, Res, UseGuards, OnModuleInit, OnModuleDestroy} from '@nestjs/common';
+import { filter, Subject, take } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+import { Response } from 'express';
 import {
   CREDENTIAL_CREATOR_FACADE,
   ICredentialCreatorFacade
 } from '../../core/applications/credentials/facade/icredential.facade';
-import { Response } from 'express';
 import { AUTH_CONTROLLER_MAPPER, IcredentialsControllerMapper } from './mapper/icredentials.controller.mapper';
-import { v4 as uuidv4 } from 'uuid';
-import { filter, Subject, take } from 'rxjs';
 import { SubjectData } from './isubject.data';
 import { JwtGuard } from '../../guards/jwt.guard';
 import {CredentialsGenerateEmailOtpApiRequestQuery} from "./requests/credentials.generate-email-otp.request.api";
@@ -21,9 +21,10 @@ import { ChainId } from '../../core/domain/entities/environment';
 type Siwens = { address: string, ens: string, chainId: ChainId };
 
 @Controller('credentials')
-export class CredentialsController {
+export class CredentialsController implements OnModuleInit, OnModuleDestroy {
 
   private authSubjects: Map<string, Subject<SubjectData>> = new Map();
+  private heartbeatInterval: NodeJS.Timer;
 
   constructor(
     @Inject(CREDENTIAL_CREATOR_FACADE)
@@ -32,6 +33,32 @@ export class CredentialsController {
     @Inject(AUTH_CONTROLLER_MAPPER)
     private readonly authControllerMapper: IcredentialsControllerMapper
   ) {}
+
+  onModuleInit() {
+    this.heartbeatInterval = setInterval(() => {
+      this.sendHeartbeats();
+    }, 10000);
+  }
+
+  onModuleDestroy() {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+    }
+  }
+
+  private sendHeartbeats() {
+    this.authSubjects.forEach((subject, authId) => {
+      try {
+        subject.next({
+          authId,
+          heartbeat: true,
+        });
+      } catch (error) {
+        console.error(`Failed to send heartbeat to ${authId}:`, error);
+        this.authSubjects.delete(authId);
+      }
+    });
+  }
 
   @UseGuards(JwtGuard)
   @Get('socials/:authName')
@@ -51,7 +78,6 @@ export class CredentialsController {
       authId
     )
 
-
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
@@ -61,11 +87,11 @@ export class CredentialsController {
     res.write(`data: ${JSON.stringify({ redirectUrl })}\n\n`);
 
     subject.pipe(
-      filter(data => data.authId === authId),
+      filter(data => data.authId === authId && !data.heartbeat),
       take(1)
     ).subscribe(
       (data) => {
-        res.write(`data: ${JSON.stringify({ result:data.result })}\n\n`);
+        res.write(`data: ${JSON.stringify({ result: data.result })}\n\n`);
         res.end();
         this.authSubjects.delete(authId);
       },
@@ -74,7 +100,7 @@ export class CredentialsController {
         res.end();
         this.authSubjects.delete(authId);
       }
-    );
+    )
   }
 
   @Get('socials/:authName/callback')
@@ -95,6 +121,7 @@ export class CredentialsController {
     const subject = this.authSubjects.get(authId);
     subject?.next({
       authId,
+      heartbeat: false,
       result: {
         verifiableCredential,
         dataKey
