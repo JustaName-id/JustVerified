@@ -54,8 +54,8 @@ export class CredentialsController implements OnModuleInit, OnModuleDestroy {
           heartbeat: true,
         });
       } catch (error) {
-        console.error(`Failed to send heartbeat to ${authId}:`, error);
         this.authSubjects.delete(authId);
+        throw Error(`Failed to send heartbeat to ${authId}: ${error}`);
       }
     });
   }
