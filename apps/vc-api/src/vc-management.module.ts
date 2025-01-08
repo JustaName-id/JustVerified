@@ -35,6 +35,7 @@ import {
 import {
   TwitterSocialResolver
 } from './core/applications/credentials/facade/social-credential-resolver/social-resolver/twitter.social.resolver';
+import { OpenPassportSocialResolver } from './core/applications/credentials/facade/social-credential-resolver/social-resolver/openpassport.social.resolver';
 import { CredentialsControllerMapper } from './api/credentials/mapper/credentials.controller.mapper';
 import { AUTH_CONTROLLER_MAPPER } from './api/credentials/mapper/icredentials.controller.mapper';
 import { AuthController } from './api/auth/auth.controller';
@@ -58,6 +59,8 @@ import { VCManagementApiFilters } from './api/filters/vc.api.filters';
 import { APP_FILTER } from '@nestjs/core';
 import { FetchChainIdService } from './external/provider-services/fetch-chain-id.service';
 import { FETCH_CHAIN_ID_SERVICE } from './core/applications/provider-services/ifetch-chain-id.service';
+import { OpenPassportService } from './external/openpassport/openpassport.service';
+import { OPENPASSPORT_SERVICE } from './core/applications/openpassport/iopenpassport.service';
 
 const dynamicImport = async (packageName: string) =>
   new Function(`return import('${packageName}')`)();
@@ -151,10 +154,15 @@ const dynamicImport = async (packageName: string) =>
       useClass: EmailSender,
       provide: EMAIL_SENDER
     },
+    {
+      useClass: OpenPassportService,
+      provide: OPENPASSPORT_SERVICE
+    },
     GithubSocialResolver,
     DiscordSocialResolver,
     TelegramSocialResolver,
     TwitterSocialResolver,
+    OpenPassportSocialResolver,
     {
       useClass: EmailResolver,
       provide: EMAIL_RESOLVER

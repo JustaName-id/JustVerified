@@ -20,7 +20,7 @@ const CALLBACK_URL = 'CALLBACK_URL';
 
 const RESOLVER: Partial<AbstractSocialResolver<{ state: string }, {}>> = {
   getCredentialName: () => CREDENTIAL_NAME,
-  getAuthUrl: () => AUTH_URL,
+  getAuthUrl: async () => AUTH_URL,
   getCallbackUrl: () => CALLBACK_URL,
 }
 

@@ -1,5 +1,7 @@
 import { IVerifyRecordsService } from './iverify-records.service';
+import { OpenPassportAttestation } from '@openpassport/core';
 import { Inject, Injectable } from '@nestjs/common';
+import { ChainId } from '@justaname.id/sdk';
 import {
   ISubnameRecordsFetcher,
   SUBNAME_RECORDS_FETCHER,
@@ -26,7 +28,10 @@ import {
   CREDENTIAL_CREATOR,
   ICredentialCreator,
 } from '../credentials/creator/icredential.creator';
-import { ChainId } from '@justaname.id/sdk';
+import { OpenPassportCredential } from '../../domain/credentials/openpassport.credential';
+import { IOpenPassportService } from '../openpassport/iopenpassport.service';
+import { OPENPASSPORT_SERVICE } from '../openpassport/iopenpassport.service';
+import { VerificationFailedException } from '../../domain/exceptions/VerificationFailed.exception';
 
 @Injectable()
 export class VerifyRecordsService implements IVerifyRecordsService {
@@ -44,7 +49,9 @@ export class VerifyRecordsService implements IVerifyRecordsService {
     @Inject(FETCH_CHAIN_ID_SERVICE)
     private readonly fetchChainIdService: IFetchChainIdService,
     @Inject(CREDENTIAL_CREATOR)
-    private readonly credentialCreator: ICredentialCreator
+    private readonly credentialCreator: ICredentialCreator,
+    @Inject(OPENPASSPORT_SERVICE) 
+    private readonly openPassportService: IOpenPassportService,
   ) {
     this.domain = this.environmentGetter.getEnsDomain();
   }
@@ -232,6 +239,17 @@ export class VerifyRecordsService implements IVerifyRecordsService {
       }
 
       if (handle !== foundRecord.value) {
+        return this.setRecordVerification(subname, record, false);
+      }
+    }
+
+    if (type === 'VerifiableOpenPassportAccount') {
+      const typedVc = vc as VerifiableEthereumEip712Signature2021<OpenPassportCredential>;
+      const openPassportProof = JSON.parse(typedVc.credentialSubject.openPassportProof);
+      
+      try {
+        await this.openPassportService.verify(openPassportProof as OpenPassportAttestation);
+      } catch (error) {
         return this.setRecordVerification(subname, record, false);
       }
     }
