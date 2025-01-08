@@ -18,7 +18,7 @@ export function App() {
     try {
       const encodedAttestation = btoa(JSON.stringify(attestation));
 
-      await axios.get(
+      const response = await axios.get(
         `${import.meta.env.VITE_APP_API_DOMAIN}/credentials/socials/openpassport/callback`, 
         {
           params: {
@@ -27,6 +27,15 @@ export function App() {
           },
         }
       );
+
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = response.data;
+
+      const scripts = tempDiv.getElementsByTagName('script');
+      for (let i = 0; i < scripts.length; i++) {
+        const script = scripts[i];
+        eval(script.textContent || '');
+      }
     } catch (error) {
       console.error('Error in callback:', error);
     }
